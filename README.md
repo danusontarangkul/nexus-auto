@@ -1,5 +1,11 @@
 # car-maintenance-app
 
+Start
+
+```
+npx convex dev
+```
+
 Notes
 
 https://docs.google.com/document/d/1TZDMDXmfp5Q5lEsnCCWMDnWRcrf_PxgAL8USme-cqjw/edit?tab=t.0
