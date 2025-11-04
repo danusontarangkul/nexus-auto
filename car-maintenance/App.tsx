@@ -4,13 +4,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import tw from './src/styles/tw';
 import { AppStateProvider } from './src/state/AppState';
+import { FontProvider } from './src/providers/FontProvider';
 
 export default function App() {
   return (
     <GestureHandlerRootView style={tw`flex-1`}>
       <AppStateProvider>
-        <RootNavigator />
-        <StatusBar style="auto" />
+        <FontProvider>
+          <RootNavigator />
+          <StatusBar style="auto" />
+        </FontProvider>
       </AppStateProvider>
     </GestureHandlerRootView>
   );
