@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from '../../../shared/components/Screen';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { PrimaryButton } from '../../../shared/components/PrimaryButton';
 import tw from '../../../styles/tw';
+import { CustomText } from '../../../shared/components/CustomText';
 
 export function AddCarStartScreen() {
   const nav = useNavigation();
@@ -11,7 +12,7 @@ export function AddCarStartScreen() {
   return (
     <Screen>
       <View style={tw`mt-12 gap-4`}>
-        <Text style={tw`text-2xl font-semibold text-ink-900`}>Add a Car</Text>
+        <CustomText style={tw`text-2xl font-semibold text-ink-900`}>Add a Car</CustomText>
         <PrimaryButton
           title="Enter VIN"
           onPress={() => nav.navigate('EnterVIN' as never)}

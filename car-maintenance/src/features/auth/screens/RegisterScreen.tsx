@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useAppState } from '../../../state/AppState';
 import { Screen } from '../../../shared/components/Screen';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Input } from '../../../shared/components/Input';
 import { PrimaryButton } from '../../../shared/components/PrimaryButton';
 import tw from '../../../styles/tw';
+import { CustomText } from '../../../shared/components/CustomText';
 
 export function RegisterScreen() {
   const { register } = useAppState();
@@ -15,9 +16,9 @@ export function RegisterScreen() {
   return (
     <Screen>
       <View style={tw`mt-12 gap-4`}>
-        <Text style={tw`text-2xl font-semibold text-ink-900`}>
+        <CustomText style={tw`text-2xl font-semibold text-ink-900`}>
           Create account
-        </Text>
+        </CustomText>
         <Input placeholder="Name" value={name} onChangeText={setName} />
         <Input
           placeholder="Email"
