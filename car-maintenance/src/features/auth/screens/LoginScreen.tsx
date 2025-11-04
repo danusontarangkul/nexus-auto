@@ -1,46 +1,60 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Screen } from '../../../shared/components/Screen';
 import { Input } from '../../../shared/components/Input';
 import { PrimaryButton } from '../../../shared/components/PrimaryButton';
-import { useNavigation } from '@react-navigation/native';
+import { DividerWithOr } from '../../../shared/components/DividerWithOr';
+import { CircleImage } from '../../../shared/components/CircleImage';
+import { GoogleButton } from '../../../shared/components/GoogleButton';
 import { useAppState } from '../../../state/AppState';
 import tw from '../../../styles/tw';
 
 export function LoginScreen() {
-  const nav = useNavigation();
   const { login } = useAppState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
     <Screen>
-      <View style={tw`mt-12 gap-4`}>
-        <Text style={tw`text-2xl font-semibold text-ink-900`}>Log in</Text>
+      <View style={tw`items-center mt-10`}>
+        <CircleImage
+          source={require('../../../../assets/login-hero.jpg')}
+          size={180}
+        />
+      </View>
+
+      <View style={tw`mt-8 gap-4`}>
         <Input
-          placeholder="Email"
+          label="Username"
+          placeholder="Username"
           autoCapitalize="none"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
         />
         <Input
+          label="Password"
           placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
+
         <PrimaryButton
           title="Log in"
+          style={tw`mt-2`}
           onPress={() => {
-            // TODO: call Convex auth
+            // TODO: hook into Convex auth
             login();
           }}
         />
-        <PrimaryButton
-          title="Create an account"
-          style={tw`bg-white border border-slate-200`}
-          onPress={() => nav.navigate('Register' as never)}
+
+        <DividerWithOr />
+
+        <GoogleButton
+          onPress={() => {
+            /* TODO: google auth */
+          }}
         />
       </View>
     </Screen>
