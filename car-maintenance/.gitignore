@@ -65,3 +65,9 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# OS files
+.DS_Store
+
+# Node files
+package-lock.json
