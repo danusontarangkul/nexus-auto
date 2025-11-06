@@ -1,8 +1,15 @@
 // src/navigation/index.tsx
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import { NavigationContainer, DefaultTheme, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  useNavigation,
+} from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import { useAppState } from '../state/AppState';
 import { navRef } from './NavRef';
 import { ROOT, RootStackParamList } from './routes';
@@ -26,15 +33,20 @@ const darkNav = {
   },
 };
 
+// This Gate sets the stack based on the app state
 function Gate() {
   const { isAuthenticated, hasCar } = useAppState();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigation.reset({ index: 0, routes: [{ name: ROOT.Auth as never }] });
     } else if (!hasCar) {
-      navigation.reset({ index: 0, routes: [{ name: ROOT.Onboarding as never }] });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: ROOT.Onboarding as never }],
+      });
     } else {
       navigation.reset({ index: 0, routes: [{ name: ROOT.App as never }] });
     }
@@ -46,11 +58,15 @@ function Gate() {
 export function RootNavigator() {
   return (
     <NavigationContainer ref={navRef} theme={darkNav as any}>
-      <Root.Navigator screenOptions={{ headerShown: false }} initialRouteName={__DEV__ ? ROOT.Gate : ROOT.Gate}>
+      <Root.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={ROOT.Gate}
+      >
         <Root.Screen name={ROOT.Gate} component={Gate} />
         <Root.Screen name={ROOT.Auth} component={AuthStack} />
         <Root.Screen name={ROOT.Onboarding} component={OnboardingStack} />
         <Root.Screen name={ROOT.App} component={AppTabs} />
+        {/* Dev Button for navigating */}
         {__DEV__ && <Root.Screen name={ROOT.Dev} component={DevSwitcher} />}
       </Root.Navigator>
     </NavigationContainer>
