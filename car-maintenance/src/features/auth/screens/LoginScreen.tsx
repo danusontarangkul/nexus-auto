@@ -8,11 +8,13 @@ import { CircleImage } from '../../../shared/components/CircleImage';
 import { GoogleButton } from '../../../shared/components/GoogleButton';
 import { useAppState } from '../../../state/AppState';
 import tw from '../../../styles/tw';
+import { useNavigation } from '@react-navigation/native';
 
 export function LoginScreen() {
   const { login } = useAppState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const nav = useNavigation<any>();
 
   return (
     <Screen>
@@ -42,10 +44,12 @@ export function LoginScreen() {
 
         <PrimaryButton
           title="Log in"
-          style={tw`mt-2`}
-          onPress={() => {
-            // TODO: hook into Convex auth
-            login();
+          onPress={async () => {
+            const { hasCar } = await login();
+            nav.reset({
+              index: 0,
+              routes: [{ name: hasCar ? 'App' : 'Onboarding' }],
+            });
           }}
         />
 

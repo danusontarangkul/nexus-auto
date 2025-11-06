@@ -14,7 +14,9 @@ export function EnterVinScreen() {
   return (
     <Screen>
       <View style={tw`mt-12 gap-4`}>
-        <CustomText style={tw`text-2xl font-semibold text-ink-900`}>Enter VIN</CustomText>
+        <CustomText style={tw`text-2xl font-semibold text-ink-900`}>
+          Enter VIN
+        </CustomText>
         <Input
           placeholder="VIN"
           value={vin}

@@ -1,24 +1,24 @@
 // Design tokens for dark UI
 export const palette = {
-    primary: {
-      500: '#3B82F6',
-      600: '#2563EB',
-    },
-    surface: {
-      950: '#121212', // background
-      900: '#1A1A1A',
-      800: '#242424',
-      700: '#2D2C2C',
-      600: '#363434', // ← your Figma gray for cards / inputs
-      border: '#4A4848',
-    },
-    ink: {
-      900: '#F8FAFC', // text high contrast
-      700: '#E4E7EB', // labels / subtitles
-      500: '#B0B0B0', // placeholders
-      400: '#9CA3AF', // disabled text
-    },
-  };
+  primary: {
+    500: '#3B82F6',
+    600: '#2563EB',
+  },
+  surface: {
+    950: '#121212', // background
+    900: '#1A1A1A',
+    800: '#242424',
+    700: '#2D2C2C',
+    600: '#363434', // ← your Figma gray for cards / inputs
+    border: '#4A4848',
+  },
+  ink: {
+    900: '#F8FAFC', // text high contrast
+    700: '#E4E7EB', // labels / subtitles
+    500: '#B0B0B0', // placeholders
+    400: '#9CA3AF', // disabled text
+  },
+};
 
 export const radii = {
   md: 12,
@@ -40,16 +40,9 @@ export const typography = {
     fontSize: 24,
     letterSpacing: 0.2,
   },
-  title: {
-    fontFamily: 'SourceSansPro_600SemiBold',
-    fontSize: 20,
-  },
-  body: {
-    fontFamily: 'SourceSansPro_400Regular',
-    fontSize: 16,
-  },
-  detail: {
-    fontFamily: 'SourceSansPro_400Regular',
-    fontSize: 13,
-  },
+  titleLg: { fontFamily: 'SourceSansPro_700Bold', fontSize: 22 },
+  title: { fontFamily: 'SourceSansPro_600SemiBold', fontSize: 20 },
+  body: { fontFamily: 'SourceSansPro_400Regular', fontSize: 16 },
+  detail: { fontFamily: 'SourceSansPro_400Regular', fontSize: 13 },
+  link: { fontFamily: 'SourceSansPro_600SemiBold', fontSize: 18 },
 };
