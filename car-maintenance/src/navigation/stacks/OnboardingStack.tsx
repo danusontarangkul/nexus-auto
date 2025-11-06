@@ -18,14 +18,28 @@ export function OnboardingStack() {
         component={AddCarStartScreen}
         options={{ header: () => <BackHeader title="New Car" hideBack /> }}
       />
-      <Stack.Screen name={ONBOARD.EnterVIN} component={EnterVinScreen}
-        options={{ header: () => <BackHeader title="Enter VIN" /> }} />
-      <Stack.Screen name={ONBOARD.EnterManual} component={EnterManualScreen}
-        options={{ header: () => <BackHeader title="Enter Details Manually" /> }} />
-      <Stack.Screen name={ONBOARD.UploadVINPhoto} component={UploadVinPhotoScreen}
-        options={{ header: () => <BackHeader title="Scan VIN Barcode" /> }} />
-      <Stack.Screen name={ONBOARD.ConfirmCar} component={ConfirmCarScreen}
-        options={{ header: () => <BackHeader title="Confirm Vehicle" /> }} />
+      <Stack.Screen
+        name={ONBOARD.EnterVIN}
+        component={EnterVinScreen}
+        options={{ header: () => <BackHeader title="Enter VIN" /> }}
+      />
+      <Stack.Screen
+        name={ONBOARD.EnterManual}
+        component={EnterManualScreen}
+        options={{
+          header: () => <BackHeader title="Enter Details Manually" />,
+        }}
+      />
+      <Stack.Screen
+        name={ONBOARD.UploadVINPhoto}
+        component={UploadVinPhotoScreen}
+        options={{ header: () => <BackHeader title="Scan VIN Barcode" /> }}
+      />
+      <Stack.Screen
+        name={ONBOARD.ConfirmCar}
+        component={ConfirmCarScreen}
+        options={{ header: () => <BackHeader title="Confirm Vehicle" /> }}
+      />
     </Stack.Navigator>
   );
 }
