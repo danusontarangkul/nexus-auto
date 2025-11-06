@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
 
+// state/AppState.tsx
 type AppState = {
   isAuthenticated: boolean;
   hasCar: boolean;
-  login: () => void;
-  register: () => void;
+  login: () => Promise<{ hasCar: boolean }>; // ← return value
+  register: () => Promise<{ hasCar: boolean }>;
   completeAddCar: () => void;
   logout: () => void;
 };
@@ -17,13 +18,30 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [hasCar, setHasCar] = useState(false);
 
+  const login = async (): Promise<{ hasCar: boolean }> => {
+    // TODO: real auth + fetch profile
+    setIsAuthenticated(true);
+    const userHasCar = false; // from API later
+    setHasCar(userHasCar);
+    return { hasCar: userHasCar };
+  };
+
+  const register = async (): Promise<{ hasCar: boolean }> => {
+    setIsAuthenticated(true);
+    const userHasCar = false;
+    setHasCar(userHasCar);
+    return { hasCar: userHasCar };
+  };
+
+  const completeAddCar = () => setHasCar(true);
+
   const value = useMemo(
     () => ({
       isAuthenticated,
       hasCar,
-      login: () => setIsAuthenticated(true),
-      register: () => setIsAuthenticated(true),
-      completeAddCar: () => setHasCar(true),
+      login,
+      register,
+      completeAddCar,
       logout: () => {
         setIsAuthenticated(false);
         setHasCar(false);

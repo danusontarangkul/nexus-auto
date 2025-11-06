@@ -1,15 +1,29 @@
 import React from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 import tw from '../../styles/tw';
+import { CustomText } from './CustomText';
 
-export function Input(props: TextInputProps) {
+type Props = TextInputProps & {
+  label?: string;
+  errorText?: string;
+};
+
+export function Input({ label, errorText, ...props }: Props) {
   return (
     <View style={tw`w-full`}>
+      {label ? (
+        <CustomText style={tw`text-ink-700 mb-1`}>{label}</CustomText>
+      ) : null}
       <TextInput
-        placeholderTextColor="#94a3b8"
-        style={tw`w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-ink-900`}
+        placeholderTextColor={tw.color('ink-400')}
+        style={tw`w-full px-4 py-3 rounded-md bg-surface-800 border border-surface-border text-ink-900`}
         {...props}
       />
+      {!!errorText && (
+        <CustomText style={tw`text-[12px] text-red-400 mt-1`}>
+          {errorText}
+        </CustomText>
+      )}
     </View>
   );
 }

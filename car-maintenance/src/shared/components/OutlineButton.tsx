@@ -5,17 +5,16 @@ import { CustomText } from './CustomText';
 
 type Props = PressableProps & { title: string };
 
-export function PrimaryButton({ title, style, ...rest }: Props) {
+export function OutlineButton({ title, style, ...rest }: Props) {
   return (
     <Pressable
       style={tw.style(
-        'bg-primary rounded-md py-3 items-center justify-center border border-white border-[0.5px]',
+        'bg-transparent rounded-xl py-3 items-center justify-center border border-surface-border',
         style as any,
       )}
-      android_ripple={{ color: '#1D4ED8' }}
       {...rest}
     >
-      <CustomText style={tw`text-ink-700 font-semibold`}>{title}</CustomText>
+      <CustomText style={tw`text-ink-500 font-medium`}>{title}</CustomText>
     </Pressable>
   );
 }
