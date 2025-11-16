@@ -1,10 +1,11 @@
 // src/navigation/DevSwitcher.tsx
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
 import { Screen } from '../../shared/components/Screen';
 import tw from '../../styles/tw';
+import { ONBOARD } from '../routes';
 
 // This component provides buttons to quickly navigate to different parts of the app during development.
 export default function DevSwitcher() {
@@ -20,6 +21,17 @@ export default function DevSwitcher() {
           title="Onboarding → AddCarStart"
           onPress={() =>
             nav.reset({ index: 0, routes: [{ name: 'Onboarding' }] })
+          }
+        />
+        <PrimaryButton
+          title="Scan Vin Screen"
+          onPress={() =>
+            nav.reset({
+              index: 0,
+              routes: [
+                { name: 'Onboarding', params: { screen: ONBOARD.VinScan } },
+              ],
+            })
           }
         />
         <PrimaryButton

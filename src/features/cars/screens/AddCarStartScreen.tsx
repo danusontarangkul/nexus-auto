@@ -8,6 +8,7 @@ import { CustomText } from '../../../shared/components/CustomText';
 import { Ionicons } from '@expo/vector-icons';
 import tw from '../../../styles/tw';
 import { useAppState } from '../../../state/AppState';
+import { ONBOARD } from '../../../navigation/routes';
 
 export function AddCarStartScreen() {
   const nav = useNavigation();
@@ -47,7 +48,7 @@ export function AddCarStartScreen() {
 
       <TouchableOpacity
         style={tw`flex-row items-center`}
-        onPress={() => nav.navigate('UploadVINPhoto' as never)}
+        onPress={() => nav.navigate(ONBOARD.VinScan as never)}
       >
         <Ionicons
           name="camera-outline"

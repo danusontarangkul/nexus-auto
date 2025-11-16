@@ -24,18 +24,21 @@ export type AuthStackParamList = {
   [AUTH.Register]: undefined;
 };
 
+// ✅ keep names 1:1 with what you register in the stack
 export const ONBOARD = {
   AddCarStart: 'AddCarStart',
-  EnterVIN: 'EnterVIN',
-  EnterManual: 'EnterManual',
+  EnterVin: 'EnterVin', // manual VIN input screen
+  EnterManual: 'EnterManual', // full manual entry details screen
+  VinScan: 'VinScan', // camera scanning screen
   UploadVINPhoto: 'UploadVINPhoto',
   ConfirmCar: 'ConfirmCar',
 } as const;
 
 export type OnboardingStackParamList = {
   [ONBOARD.AddCarStart]: undefined;
-  [ONBOARD.EnterVIN]: undefined;
+  [ONBOARD.EnterVin]: undefined;
   [ONBOARD.EnterManual]: undefined;
+  [ONBOARD.VinScan]: undefined;
   [ONBOARD.UploadVINPhoto]: undefined;
   [ONBOARD.ConfirmCar]: undefined;
 };

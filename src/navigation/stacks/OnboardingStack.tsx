@@ -1,4 +1,3 @@
-// src/navigation/stacks/OnboardingStack.tsx
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ONBOARD, OnboardingStackParamList } from '../routes';
 import { stackDark } from '../options';
@@ -8,8 +7,10 @@ import { EnterVinScreen } from '../../features/cars/screens/EnterVinScreen';
 import { EnterManualScreen } from '../../features/cars/screens/EnterManualScreen';
 import { UploadVinPhotoScreen } from '../../features/cars/screens/UploadVinPhotoScreen';
 import { ConfirmCarScreen } from '../../features/cars/screens/ConfirmCarScreen';
+import VinScanScreen from '../../features/cars/screens/VinScanScreen';
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
+
 export function OnboardingStack() {
   return (
     <Stack.Navigator screenOptions={stackDark}>
@@ -19,7 +20,7 @@ export function OnboardingStack() {
         options={{ header: () => <BackHeader title="New Car" hideBack /> }}
       />
       <Stack.Screen
-        name={ONBOARD.EnterVIN}
+        name={ONBOARD.EnterVin}
         component={EnterVinScreen}
         options={{ header: () => <BackHeader title="Enter VIN" /> }}
       />
@@ -33,7 +34,12 @@ export function OnboardingStack() {
       <Stack.Screen
         name={ONBOARD.UploadVINPhoto}
         component={UploadVinPhotoScreen}
-        options={{ header: () => <BackHeader title="Scan VIN Barcode" /> }}
+        options={{ header: () => <BackHeader title="Upload VIN Photo" /> }}
+      />
+      <Stack.Screen
+        name={ONBOARD.VinScan}
+        component={VinScanScreen}
+        options={{ header: () => <BackHeader title="Scan VIN" /> }}
       />
       <Stack.Screen
         name={ONBOARD.ConfirmCar}
