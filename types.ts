@@ -1,19 +1,19 @@
-import { Doc, Id } from "./convex/_generated/dataModel";
+import { Doc, Id } from './convex/_generated/dataModel';
 
 export type CreateWarrantyInput = {
-  vehicleId: Id<"vehicles">;
+  vehicleId: Id<'vehicles'>;
   expiresAt: number;
   manufacturer: string;
-  receiptIds: Id<"receipts">[];
+  receiptIds: Id<'receipts'>[];
 };
 
 export type UpdateWarrantyInput = {
-  warrantyId: Id<"warranties">;
+  warrantyId: Id<'warranties'>;
   updates: {
     expiresAt: number;
     manufacturer: string;
-    receiptIds?: Id<"receipts">[];
-    receiptIdsToRemove?: Id<"receipts">[];
+    receiptIds?: Id<'receipts'>[];
+    receiptIdsToRemove?: Id<'receipts'>[];
   };
 };
 
@@ -83,7 +83,7 @@ export type SafetyFeatures = {
 };
 
 export type UpdateVehicleInput = {
-  vehicleId: Id<"vehicles">;
+  vehicleId: Id<'vehicles'>;
   updates: {
     isActive?: boolean;
     licensePlate?: string;
@@ -96,12 +96,12 @@ export type UpdateVehicleInput = {
 };
 
 export type ServiceRecordWithReceipts = {
-  serviceRecord: Doc<"serviceRecords">;
-  receipts: Doc<"receipts">[];
+  serviceRecord: Doc<'serviceRecords'>;
+  receipts: Doc<'receipts'>[];
 };
 
 export type CreateServiceRecordInput = {
-  vehicleId: Id<"vehicles">;
+  vehicleId: Id<'vehicles'>;
   serviceRecord: {
     isActive: boolean;
     performed: {
@@ -109,17 +109,17 @@ export type CreateServiceRecordInput = {
       cost: number;
       name: string;
       notes: string;
-      warrantyId: Id<"warranties">;
-      templateItemId: Id<"maintenanceItems">;
+      warrantyId: Id<'warranties'>;
+      templateItemId: Id<'maintenanceItems'>;
     }[];
     serviceCenter: string;
     serviceDate: number;
-    receiptIds: Id<"receipts">[];
+    receiptIds: Id<'receipts'>[];
   };
 };
 
 export type UpdateServiceRecordInput = {
-  serviceRecordId: Id<"serviceRecords">;
+  serviceRecordId: Id<'serviceRecords'>;
   updates: {
     isActive?: boolean;
     performed?: {
@@ -127,53 +127,53 @@ export type UpdateServiceRecordInput = {
       cost: number;
       name: string;
       notes: string;
-      warrantyId: Id<"warranties">;
-      templateItemId: Id<"maintenanceItems">;
+      warrantyId: Id<'warranties'>;
+      templateItemId: Id<'maintenanceItems'>;
     }[];
     serviceCenter?: string;
     serviceDate?: number;
-    receiptIds?: Id<"receipts">[];
-    receiptIdsToRemove?: Id<"receipts">[];
+    receiptIds?: Id<'receipts'>[];
+    receiptIdsToRemove?: Id<'receipts'>[];
   };
 };
 
 export type RegistrationWithReceipts = {
-  registration: Doc<"registrations"> | null;
-  receipts: Doc<"receipts">[];
+  registration: Doc<'registrations'> | null;
+  receipts: Doc<'receipts'>[];
 };
 
 export type UpsertRegistrationInput = {
-  vehicleId: Id<"vehicles">;
+  vehicleId: Id<'vehicles'>;
   expiresAt: number;
-  receiptIds: Id<"receipts">[];
-  receiptIdsToRemove: Id<"receipts">[];
+  receiptIds: Id<'receipts'>[];
+  receiptIdsToRemove: Id<'receipts'>[];
 };
 
 export type InsuranceWithReceipts = {
-  insurance: Doc<"insurance">;
-  receipts: Doc<"receipts">[];
+  insurance: Doc<'insurance'>;
+  receipts: Doc<'receipts'>[];
 };
 
 export type UpsertInsuranceInput = {
-  vehicleId: Id<"vehicles">;
+  vehicleId: Id<'vehicles'>;
   expiresAt: number;
-  receiptIds: Id<"receipts">[];
-  receiptIdsToRemove: Id<"receipts">[];
+  receiptIds: Id<'receipts'>[];
+  receiptIdsToRemove: Id<'receipts'>[];
   name: string;
 };
 
 export type CreateReceiptInput = {
-  vehicleId: Id<"vehicles">;
+  vehicleId: Id<'vehicles'>;
   file: File;
   fileName: string;
   type: ReceiptType;
 };
 
 export type ReceiptType =
-  | "registration"
-  | "insurance"
-  | "warranty"
-  | "serviceRecord";
+  | 'registration'
+  | 'insurance'
+  | 'warranty'
+  | 'serviceRecord';
 
 export type ValidatePromoCodeInput = {
   promoCode: string;
@@ -205,3 +205,22 @@ export type CheckOrRestoreSubscriptionResult =
       success: false;
       message: string;
     };
+
+export type InsertReceiptResponse = {
+  receiptId: Id<'receipts'>;
+  url: string;
+  status: ReceiptStatus;
+};
+
+export type ReceiptStatus =
+  | 'draft'
+  | 'parsing'
+  | 'ready'
+  | 'parsed'
+  | 'failed'
+  | 'abandoned';
+
+export type WarrantyWithReceipts = {
+  warranty: Doc<'warranties'>;
+  receipts: Doc<'receipts'>[];
+};

@@ -1,30 +1,30 @@
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
-import { ReceiptStatus, ReceiptType } from "./types/literals";
+import { defineSchema, defineTable } from 'convex/server';
+import { v } from 'convex/values';
+import { ReceiptStatus, ReceiptType } from './types/literals';
 
 export default defineSchema({
   insurance: defineTable({
     expiresAt: v.number(),
     name: v.string(),
     updatedAt: v.number(),
-    vehicleId: v.id("vehicles"),
-  }).index("by_vehicle", ["vehicleId"]),
+    vehicleId: v.id('vehicles'),
+  }).index('by_vehicle', ['vehicleId']),
   maintenanceItems: defineTable({
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
     name: v.string(),
     category: v.string(),
     intervalMiles: v.optional(v.number()),
     intervalMonths: v.optional(v.number()),
     lastDoneAtMileage: v.optional(v.number()),
     lastDoneAtDate: v.optional(v.number()),
-    lastDoneRecordId: v.optional(v.id("serviceRecords")),
+    lastDoneRecordId: v.optional(v.id('serviceRecords')),
     nextDueMileage: v.optional(v.number()),
     nextDueDate: v.optional(v.number()),
     updatedAt: v.number(),
   })
-    .index("by_vehicle", ["vehicleId"])
-    .index("by_next_due_miles", ["vehicleId", "nextDueMileage"])
-    .index("by_next_due_date", ["vehicleId", "nextDueDate"]),
+    .index('by_vehicle', ['vehicleId'])
+    .index('by_next_due_miles', ['vehicleId', 'nextDueMileage'])
+    .index('by_next_due_date', ['vehicleId', 'nextDueDate']),
   maintenanceTemplates: defineTable({
     make: v.string(),
     model: v.string(),
@@ -32,7 +32,7 @@ export default defineSchema({
     yearEnd: v.number(),
     trim: v.optional(v.string()),
     engine: v.optional(v.string()),
-    source: v.union(v.literal("seeded"), v.literal("ai-generated")),
+    source: v.union(v.literal('seeded'), v.literal('ai-generated')),
     generatedAt: v.optional(v.number()),
     defaultItems: v.array(
       v.object({
@@ -40,15 +40,15 @@ export default defineSchema({
         category: v.string(),
         intervalMiles: v.optional(v.number()),
         intervalMonths: v.optional(v.number()),
-        severity: v.optional(v.union(v.literal("normal"), v.literal("severe"))),
+        severity: v.optional(v.union(v.literal('normal'), v.literal('severe'))),
         estimatedCostUsd: v.optional(v.number()),
         notes: v.optional(v.string()),
-      })
+      }),
     ),
   })
-    .index("by_make_model_year", ["make", "model", "yearStart"])
-    .index("by_make", ["make"])
-    .index("by_model", ["model"]),
+    .index('by_make_model_year', ['make', 'model', 'yearStart'])
+    .index('by_make', ['make'])
+    .index('by_model', ['model']),
 
   serviceRecords: defineTable({
     isActive: v.boolean(),
@@ -58,40 +58,39 @@ export default defineSchema({
         cost: v.union(v.null(), v.number()),
         name: v.string(),
         notes: v.union(v.null(), v.string()),
-        warrantyId: v.optional(v.id("warranties")),
-        templateItemId: v.optional(v.id("maintenanceItems")),
-      })
+        warrantyId: v.optional(v.id('warranties')),
+        templateItemId: v.optional(v.id('maintenanceItems')),
+      }),
     ),
     serviceCenter: v.union(v.null(), v.string()),
     serviceDate: v.number(),
     updatedAt: v.number(),
-    vehicleId: v.id("vehicles"),
-  }).index("by_vehicle", ["vehicleId"]),
+    vehicleId: v.id('vehicles'),
+  }).index('by_vehicle', ['vehicleId']),
   receipts: defineTable({
-    fileId: v.id("_storage"),
+    fileId: v.id('_storage'),
     fileName: v.string(),
-    insuranceId: v.optional(v.id("insurance")),
+    insuranceId: v.optional(v.id('insurance')),
     parsedData: v.optional(v.any()),
-    serviceRecordId: v.optional(v.id("serviceRecords")),
-    registrationId: v.optional(v.id("registrations")),
+    serviceRecordId: v.optional(v.id('serviceRecords')),
+    registrationId: v.optional(v.id('registrations')),
     status: ReceiptStatus,
     updatedAt: v.number(),
-    uploadedAt: v.number(),
     url: v.string(),
-    userId: v.id("users"),
-    warrantyId: v.optional(v.id("warranties")),
+    userId: v.id('users'),
+    warrantyId: v.optional(v.id('warranties')),
     type: ReceiptType,
   })
-    .index("by_insurance", ["insuranceId"])
-    .index("by_serviceRecord", ["serviceRecordId"])
-    .index("by_registration", ["registrationId"])
-    .index("by_warranty", ["warrantyId"])
-    .index("by_user", ["userId"]),
+    .index('by_insurance', ['insuranceId'])
+    .index('by_serviceRecord', ['serviceRecordId'])
+    .index('by_registration', ['registrationId'])
+    .index('by_warranty', ['warrantyId'])
+    .index('by_user', ['userId']),
   registrations: defineTable({
     expiresAt: v.number(),
     updatedAt: v.number(),
-    vehicleId: v.id("vehicles"),
-  }).index("by_vehicle", ["vehicleId"]),
+    vehicleId: v.id('vehicles'),
+  }).index('by_vehicle', ['vehicleId']),
 
   users: defineTable({
     appliedPromoCode: v.optional(v.string()),
@@ -101,14 +100,14 @@ export default defineSchema({
     promoCodeAppliedAt: v.optional(v.number()),
     revenueCatId: v.string(),
     updatedAt: v.number(),
-  }).index("by_revenue_cat_id", ["revenueCatId"]),
+  }).index('by_revenue_cat_id', ['revenueCatId']),
   vehicles: defineTable({
     isActive: v.boolean(),
     licensePlate: v.string(),
     make: v.string(),
     model: v.string(),
     updatedAt: v.number(),
-    userId: v.id("users"),
+    userId: v.id('users'),
     vinNumber: v.string(),
     year: v.number(),
     details: v.optional(
@@ -130,16 +129,16 @@ export default defineSchema({
             abs: v.optional(v.string()),
             seatBelts: v.optional(v.string()),
             tractionControl: v.optional(v.string()),
-          })
+          }),
         ),
-      })
+      }),
     ),
-  }).index("by_user", ["userId"]),
+  }).index('by_user', ['userId']),
   warranties: defineTable({
     expiresAt: v.number(),
     isActive: v.boolean(),
     manufacturer: v.string(),
     updatedAt: v.number(),
-    vehicleId: v.id("vehicles"),
-  }).index("by_vehicle", ["vehicleId"]),
+    vehicleId: v.id('vehicles'),
+  }).index('by_vehicle', ['vehicleId']),
 });

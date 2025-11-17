@@ -10,10 +10,12 @@
 
 import type * as dashboards from "../dashboards.js";
 import type * as functions_openAi from "../functions/openAi.js";
+import type * as functions_revenueCat from "../functions/revenueCat.js";
 import type * as helpers_openAi from "../helpers/openAi.js";
 import type * as http from "../http.js";
 import type * as insurance from "../insurance.js";
 import type * as maintenanceItems from "../maintenanceItems.js";
+import type * as maintenanceTemplates from "../maintenanceTemplates.js";
 import type * as openAi from "../openAi.js";
 import type * as receipts from "../receipts.js";
 import type * as registrations from "../registrations.js";
@@ -39,21 +41,15 @@ import type {
   FunctionReference,
 } from "convex/server";
 
-/**
- * A utility for referencing Convex functions in your app's API.
- *
- * Usage:
- * ```js
- * const myFunctionReference = api.myModule.myFunction;
- * ```
- */
 declare const fullApi: ApiFromModules<{
   dashboards: typeof dashboards;
   "functions/openAi": typeof functions_openAi;
+  "functions/revenueCat": typeof functions_revenueCat;
   "helpers/openAi": typeof helpers_openAi;
   http: typeof http;
   insurance: typeof insurance;
   maintenanceItems: typeof maintenanceItems;
+  maintenanceTemplates: typeof maintenanceTemplates;
   openAi: typeof openAi;
   receipts: typeof receipts;
   registrations: typeof registrations;
@@ -73,14 +69,30 @@ declare const fullApi: ApiFromModules<{
   warranties: typeof warranties;
   "webhooks/revenueCat": typeof webhooks_revenueCat;
 }>;
-declare const fullApiWithMounts: typeof fullApi;
 
+/**
+ * A utility for referencing Convex functions in your app's public API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = api.myModule.myFunction;
+ * ```
+ */
 export declare const api: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "public">
 >;
+
+/**
+ * A utility for referencing Convex functions in your app's internal API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = internal.myModule.myFunction;
+ * ```
+ */
 export declare const internal: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "internal">
 >;
 

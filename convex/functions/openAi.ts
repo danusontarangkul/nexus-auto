@@ -1,47 +1,68 @@
-import { ActionCtx } from "../_generated/server";
+// convex/ai/openai.ts
+import { ConvexError } from 'convex/values';
+import { getOpenAIKey } from '../utils/validateKey';
 
-export async function callOpenAIVision(
-  ctx: ActionCtx,
-  imageUrl: string,
-  prompt: string = "Extract all data from this car service receipt as JSON. Include: date, total amount, service center name, items performed, mileage, VIN if present."
-): Promise<string> {
+type MessageContent =
+  | string
+  | Array<
+      | { type: 'text'; text: string }
+      | { type: 'image_url'; image_url: { url: string } }
+    >;
+
+type Message = {
+  role: 'user' | 'assistant' | 'system';
+  content: MessageContent;
+};
+
+export type OpenAIResponse = {
+  choices?: Array<{
+    message?: {
+      content?: string | null;
+    };
+  }>;
+};
+
+export async function callOpenAI({
+  messages,
+  model = 'gpt-4o',
+  maxTokens = 2000,
+  temperature = 0,
+}: {
+  messages: Message[];
+  model?: 'gpt-4o' | 'gpt-4-turbo' | 'gpt-4o-mini';
+  maxTokens?: number;
+  temperature?: number;
+}): Promise<string> {
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${getOpenAIKey()}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              { type: "image_url", image_url: { url: imageUrl } },
-            ],
-          },
-        ],
-        max_tokens: 1000,
+        model,
+        messages,
+        temperature,
+        max_tokens: maxTokens,
       }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`OpenAI API error ${response.status}: ${errorText}`);
+      const text = await response.text();
+      throw new Error(`OpenAI ${response.status}: ${text}`);
     }
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const data = (await response.json()) as OpenAIResponse;
+    const content = data.choices?.[0]?.message?.content?.trim();
 
     if (!content) {
-      throw new Error("OpenAI returned empty content");
+      throw new Error('OpenAI returned no content');
     }
 
     return content;
   } catch (error) {
-    console.error("callOpenAIVision failed:", error);
-    throw error; // re-throw so caller can handle
+    console.error('[OpenAI] call failed:', error);
+    throw new ConvexError('Failed to call OpenAI');
   }
 }

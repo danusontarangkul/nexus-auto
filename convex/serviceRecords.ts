@@ -1,38 +1,38 @@
-import { v } from "convex/values";
-import { Doc, Id } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import { v } from 'convex/values';
+import { Doc, Id } from './_generated/dataModel';
+import { internalMutation, mutation, query } from './_generated/server';
 import {
   isIdentityOwnerOfVehicle,
   validateReceipt,
   validateServiceRecord,
   validateVehicle,
-} from "./utils/validation";
-import { internal } from "./_generated/api";
-import { getCurrentUser } from "./utils/auth";
-import { ServiceRecordWithReceipts } from "types";
+} from './utils/validation';
+import { internal } from './_generated/api';
+import { getCurrentUser } from './utils/auth';
+import { ServiceRecordWithReceipts } from 'types';
 
 export const getServiceRecordsByVehicleId = query({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
   },
-  handler: async (ctx, { vehicleId }): Promise<Doc<"serviceRecords">[]> => {
+  handler: async (ctx, { vehicleId }): Promise<Doc<'serviceRecords'>[]> => {
     const user = await getCurrentUser(ctx);
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
     isIdentityOwnerOfVehicle(user._id, vehicle._id);
 
     return await ctx.db
-      .query("serviceRecords")
-      .withIndex("by_vehicle", (q) => q.eq("vehicleId", vehicleId))
-      .order("desc")
-      .filter((q) => q.eq(q.field("isActive"), true))
+      .query('serviceRecords')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
+      .order('desc')
+      .filter((q) => q.eq(q.field('isActive'), true))
       .collect();
   },
 });
 
 export const insertServiceRecord = mutation({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
     serviceRecord: v.object({
       isActive: v.boolean(),
       performed: v.array(
@@ -41,25 +41,25 @@ export const insertServiceRecord = mutation({
           cost: v.optional(v.number()),
           name: v.string(),
           notes: v.optional(v.string()),
-          warrantyId: v.optional(v.id("warranties")),
-          templateItemId: v.optional(v.id("maintenanceItems")),
-        })
+          warrantyId: v.optional(v.id('warranties')),
+          templateItemId: v.optional(v.id('maintenanceItems')),
+        }),
       ),
       serviceCenter: v.optional(v.string()),
       serviceDate: v.number(),
-      receiptIds: v.optional(v.array(v.id("receipts"))),
+      receiptIds: v.optional(v.array(v.id('receipts'))),
     }),
   },
   handler: async (
     ctx,
-    { vehicleId, serviceRecord }
-  ): Promise<Id<"serviceRecords">> => {
+    { vehicleId, serviceRecord },
+  ): Promise<Id<'serviceRecords'>> => {
     const user = await getCurrentUser(ctx);
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
     isIdentityOwnerOfVehicle(user._id, vehicle._id);
 
-    const serviceRecordId = await ctx.db.insert("serviceRecords", {
+    const serviceRecordId = await ctx.db.insert('serviceRecords', {
       isActive: serviceRecord.isActive,
       performed: serviceRecord.performed.map((performed) => ({
         ...performed,
@@ -84,8 +84,8 @@ export const insertServiceRecord = mutation({
           ctx.runMutation(internal.receipts.updateReceiptInternal, {
             receiptId,
             updates: { serviceRecordId },
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -101,7 +101,7 @@ export const insertServiceRecord = mutation({
 
 export const updateServiceRecord = mutation({
   args: {
-    serviceRecordId: v.id("serviceRecords"),
+    serviceRecordId: v.id('serviceRecords'),
     updates: v.object({
       isActive: v.optional(v.boolean()),
       performed: v.optional(
@@ -111,22 +111,22 @@ export const updateServiceRecord = mutation({
             cost: v.optional(v.number()),
             name: v.string(),
             notes: v.optional(v.string()),
-            warrantyId: v.optional(v.id("warranties")),
-            templateItemId: v.optional(v.id("maintenanceItems")),
-          })
-        )
+            warrantyId: v.optional(v.id('warranties')),
+            templateItemId: v.optional(v.id('maintenanceItems')),
+          }),
+        ),
       ),
       serviceCenter: v.optional(v.string()),
       serviceDate: v.optional(v.number()),
-      receiptIds: v.optional(v.array(v.id("receipts"))),
-      receiptIdsToRemove: v.optional(v.array(v.id("receipts"))),
+      receiptIds: v.optional(v.array(v.id('receipts'))),
+      receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
     }),
   },
   handler: async (ctx, { serviceRecordId, updates }): Promise<boolean> => {
     const user = await getCurrentUser(ctx);
 
     const serviceRecord = validateServiceRecord(
-      await ctx.db.get(serviceRecordId)
+      await ctx.db.get(serviceRecordId),
     );
     isIdentityOwnerOfVehicle(user._id, serviceRecord.vehicleId);
 
@@ -160,8 +160,8 @@ export const updateServiceRecord = mutation({
           ctx.runMutation(internal.receipts.updateReceiptInternal, {
             receiptId,
             updates: { serviceRecordId },
-          })
-        )
+          }),
+        ),
       );
     }
     if (updates.receiptIdsToRemove) {
@@ -170,8 +170,8 @@ export const updateServiceRecord = mutation({
           ctx.runMutation(internal.receipts.updateReceiptInternal, {
             receiptId,
             updates: { serviceRecordId: undefined },
-          })
-        )
+          }),
+        ),
       );
     }
     if (updates.performed || updates.serviceDate !== undefined) {
@@ -193,24 +193,60 @@ export const updateServiceRecord = mutation({
 
 export const getServiceRecordById = query({
   args: {
-    serviceRecordId: v.id("serviceRecords"),
+    serviceRecordId: v.id('serviceRecords'),
   },
   handler: async (
     ctx,
-    { serviceRecordId }
+    { serviceRecordId },
   ): Promise<ServiceRecordWithReceipts> => {
     const user = await getCurrentUser(ctx);
 
     const serviceRecord = validateServiceRecord(
-      await ctx.db.get(serviceRecordId)
+      await ctx.db.get(serviceRecordId),
     );
     isIdentityOwnerOfVehicle(user._id, serviceRecord.vehicleId);
 
     const receipts = await ctx.runQuery(
       internal.receipts.getReceiptByServiceRecordIdInternal,
-      { serviceRecordId }
+      { serviceRecordId },
     );
 
     return { serviceRecord, receipts };
+  },
+});
+
+export const updateServiceRecordInternal = internalMutation({
+  args: {
+    serviceRecordId: v.id('serviceRecords'),
+    updates: v.object({
+      isActive: v.optional(v.boolean()),
+      performed: v.optional(
+        v.array(
+          v.object({
+            category: v.string(),
+            cost: v.optional(v.number()),
+            name: v.string(),
+            notes: v.optional(v.string()),
+            warrantyId: v.optional(v.id('warranties')),
+            templateItemId: v.optional(v.id('maintenanceItems')),
+          }),
+        ),
+      ),
+      serviceCenter: v.optional(v.string()),
+      serviceDate: v.optional(v.number()),
+      receiptIds: v.optional(v.array(v.id('receipts'))),
+      receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
+    }),
+  },
+  handler: async (ctx, { serviceRecordId, updates }): Promise<void> => {
+    return await ctx.db.patch(serviceRecordId, {
+      ...updates,
+      performed: updates.performed?.map((performed) => ({
+        ...performed,
+        notes: performed.notes ?? null,
+        cost: performed.cost ?? null,
+      })),
+      updatedAt: Date.now(),
+    });
   },
 });
