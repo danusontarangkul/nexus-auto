@@ -14,7 +14,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ivantorres7.carmaintenance"
+      "bundleIdentifier": "com.ivantorres7.carmaintenance",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We use the camera to scan VINs and receipts.",
+        "NSPhotoLibraryUsageDescription": "We access photos you select to read VINs and receipts.",
+        "NSPhotoLibraryAddUsageDescription": "We can save processed images if you choose to."
+      }
     },
     "android": {
       "adaptiveIcon": {

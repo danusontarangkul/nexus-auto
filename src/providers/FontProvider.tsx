@@ -1,11 +1,13 @@
-import React from 'react';
-import AppLoading from 'expo-app-loading';
+import React, { useEffect } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
 import {
   useFonts,
   SourceSansPro_400Regular,
   SourceSansPro_600SemiBold,
   SourceSansPro_700Bold,
 } from '@expo-google-fonts/source-sans-pro';
+
+SplashScreen.preventAutoHideAsync();
 
 export function FontProvider({ children }: { children: React.ReactNode }) {
   const [fontsLoaded] = useFonts({
@@ -14,9 +16,12 @@ export function FontProvider({ children }: { children: React.ReactNode }) {
     SourceSansPro_700Bold,
   });
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
+  if (!fontsLoaded) return null;
   return <>{children}</>;
 }

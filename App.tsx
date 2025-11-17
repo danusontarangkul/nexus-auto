@@ -1,4 +1,5 @@
-import 'react-native-gesture-handler'; // keep this FIRST
+import React from 'react';
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import tw from './src/styles/tw';
