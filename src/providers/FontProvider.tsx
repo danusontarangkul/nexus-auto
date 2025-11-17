@@ -7,7 +7,6 @@ import {
   SourceSansPro_700Bold,
 } from '@expo-google-fonts/source-sans-pro';
 
-// Keep the splash screen up while we load fonts.
 SplashScreen.preventAutoHideAsync();
 
 export function FontProvider({ children }: { children: React.ReactNode }) {

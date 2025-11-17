@@ -40,7 +40,6 @@ export default function VinScanScreen() {
   const [vin, setVin] = useState<string | null>(null);
   const [decoded, setDecoded] = useState<any | null>(null);
   const [torchOn, setTorchOn] = useState(false);
-  const [torch, setTorch] = useState<'on' | 'off'>('off');
 
   // VIN quick filter (format-level check)
   const VIN_REGEX = /^(?!.*[IOQ])[A-HJ-NPR-Z0-9]{17}$/;

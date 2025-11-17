@@ -14,7 +14,6 @@ export function UploadVinPhotoScreen() {
         <CustomText style={tw`text-2xl font-semibold text-ink-900`}>
           Scan VIN Barcode
         </CustomText>
-        {/* TODO: wire up camera/scan later */}
         <PrimaryButton
           title="Simulate Scan → Next"
           onPress={() => nav.navigate('ConfirmCar' as never)}
