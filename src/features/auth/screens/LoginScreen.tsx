@@ -11,10 +11,10 @@ import tw from '../../../styles/tw';
 import { useNavigation } from '@react-navigation/native';
 
 export function LoginScreen() {
-  const { login } = useAppState();
+  const { subscribe } = useAppState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const nav = useNavigation<any>();
+  const nav = useNavigation();
 
   return (
     <Screen>
@@ -45,10 +45,12 @@ export function LoginScreen() {
         <PrimaryButton
           title="Log in"
           onPress={async () => {
-            const { hasCar } = await login();
+            const { hasCar } = await subscribe();
             nav.reset({
               index: 0,
-              routes: [{ name: hasCar ? 'App' : 'Onboarding' }],
+              routes: [
+                { name: hasCar ? ('App' as never) : ('Onboarding' as never) },
+              ],
             });
           }}
         />
