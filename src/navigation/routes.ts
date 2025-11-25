@@ -15,13 +15,11 @@ export type RootStackParamList = {
 };
 
 export const AUTH = {
-  Login: 'Login',
-  Register: 'Register',
+  Subscribe: 'Subscribe',
 } as const;
 
 export type AuthStackParamList = {
-  [AUTH.Login]: undefined;
-  [AUTH.Register]: undefined;
+  [AUTH.Subscribe]: undefined;
 };
 
 // ✅ keep names 1:1 with what you register in the stack

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useMemo } from 'react';
 type AppState = {
   isAuthenticated: boolean;
   hasCar: boolean;
-  login: () => Promise<{ hasCar: boolean }>; // ← return value
+  subscribe: () => Promise<{ hasCar: boolean }>; // ← return value
   register: () => Promise<{ hasCar: boolean }>;
   completeAddCar: () => void;
   logout: () => void;
@@ -18,7 +18,7 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [hasCar, setHasCar] = useState(false);
 
-  const login = async (): Promise<{ hasCar: boolean }> => {
+  const subscribe = async (): Promise<{ hasCar: boolean }> => {
     // TODO: real auth + fetch profile
     setIsAuthenticated(true);
     const userHasCar = false; // from API later
@@ -39,7 +39,7 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({
     () => ({
       isAuthenticated,
       hasCar,
-      login,
+      subscribe,
       register,
       completeAddCar,
       logout: () => {

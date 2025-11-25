@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Screen } from '../../../shared/components/Screen';
 import { CarSwitcher, CarLite } from '../../../shared/components/CarSwitcher';
