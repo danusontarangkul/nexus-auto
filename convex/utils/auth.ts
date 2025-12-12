@@ -1,17 +1,20 @@
-import { ConvexError } from "convex/values";
-import { QueryCtx, MutationCtx, ActionCtx } from "../_generated/server";
-import { internal } from "../_generated/api";
-import { validateUser } from "./validation";
-import { Doc } from "../_generated/dataModel";
+import { ConvexError } from 'convex/values';
+import { QueryCtx, MutationCtx, ActionCtx } from '../_generated/server';
+import { internal } from '../_generated/api';
+import { validateUser } from './validation';
+import { Doc } from '../_generated/dataModel';
 
 export async function getRevenueCatId(
-  ctx: QueryCtx | MutationCtx | ActionCtx
+  ctx: QueryCtx | MutationCtx | ActionCtx,
 ): Promise<string> {
   const identity = await ctx.auth.getUserIdentity();
+  if (!identity?.subject && __DEV__) {
+    return 'dev_test_user_123'; // ← this is your placeholder
+  }
   if (!identity?.subject) {
     throw new ConvexError({
-      code: "unauthenticated",
-      message: "Please restart the app or restore purchases.",
+      code: 'unauthenticated',
+      message: 'Please restart the app or restore purchases.',
     });
   }
 
@@ -19,13 +22,13 @@ export async function getRevenueCatId(
 }
 
 export async function getCurrentUser(
-  ctx: QueryCtx | MutationCtx | ActionCtx
-): Promise<Doc<"users">> {
+  ctx: QueryCtx | MutationCtx | ActionCtx,
+): Promise<Doc<'users'>> {
   const revenueCatId = await getRevenueCatId(ctx);
 
   return validateUser(
     await ctx.runQuery(internal.users.getUserByRevenueCatIdInternal, {
       revenueCatId,
-    })
+    }),
   );
 }
