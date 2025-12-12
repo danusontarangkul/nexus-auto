@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -9,11 +9,20 @@ import { Pressable, Text } from 'react-native';
 import { navRef } from './src/navigation/NavRef';
 import { RootNavigator } from './src/navigation';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
+import Purchases from 'react-native-purchases';
+import { getRevenueCatApiKey } from './convex/utils/validateKey';
 
-const CONVEX_URL = 'https://glossy-duck-123.convex.cloud'; // temp for now
+const CONVEX_URL = 'https://glossy-duck-123.convex.cloud';
 
 export default function App() {
   const convex = new ConvexReactClient(CONVEX_URL);
+
+  // To do, set env
+
+  useEffect(() => {
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+    Purchases.configure({ apiKey: 'test_VupqdMMnmGNVXbnfOdpypCFFpsZ' });
+  }, []);
 
   return (
     <ConvexProvider client={convex}>

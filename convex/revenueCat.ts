@@ -1,6 +1,6 @@
-import { v } from "convex/values";
-import { action, internalAction } from "./_generated/server";
-import { getRevenueCatSecret } from "./utils/validateKey";
+import { v } from 'convex/values';
+import { internalAction } from './_generated/server';
+import { getRevenueCatSecret } from './utils/validateKey';
 
 export const fulfill = internalAction({
   args: {
@@ -14,7 +14,7 @@ export const fulfill = internalAction({
 
     const auth = headers.authorization;
     if (auth !== `Bearer ${secret}`) {
-      throw new Error("Invalid webhook secret");
+      throw new Error('Invalid webhook secret');
     }
 
     const event = JSON.parse(payload);
