@@ -1,14 +1,37 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
+import { authTables } from "@convex-dev/auth/server";
 import { ReceiptStatus, ReceiptType } from './types/literals';
 
 export default defineSchema({
+  ...authTables,
+  users: defineTable({
+    // --- 1. Base Auth Fields (Google puts data here) ---
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+
+    // --- 2. Your Custom Fields (Make them optional for the first login!) ---
+    appliedPromoCode: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
+    hasPaid: v.optional(v.boolean()),
+    promoCodeAppliedAt: v.optional(v.number()),
+    revenueCatId: v.optional(v.string()),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("email", ["email"]).index('by_revenue_cat_id', ['revenueCatId']),
+
   insurance: defineTable({
     expiresAt: v.number(),
     name: v.string(),
     updatedAt: v.number(),
     vehicleId: v.id('vehicles'),
   }).index('by_vehicle', ['vehicleId']),
+
   maintenanceItems: defineTable({
     vehicleId: v.id('vehicles'),
     name: v.string(),
@@ -25,6 +48,7 @@ export default defineSchema({
     .index('by_vehicle', ['vehicleId'])
     .index('by_next_due_miles', ['vehicleId', 'nextDueMileage'])
     .index('by_next_due_date', ['vehicleId', 'nextDueDate']),
+
   maintenanceTemplates: defineTable({
     make: v.string(),
     model: v.string(),
@@ -67,6 +91,7 @@ export default defineSchema({
     updatedAt: v.number(),
     vehicleId: v.id('vehicles'),
   }).index('by_vehicle', ['vehicleId']),
+
   receipts: defineTable({
     fileId: v.id('_storage'),
     fileName: v.string(),
@@ -86,21 +111,13 @@ export default defineSchema({
     .index('by_registration', ['registrationId'])
     .index('by_warranty', ['warrantyId'])
     .index('by_user', ['userId']),
+
   registrations: defineTable({
     expiresAt: v.number(),
     updatedAt: v.number(),
     vehicleId: v.id('vehicles'),
   }).index('by_vehicle', ['vehicleId']),
 
-  users: defineTable({
-    appliedPromoCode: v.optional(v.string()),
-    email: v.string(),
-    expiresAt: v.number(),
-    hasPaid: v.boolean(),
-    promoCodeAppliedAt: v.optional(v.number()),
-    revenueCatId: v.string(),
-    updatedAt: v.number(),
-  }).index('by_revenue_cat_id', ['revenueCatId']),
   vehicles: defineTable({
     isActive: v.boolean(),
     licensePlate: v.string(),
@@ -134,6 +151,7 @@ export default defineSchema({
       }),
     ),
   }).index('by_user', ['userId']),
+
   warranties: defineTable({
     expiresAt: v.number(),
     isActive: v.boolean(),

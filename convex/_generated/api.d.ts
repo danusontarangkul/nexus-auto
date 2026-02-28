@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as dashboards from "../dashboards.js";
 import type * as functions_openAi from "../functions/openAi.js";
 import type * as functions_revenueCat from "../functions/revenueCat.js";
@@ -42,6 +43,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   dashboards: typeof dashboards;
   "functions/openAi": typeof functions_openAi;
   "functions/revenueCat": typeof functions_revenueCat;
