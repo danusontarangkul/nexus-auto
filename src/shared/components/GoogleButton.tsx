@@ -3,8 +3,11 @@ import { Image } from 'react-native';
 import tw from '@/styles/tw';
 import { CustomText } from './CustomText';
 import { AppPressable } from './AppPressable';
+import { resolvePressableStyle } from '@/utils/style';
 
-type Props = React.ComponentProps<typeof AppPressable> & { title?: string };
+type Props = React.ComponentProps<typeof AppPressable> & {
+  title?: string;
+};
 
 export function GoogleButton({
   title = 'Log in with Google',
@@ -17,9 +20,9 @@ export function GoogleButton({
       {...rest}
       isLoading={isLoading}
       accessibilityRole="button"
-      style={[
+      style={(state) => [
         tw`rounded-md py-3 px-4 border border-surface-border flex-row items-center justify-center`,
-        style as any,
+        resolvePressableStyle(state, style),
       ]}
     >
       {(state) => (

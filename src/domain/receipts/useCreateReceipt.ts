@@ -2,25 +2,27 @@
 
 import { useState } from 'react';
 import { useAction } from 'convex/react';
-import { api } from '@convex/_generated/api';
+import { api } from '../../../convex/_generated/api';
 import { setErrorFromConvexError } from '@/utils/error/errorHelper';
-import { CreateVehicleInput } from '../../convex/types';
-import { Id } from '@convex/_generated/dataModel';
+import {
+  CreateReceiptInput,
+  InsertReceiptResponse,
+} from '../../../convex/types';
 
-export const useCreateVehicle = () => {
+export const useCreateReceipt = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createVehicleMutation = useAction(api.vehicles.insertVehicle);
+  const createReceiptMutation = useAction(api.receipts.insertReceipt);
 
-  const createVehicle = async (
-    input: CreateVehicleInput,
-  ): Promise<{ vehicleId: Id<'vehicles'>; itemsAdded: number } | null> => {
+  const createReceipt = async (
+    input: CreateReceiptInput,
+  ): Promise<InsertReceiptResponse | null> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      return await createVehicleMutation(input);
+      return await createReceiptMutation(input);
     } catch (error) {
       setErrorFromConvexError(error, setError);
       return null;
@@ -30,7 +32,7 @@ export const useCreateVehicle = () => {
   };
 
   return {
-    createVehicle,
+    createReceipt,
     isLoading,
     error,
     setError,

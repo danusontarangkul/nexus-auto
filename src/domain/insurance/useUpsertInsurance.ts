@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+import { api } from '../../../convex/_generated/api';
 import { setErrorFromConvexError } from '@/utils/error/errorHelper';
-import { UpsertInsuranceInput } from '../../convex/types';
+import { UpsertInsuranceInput } from '../../../convex/types';
 
 export const useUpsertInsurance = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);

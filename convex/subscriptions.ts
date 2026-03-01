@@ -2,7 +2,7 @@ import { action } from './_generated/server';
 import { v } from 'convex/values';
 import { api, internal } from './_generated/api';
 import { CheckOrRestoreSubscriptionResult } from './types';
-import { fetchCustomerInfo } from './functions/revenueCat';
+import { fetchCustomerInfo } from './services/revenueCat';
 import { Id } from './_generated/dataModel';
 
 export const startYearlySubscription = action({

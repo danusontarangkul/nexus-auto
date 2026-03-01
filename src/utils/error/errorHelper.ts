@@ -1,41 +1,27 @@
-export type ConvexClientError = Error & {
-  digest?: string;
-  data?: { code?: string; message?: string; details?: unknown };
-};
+interface ConvexErrorLike {
+  data?: unknown;
+}
 
-export type ConvexErrorCode =
-  | 'conflict'
-  | 'unauthorized'
-  | 'not_found'
-  | 'forbidden'
-  | 'bad_request';
+export function getErrorMessage(error: unknown): string {
+  const fallback = 'Something went wrong. Please try again.';
 
-export function getConvexErrorMessage(unknownError: unknown): {
-  message: string;
-  code?: ConvexErrorCode;
-  recognized: boolean;
-} {
-  const payload = (unknownError as ConvexClientError)?.data;
-  const code = payload?.code as ConvexErrorCode | undefined;
-  const message = payload?.message;
-  const fallbackMessage = 'Something went wrong. Please try again.';
-  const isRecognized =
-    code === 'conflict' ||
-    code === 'unauthorized' ||
-    code === 'not_found' ||
-    code === 'forbidden' ||
-    code === 'bad_request';
-  if (isRecognized) {
-    return { message: message ?? fallbackMessage, code, recognized: true };
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'data' in error &&
+    typeof (error as ConvexErrorLike).data === 'string'
+  ) {
+    return (error as ConvexErrorLike).data as string;
   }
-  return { message: fallbackMessage, recognized: false };
+
+  return fallback;
 }
 
 export function setErrorFromConvexError(
-  unknownError: unknown,
-  setError: (msg: string) => void,
+  error: unknown,
+  setError: (msg: string | null) => void,
 ): void {
-  const { message } = getConvexErrorMessage(unknownError);
-  console.error(message, unknownError);
+  const message = getErrorMessage(error);
+  console.error('[Action Failure]:', error);
   setError(message);
 }

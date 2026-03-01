@@ -1,35 +1,33 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Screen } from '../../../shared/components/Screen';
-import { Input } from '../../../shared/components/Input';
-import { PrimaryButton } from '../../../shared/components/PrimaryButton';
-import { CustomText } from '../../../shared/components/CustomText';
-import { Ionicons } from '@expo/vector-icons';
-import tw from '../../../styles/tw';
-import { useAppState } from '../../../state/AppState';
-import { ONBOARD } from '../../../navigation/routes';
-
-// VIN utilities
+import { Screen } from '@/shared/components/Screen';
+import { Input } from '@/shared/components/Input';
+import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import { CustomText } from '@/shared/components/CustomText';
+import tw from '@/styles/tw';
+import { useAppState } from '@/state/AppState';
+import { ONBOARD } from '@/navigation/routes';
 import {
   getVinHelperMessage,
   validateVinOnSubmit,
-  normalizeVin,
-} from '../../cars/utils/vin';
-
-// Convex domain hook
-import { useDecodeVin } from '../../../../domain/vin'; // adjust path/alias if needed
+  VIN_LENGTH,
+  sanitizeVinInput,
+} from '../utils/vin';
+import { VinScanLink } from '../components/VinScanLink';
+import { useDecodeVin } from '@/domain/vin';
+import { InputGroup } from '@/shared/components/InputGroup';
+import { MAX_PLATE_LENGTH, sanitizePlateInput } from '../utils/licensepPlate';
 
 export function AddCarStartScreen() {
   const nav = useNavigation();
-  const [plate, setPlate] = useState('');
-  const [vin, setVin] = useState('');
-  const [vinMessage, setVinMessage] = useState('');
+  const [plate, setPlate] = useState<string>('');
+  const [vin, setVin] = useState<string>('');
+  const [vinMessage, setVinMessage] = useState<string>('');
   const [vinError, setVinError] = useState<string | null>(null);
 
   const { completeAddCar } = useAppState();
 
-  // convex hook
   const {
     decodeVin,
     isLoading: isDecoding,
@@ -38,26 +36,23 @@ export function AddCarStartScreen() {
   } = useDecodeVin();
 
   const handleVinChange = (value: string) => {
-    const upper = normalizeVin(value);
-    setVin(upper);
+    const sanitized = sanitizeVinInput(value);
 
-    if (!upper) {
-      setVinMessage('');
-      setVinError(null);
-      // clear convex-level error too when user starts over
-      setDecodeError(null);
-      return;
-    }
+    setVin(sanitized);
 
-    setVinMessage(getVinHelperMessage(upper));
+    setVinMessage(getVinHelperMessage(sanitized));
 
     if (vinError) {
       setVinError(null);
     }
-
     if (decodeError) {
       setDecodeError(null);
     }
+  };
+
+  const handlePlateChange = (value: string) => {
+    const sanitized = sanitizePlateInput(value);
+    setPlate(sanitized);
   };
 
   const handleSubmit = async () => {
@@ -68,107 +63,59 @@ export function AddCarStartScreen() {
       return;
     }
 
-    try {
-      // 🔌 Call Convex action via the hook
-      const result = await decodeVin({ vin }); // adjust shape if DecodeVinInput needs more
+    const result = await decodeVin({ vin });
 
-      if (!result) {
-        // Convex hook already set `decodeError`, so surface that here if needed
-        setVinError(
-          decodeError ?? 'Unable to decode this VIN. Please try again.',
-        );
-        return;
-      }
-
-      // TODO: later you can stash `result` in app state or navigate with params
-      console.log('Decoded VIN result:', result);
-
-      completeAddCar();
-      nav.navigate('ConfirmCar' as never);
-    } catch (e) {
-      console.error('Unexpected error decoding VIN:', e);
-      setVinError('There was a problem decoding this VIN. Please try again.');
+    if (!result) {
+      return;
     }
+
+    completeAddCar();
+    nav.navigate(ONBOARD.ConfirmCar);
   };
 
-  const isSubmitting = isDecoding; // for now just tie button to convex loading
+  const isSubmitReady = vin.length === VIN_LENGTH && plate.length !== 0;
+  const displayVinError = vinError ?? decodeError;
 
   return (
     <Screen>
-      <CustomText variant="titleXL" color={tw.color('ink-900') as string}>
-        Enter Car Details–Manually
+      <CustomText variant="titleXL" color={tw.color('ink-900')}>
+        Enter Car Details
       </CustomText>
-
-      <View style={tw`mt-6 gap-5`}>
+      <InputGroup style={tw`mt-6`}>
         <Input
           label="License Plate #"
           placeholder="License Plate #"
           autoCapitalize="characters"
           value={plate}
-          onChangeText={setPlate}
-          editable={false}
+          onChangeText={handlePlateChange}
+          maxLength={MAX_PLATE_LENGTH}
+          onClear={() => handlePlateChange('')}
         />
-
-        <View>
-          <Input
-            label="VIN"
-            placeholder="VIN"
-            autoCapitalize="characters"
-            value={vin}
-            onChangeText={handleVinChange}
-          />
-
-          {/* Only one message at a time: error beats helper */}
-          {vinError ? (
-            <CustomText
-              variant="detail"
-              color={tw.color('ink-900') as string} // swap to error color later
-              style={tw`mt-1`}
-            >
-              {vinError}
-            </CustomText>
-          ) : vinMessage ? (
-            <CustomText
-              variant="detail"
-              color={tw.color('ink-700') as string}
-              style={tw`mt-1`}
-            >
-              {vinMessage}
-            </CustomText>
-          ) : null}
-        </View>
-      </View>
-
+        <Input
+          label="VIN"
+          placeholder="VIN"
+          autoCapitalize="characters"
+          value={vin}
+          onChangeText={handleVinChange}
+          maxLength={VIN_LENGTH}
+          errorText={displayVinError}
+          helperText={vinMessage}
+          onClear={() => handleVinChange('')}
+        />
+      </InputGroup>
       <View style={tw`my-8`}>
-        <CustomText variant="titleLg" color={tw.color('ink-900') as string}>
+        <CustomText variant="titleLg" color={tw.color('ink-900')}>
           Or
         </CustomText>
       </View>
-
-      <TouchableOpacity
-        style={tw`flex-row items-center`}
-        onPress={() => nav.navigate(ONBOARD.VinScan as never)}
-      >
-        <Ionicons
-          name="camera-outline"
-          size={22}
-          color={tw.color('ink-900') as string}
-        />
-        <CustomText
-          variant="link"
-          color={tw.color('ink-900') as string}
-          style={tw`underline ml-3`}
-        >
-          Upload Photo of VIN Barcode
-        </CustomText>
-      </TouchableOpacity>
-
+      <VinScanLink onPress={() => nav.navigate(ONBOARD.VinScan)} />
       <View style={tw`mt-12`}>
         <PrimaryButton
-          title={isSubmitting ? 'Decoding…' : 'Submit'}
+          title="Submit"
           style={tw`rounded-xl py-4`}
           onPress={handleSubmit}
-          disabled={isSubmitting}
+          disabled={!isSubmitReady}
+          isLoading={isDecoding}
         />
       </View>
     </Screen>

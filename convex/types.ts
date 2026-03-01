@@ -21,36 +21,27 @@ export type DecodeVinInput = {
   vin: string;
 };
 
-export type DecodeVinResult =
-  | {
-      success: true;
-      data: {
-        make: string | null;
-        model: string | null;
-        year: number | null;
-        manufacturer: string | null;
-        plantCountry: string | null;
-        bodyClass: string | null;
-        vehicleType: string | null;
-        trim: string | null;
-        series: string | null;
-        engine: {
-          displacement: number | null;
-          cylinders: number | null;
-          horsepower: number | null;
-          fuelType: string | null;
-        };
-        gvwr: string | null;
-        doors: number | null;
-        driveType: string | null;
-        transmission: string | null;
-      };
-    }
-  | {
-      success: false;
-      error: string;
-    };
-
+export type VehicleData = {
+  make: string | null;
+  model: string | null;
+  year: number | null;
+  manufacturer: string | null;
+  plantCountry: string | null;
+  bodyClass: string | null;
+  vehicleType: string | null;
+  trim: string | null;
+  series: string | null;
+  engine: {
+    displacement: number | null;
+    cylinders: number | null;
+    horsepower: number | null;
+    fuelType: string | null;
+  };
+  gvwr: string | null;
+  doors: number | null;
+  driveType: string | null;
+  transmission: string | null;
+};
 export type CreateVehicleInput = {
   licensePlate: string;
   make: string;
@@ -224,3 +215,24 @@ export type WarrantyWithReceipts = {
   warranty: Doc<'warranties'>;
   receipts: Doc<'receipts'>[];
 };
+
+export interface NhtsaRawVehicle {
+  Make: string | null;
+  Model: string | null;
+  ModelYear: string | null;
+  Manufacturer: string | null;
+  PlantCountry: string | null;
+  BodyClass: string | null;
+  VehicleType: string | null;
+  Trim: string | null;
+  Series: string | null;
+  DisplacementL: string | null;
+  EngineCylinders: string | null;
+  EngineHP: string | null;
+  FuelTypePrimary: string | null;
+  GVWR: string | null;
+  Doors: string | null;
+  DriveType: string | null;
+  TransmissionStyle: string | null;
+  ErrorCode: string;
+}
