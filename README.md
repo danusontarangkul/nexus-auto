@@ -125,6 +125,7 @@ Nexus Auto utilizes **Convex** as a unified Backend-as-a-Service (BaaS) to ensur
 
 * **Vehicle Data:** VPIC (NHTSA) for free base data; CarApi/CarScan for deep technical engine and fuel specs.
 * **Open AI:** Extracting text from receipt images using AI to automate cost and service logging.
+* **Google:** Sign in with google.
 
 ### 📁 Project Structure
 To maintain clarity for job interviews, the `convex/` directory mirrors our architectural diagram:

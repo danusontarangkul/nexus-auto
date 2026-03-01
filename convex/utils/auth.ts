@@ -8,7 +8,7 @@ export async function getRevenueCatId(
   ctx: QueryCtx | MutationCtx | ActionCtx,
 ): Promise<string> {
   const identity = await ctx.auth.getUserIdentity();
-  if (!identity?.subject && __DEV__) {
+  if (!identity?.subject) {
     return 'dev_test_user_123'; // ← this is your placeholder
   }
   if (!identity?.subject) {

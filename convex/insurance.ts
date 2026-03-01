@@ -1,18 +1,18 @@
-import { v } from "convex/values";
-import { internalQuery, mutation, query } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
-import { internal } from "./_generated/api";
+import { v } from 'convex/values';
+import { internalQuery, mutation, query } from './_generated/server';
+import { Doc, Id } from './_generated/dataModel';
+import { internal } from './_generated/api';
 import {
   isIdentityOwnerOfVehicle,
   validateInsurance,
   validateVehicle,
-} from "./utils/validation";
-import { getCurrentUser } from "./utils/auth";
-import { InsuranceWithReceipts } from "types";
+} from './utils/validation';
+import { getCurrentUser } from './utils/auth';
+import { InsuranceWithReceipts } from './types';
 
 export const getInsuranceWithReceiptsByVehicleId = query({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
   },
   handler: async (ctx, { vehicleId }): Promise<InsuranceWithReceipts> => {
     const user = await getCurrentUser(ctx);
@@ -23,12 +23,12 @@ export const getInsuranceWithReceiptsByVehicleId = query({
     const insurance = validateInsurance(
       await ctx.runQuery(internal.insurance.getInsuranceByVehicleIdInternal, {
         vehicleId,
-      })
+      }),
     );
 
     const receipts = await ctx.runQuery(
       internal.receipts.getReceiptByInsuranceIdInternal,
-      { insuranceId: insurance._id }
+      { insuranceId: insurance._id },
     );
 
     return { insurance, receipts };
@@ -37,27 +37,27 @@ export const getInsuranceWithReceiptsByVehicleId = query({
 
 export const getInsuranceByVehicleIdInternal = internalQuery({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
   },
-  handler: async (ctx, { vehicleId }): Promise<Doc<"insurance"> | null> => {
+  handler: async (ctx, { vehicleId }): Promise<Doc<'insurance'> | null> => {
     return await ctx.db
-      .query("insurance")
-      .withIndex("by_vehicle", (q) => q.eq("vehicleId", vehicleId))
+      .query('insurance')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
       .first();
   },
 });
 
 export const upsertInsurance = mutation({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
     expiresAt: v.number(),
-    receiptIds: v.array(v.id("receipts")),
-    receiptIdsToRemove: v.array(v.id("receipts")),
+    receiptIds: v.array(v.id('receipts')),
+    receiptIdsToRemove: v.array(v.id('receipts')),
     name: v.string(),
   },
   handler: async (
     ctx,
-    { vehicleId, expiresAt, receiptIds, receiptIdsToRemove, name }
+    { vehicleId, expiresAt, receiptIds, receiptIdsToRemove, name },
   ): Promise<boolean> => {
     const user = await getCurrentUser(ctx);
 
@@ -66,10 +66,10 @@ export const upsertInsurance = mutation({
 
     const insurance = await ctx.runQuery(
       internal.insurance.getInsuranceByVehicleIdInternal,
-      { vehicleId }
+      { vehicleId },
     );
 
-    let insuranceId: Id<"insurance"> | null = insurance?._id ?? null;
+    let insuranceId: Id<'insurance'> | null = insurance?._id ?? null;
 
     if (insurance) {
       await ctx.db.patch(insurance._id, {
@@ -78,7 +78,7 @@ export const upsertInsurance = mutation({
         updatedAt: Date.now(),
       });
     } else {
-      insuranceId = await ctx.db.insert("insurance", {
+      insuranceId = await ctx.db.insert('insurance', {
         vehicleId,
         expiresAt,
         name,
@@ -94,8 +94,8 @@ export const upsertInsurance = mutation({
             updates: {
               insuranceId,
             },
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -107,8 +107,8 @@ export const upsertInsurance = mutation({
             updates: {
               insuranceId: undefined,
             },
-          })
-        )
+          }),
+        ),
       );
     }
 

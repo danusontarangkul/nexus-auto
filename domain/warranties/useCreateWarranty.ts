@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { setErrorFromConvexError } from "utils/errorHelper";
-import { CreateWarrantyInput } from "types";
+import { useState } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '@convex/_generated/api';
+import { Id } from '@convex/_generated/dataModel';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
+import { CreateWarrantyInput } from '@convex/types';
 
 export const useCreateWarranty = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -14,8 +14,8 @@ export const useCreateWarranty = () => {
   const createWarrantyMutation = useMutation(api.warranties.insertWarranty);
 
   const createWarranty = async (
-    input: CreateWarrantyInput
-  ): Promise<Id<"warranties"> | null> => {
+    input: CreateWarrantyInput,
+  ): Promise<Id<'warranties'> | null> => {
     setIsLoading(true);
     setError(null);
 

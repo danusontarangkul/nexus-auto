@@ -1,29 +1,46 @@
 import React from 'react';
-import { Pressable, Image, PressableProps } from 'react-native';
-import tw from '../../styles/tw';
+import { Image } from 'react-native';
+import tw from '@/styles/tw';
 import { CustomText } from './CustomText';
+import { AppPressable } from './AppPressable';
 
-type Props = PressableProps & { title?: string };
+type Props = React.ComponentProps<typeof AppPressable> & { title?: string };
 
 export function GoogleButton({
   title = 'Log in with Google',
+  isLoading,
   style,
   ...rest
 }: Props) {
   return (
-    <Pressable
-      accessibilityRole="button"
-      style={tw.style(
-        'rounded-md py-3 px-4 border border-surface-border bg-transparent flex-row items-center justify-center',
-        style as any,
-      )}
+    <AppPressable
       {...rest}
+      isLoading={isLoading}
+      accessibilityRole="button"
+      style={[
+        tw`rounded-md py-3 px-4 border border-surface-border flex-row items-center justify-center`,
+        style as any,
+      ]}
     >
-      <Image
-        source={require('../../../assets/google-icon.png')}
-        style={{ width: 18, height: 18, marginRight: 10 }}
-      />
-      <CustomText style={tw`text-ink-700 font-medium`}>{title}</CustomText>
-    </Pressable>
+      {(state) => (
+        <>
+          <Image
+            source={require('@assets/google-icon.png')}
+            style={[
+              { width: 18, height: 18, marginRight: 10 },
+              state.pressed && tw`opacity-70`,
+            ]}
+          />
+          <CustomText
+            style={[
+              tw`text-ink-700 font-medium`,
+              state.pressed && tw`text-ink-500`,
+            ]}
+          >
+            {title}
+          </CustomText>
+        </>
+      )}
+    </AppPressable>
   );
 }

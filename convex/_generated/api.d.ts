@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as dashboards from "../dashboards.js";
 import type * as functions_openAi from "../functions/openAi.js";
 import type * as functions_revenueCat from "../functions/revenueCat.js";
@@ -22,6 +23,7 @@ import type * as registrations from "../registrations.js";
 import type * as revenueCat from "../revenueCat.js";
 import type * as serviceRecords from "../serviceRecords.js";
 import type * as subscriptions from "../subscriptions.js";
+import type * as types from "../types.js";
 import type * as types_literals from "../types/literals.js";
 import type * as users from "../users.js";
 import type * as utils_antiAbuseLimits from "../utils/antiAbuseLimits.js";
@@ -42,6 +44,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   dashboards: typeof dashboards;
   "functions/openAi": typeof functions_openAi;
   "functions/revenueCat": typeof functions_revenueCat;
@@ -56,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   revenueCat: typeof revenueCat;
   serviceRecords: typeof serviceRecords;
   subscriptions: typeof subscriptions;
+  types: typeof types;
   "types/literals": typeof types_literals;
   users: typeof users;
   "utils/antiAbuseLimits": typeof utils_antiAbuseLimits;

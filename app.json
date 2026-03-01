@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "car-maintenance",
-    "slug": "car-maintenance",
+    "name": "Nexus Auto",
+    "slug": "nexus-auto",
+    "scheme": "nexus-auto",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -34,7 +35,9 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-web-browser",
+      "expo-secure-store"
     ]
   }
 }

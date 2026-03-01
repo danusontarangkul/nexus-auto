@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAction } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { setErrorFromConvexError } from "utils/errorHelper";
-import { CreateVehicleInput, DecodeVinResult } from "types";
+import { useState } from 'react';
+import { useAction } from 'convex/react';
+import { api } from '@convex/_generated/api';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
+import { CreateVehicleInput } from '../../convex/types';
+import { Id } from '@convex/_generated/dataModel';
 
 export const useCreateVehicle = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -13,8 +14,8 @@ export const useCreateVehicle = () => {
   const createVehicleMutation = useAction(api.vehicles.insertVehicle);
 
   const createVehicle = async (
-    input: CreateVehicleInput
-  ): Promise<DecodeVinResult | null> => {
+    input: CreateVehicleInput,
+  ): Promise<{ vehicleId: Id<'vehicles'>; itemsAdded: number } | null> => {
     setIsLoading(true);
     setError(null);
 

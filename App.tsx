@@ -1,36 +1,43 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Pressable, Text } from 'react-native';
+
+// Convex & Auth
+import { ConvexReactClient } from 'convex/react';
+import { ConvexAuthProvider } from '@convex-dev/auth/react';
+
+import * as SecureStore from 'expo-secure-store';
+
+// Internal Imports
 import tw from './src/styles/tw';
 import { AppStateProvider } from './src/state/AppState';
 import { FontProvider } from './src/providers/FontProvider';
-import { Pressable, Text } from 'react-native';
 import { navRef } from './src/navigation/NavRef';
 import { RootNavigator } from './src/navigation';
-import { ConvexProvider, ConvexReactClient } from 'convex/react';
-import Purchases from 'react-native-purchases';
-import { getRevenueCatApiKey } from './convex/utils/validateKey';
+import { validateEnv, ENV } from './src/utils/env';
 
-const CONVEX_URL = 'https://glossy-duck-123.convex.cloud';
+validateEnv();
+
+const secureStorage = {
+  getItem: SecureStore.getItemAsync,
+  setItem: SecureStore.setItemAsync,
+  removeItem: SecureStore.deleteItemAsync,
+};
+
+const convex = new ConvexReactClient(ENV.CONVEX_URL);
 
 export default function App() {
-  const convex = new ConvexReactClient(CONVEX_URL);
-
-  // To do, set env
-
-  useEffect(() => {
-    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-    Purchases.configure({ apiKey: 'test_VupqdMMnmGNVXbnfOdpypCFFpsZ' });
-  }, []);
-
   return (
-    <ConvexProvider client={convex}>
+    <ConvexAuthProvider client={convex} storage={secureStorage}>
       <GestureHandlerRootView style={tw`flex-1`}>
         <AppStateProvider>
           <FontProvider>
             <RootNavigator />
             <StatusBar style="auto" />
+
+            {/* Dev Floating Button */}
             {__DEV__ && (
               <Pressable
                 onPress={() =>
@@ -52,6 +59,6 @@ export default function App() {
           </FontProvider>
         </AppStateProvider>
       </GestureHandlerRootView>
-    </ConvexProvider>
+    </ConvexAuthProvider>
   );
 }

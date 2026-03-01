@@ -2,13 +2,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AUTH, AuthStackParamList } from '../routes';
 import { stackDark } from '../options';
-import { Subscribe } from '@/features/auth/screens/Subscribe';
+import { LoginScreen } from '@/features/auth/screens/LoginScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 export function AuthStack() {
   return (
     <Stack.Navigator screenOptions={stackDark}>
-      <Stack.Screen name={AUTH.Subscribe} component={Subscribe} />
+      <Stack.Screen name={AUTH.Login} component={LoginScreen} />
     </Stack.Navigator>
   );
 }

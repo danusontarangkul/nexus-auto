@@ -7,7 +7,7 @@ import { internal } from './_generated/api';
 import { uploadFile } from './utils/storage';
 import { ReceiptStatus, ReceiptType } from './types/literals';
 import { enforceReceiptUploadRateLimit } from './utils/antiAbuseLimits';
-import { InsertReceiptResponse } from 'types';
+import { InsertReceiptResponse } from './types';
 
 export const updateReceiptInternal = internalMutation({
   args: {

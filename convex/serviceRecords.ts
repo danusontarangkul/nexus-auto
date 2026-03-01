@@ -9,7 +9,7 @@ import {
 } from './utils/validation';
 import { internal } from './_generated/api';
 import { getCurrentUser } from './utils/auth';
-import { ServiceRecordWithReceipts } from 'types';
+import { ServiceRecordWithReceipts } from './types';
 
 export const getServiceRecordsByVehicleId = query({
   args: {

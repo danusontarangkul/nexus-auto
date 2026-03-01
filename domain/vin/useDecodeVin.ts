@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAction } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { setErrorFromConvexError } from "utils/errorHelper";
-import { DecodeVinInput, DecodeVinResult } from "types";
+import { useState } from 'react';
+import { useAction } from 'convex/react';
+import { api } from '@convex/_generated/api';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
+import { DecodeVinInput, DecodeVinResult } from '@convex/types';
 
 export const useDecodeVin = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -13,7 +13,7 @@ export const useDecodeVin = () => {
   const decodeVinMutation = useAction(api.vin.decodeVin);
 
   const decodeVin = async (
-    input: DecodeVinInput
+    input: DecodeVinInput,
   ): Promise<DecodeVinResult | null> => {
     setIsLoading(true);
     setError(null);

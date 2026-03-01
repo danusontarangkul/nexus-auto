@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { internalMutation } from './_generated/server';
+import { internalMutation, internalQuery } from './_generated/server';
 
 export const insertMaintenanceTemplate = internalMutation({
   args: {
@@ -26,5 +26,21 @@ export const insertMaintenanceTemplate = internalMutation({
       defaultItems,
       source: 'ai-generated',
     });
+  },
+});
+
+export const getMaintenanceTemplatesByMakeModelYear = internalQuery({
+  args: {
+    make: v.string(),
+    model: v.string(),
+    year: v.number(),
+  },
+  handler: async (ctx, { make, model, year }) => {
+    return await ctx.db
+      .query('maintenanceTemplates')
+      .withIndex('by_make_model_year', (q) =>
+        q.eq('make', make).eq('model', model).eq('yearStart', year),
+      )
+      .collect();
   },
 });

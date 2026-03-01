@@ -6,8 +6,11 @@ import {
   handleInitialPurchase,
   handleRenewedSubscription,
 } from "./webhooks/revenueCat";
+import { auth } from "./auth";
 
 const http = httpRouter();
+
+auth.addHttpRoutes(http);
 
 http.route({
   path: "/revenueCat",

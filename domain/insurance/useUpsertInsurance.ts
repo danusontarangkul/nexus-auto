@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { setErrorFromConvexError } from "utils/errorHelper";
-import { UpsertInsuranceInput } from "types";
+import { useState } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
+import { UpsertInsuranceInput } from '../../convex/types';
 
 export const useUpsertInsurance = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -13,7 +13,7 @@ export const useUpsertInsurance = () => {
   const upsertInsuranceMutation = useMutation(api.insurance.upsertInsurance);
 
   const upsertRegistration = async (
-    input: UpsertInsuranceInput
+    input: UpsertInsuranceInput,
   ): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
@@ -22,7 +22,7 @@ export const useUpsertInsurance = () => {
       return await upsertInsuranceMutation(input);
     } catch (error) {
       setErrorFromConvexError(error, setError);
-      return null;
+      return false;
     } finally {
       setIsLoading(false);
     }

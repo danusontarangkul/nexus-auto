@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useAction } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { setErrorFromConvexError } from 'utils/errorHelper';
-import { CreateReceiptInput, InsertReceiptResponse } from 'types';
+import { api } from '../../convex/_generated/api';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
+import { CreateReceiptInput, InsertReceiptResponse } from '../../convex/types';
 
 export const useCreateReceipt = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);

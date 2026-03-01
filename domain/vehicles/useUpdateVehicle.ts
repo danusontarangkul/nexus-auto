@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { setErrorFromConvexError } from "utils/errorHelper";
-import { UpdateVehicleInput } from "types";
+import { useState } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '@convex/_generated/api';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
+import { UpdateVehicleInput } from '@convex/types';
 
 export const useUpdateVehicle = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -20,7 +20,7 @@ export const useUpdateVehicle = () => {
       return await updateVehicleMutation(input);
     } catch (error) {
       setErrorFromConvexError(error, setError);
-      return null;
+      return false;
     } finally {
       setIsLoading(false);
     }
