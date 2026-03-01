@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Pressable, Text } from 'react-native';
-import Purchases from 'react-native-purchases';
 
 // Convex & Auth
 import { ConvexReactClient } from 'convex/react';
@@ -17,7 +16,7 @@ import { AppStateProvider } from './src/state/AppState';
 import { FontProvider } from './src/providers/FontProvider';
 import { navRef } from './src/navigation/NavRef';
 import { RootNavigator } from './src/navigation';
-import { validateEnv, ENV } from './utils/env';
+import { validateEnv, ENV } from './src/utils/env';
 
 validateEnv();
 

@@ -1,0 +1,72 @@
+import { useState, useCallback, useEffect } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+import { useAuthActions } from '@convex-dev/auth/react';
+import { handleError } from '@/utils/error/errorAlert';
+import { sanitizeAuthParams } from '@/utils/auth';
+
+WebBrowser.maybeCompleteAuthSession();
+
+export function useGoogleAuth(onSuccess: () => Promise<void>) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { signIn } = useAuthActions();
+
+  const handleDeepLink = useCallback(
+    async (event: { url: string }) => {
+      if (!event.url.includes('auth')) return;
+
+      setIsLoading(true);
+      try {
+        const parsed = Linking.parse(event.url);
+
+        let params: Record<string, string> = {};
+
+        if (parsed.queryParams) {
+          params = sanitizeAuthParams(parsed.queryParams);
+        }
+
+        await signIn('google', params);
+        await onSuccess();
+      } catch (error) {
+        handleError(error, 'Google Auth', 'Could not complete Google sign-in.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [signIn, onSuccess],
+  );
+
+  useEffect(() => {
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+    return () => subscription.remove();
+  }, [handleDeepLink]);
+
+  const loginWithGoogle = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const redirectTo = Linking.createURL('auth');
+      const result = await signIn('google', { redirectTo });
+      const urlToOpen = result?.redirect?.toString();
+
+      if (!urlToOpen) {
+        throw new Error('No redirect URL');
+      }
+
+      const authResult = await WebBrowser.openAuthSessionAsync(
+        urlToOpen,
+        redirectTo,
+      );
+
+      if (authResult.type === 'success' && authResult.url) {
+        await handleDeepLink({ url: authResult.url });
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      handleError(error, 'Google Auth', 'Could not complete Google sign-in.');
+    }
+  }, [signIn, handleDeepLink]);
+
+  return { loginWithGoogle, isLoading };
+}

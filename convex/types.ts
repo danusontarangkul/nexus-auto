@@ -1,4 +1,4 @@
-import { Doc, Id } from './convex/_generated/dataModel';
+import { Doc, Id } from './_generated/dataModel';
 
 export type CreateWarrantyInput = {
   vehicleId: Id<'vehicles'>;

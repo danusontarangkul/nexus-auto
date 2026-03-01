@@ -1,14 +1,14 @@
-import { v } from "convex/values";
-import { internalQuery, mutation, query } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
-import { internal } from "./_generated/api";
-import { isIdentityOwnerOfVehicle, validateVehicle } from "./utils/validation";
-import { getCurrentUser } from "./utils/auth";
-import { RegistrationWithReceipts } from "types";
+import { v } from 'convex/values';
+import { internalQuery, mutation, query } from './_generated/server';
+import { Doc, Id } from './_generated/dataModel';
+import { internal } from './_generated/api';
+import { isIdentityOwnerOfVehicle, validateVehicle } from './utils/validation';
+import { getCurrentUser } from './utils/auth';
+import { RegistrationWithReceipts } from './types';
 
 export const getRegistrationWithReceiptsByVehicleId = query({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
   },
   handler: async (ctx, { vehicleId }): Promise<RegistrationWithReceipts> => {
     const user = await getCurrentUser(ctx);
@@ -18,7 +18,7 @@ export const getRegistrationWithReceiptsByVehicleId = query({
 
     const registration = await ctx.runQuery(
       internal.registrations.getRegistrationByVehicleIdInternal,
-      { vehicleId }
+      { vehicleId },
     );
 
     if (!registration) {
@@ -27,7 +27,7 @@ export const getRegistrationWithReceiptsByVehicleId = query({
 
     const receipts = await ctx.runQuery(
       internal.receipts.getReceiptByRegistrationIdInternal,
-      { registrationId: registration._id }
+      { registrationId: registration._id },
     );
 
     return { registration, receipts };
@@ -37,26 +37,26 @@ export const getRegistrationWithReceiptsByVehicleId = query({
 // for dashboard
 export const getRegistrationByVehicleIdInternal = internalQuery({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
   },
-  handler: async (ctx, { vehicleId }): Promise<Doc<"registrations"> | null> => {
+  handler: async (ctx, { vehicleId }): Promise<Doc<'registrations'> | null> => {
     return await ctx.db
-      .query("registrations")
-      .withIndex("by_vehicle", (q) => q.eq("vehicleId", vehicleId))
+      .query('registrations')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
       .first();
   },
 });
 
 export const upsertRegistration = mutation({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
     expiresAt: v.number(),
-    receiptIds: v.array(v.id("receipts")),
-    receiptIdsToRemove: v.array(v.id("receipts")),
+    receiptIds: v.array(v.id('receipts')),
+    receiptIdsToRemove: v.array(v.id('receipts')),
   },
   handler: async (
     ctx,
-    { vehicleId, expiresAt, receiptIds, receiptIdsToRemove }
+    { vehicleId, expiresAt, receiptIds, receiptIdsToRemove },
   ): Promise<boolean> => {
     const user = await getCurrentUser(ctx);
 
@@ -65,10 +65,10 @@ export const upsertRegistration = mutation({
 
     const registration = await ctx.runQuery(
       internal.registrations.getRegistrationByVehicleIdInternal,
-      { vehicleId }
+      { vehicleId },
     );
 
-    let registrationId: Id<"registrations"> | null = registration?._id ?? null;
+    let registrationId: Id<'registrations'> | null = registration?._id ?? null;
 
     if (registration) {
       await ctx.db.patch(registration._id, {
@@ -76,7 +76,7 @@ export const upsertRegistration = mutation({
         updatedAt: Date.now(),
       });
     } else {
-      registrationId = await ctx.db.insert("registrations", {
+      registrationId = await ctx.db.insert('registrations', {
         vehicleId,
         expiresAt,
         updatedAt: Date.now(),
@@ -91,8 +91,8 @@ export const upsertRegistration = mutation({
             updates: {
               registrationId: registration?._id,
             },
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -104,8 +104,8 @@ export const upsertRegistration = mutation({
             updates: {
               registrationId: undefined,
             },
-          })
-        )
+          }),
+        ),
       );
     }
 

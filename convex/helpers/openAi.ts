@@ -14,8 +14,8 @@ export function parseOpenAIResponse(content: string): ReceiptAIResult {
   try {
     const parsed = JSON.parse(content);
 
-    if (parsed === null || typeof parsed !== "object") {
-      throw new Error("Not an object");
+    if (parsed === null || typeof parsed !== 'object') {
+      throw new Error('Not an object');
     }
 
     return parsed as ReceiptAIResult;
@@ -24,39 +24,37 @@ export function parseOpenAIResponse(content: string): ReceiptAIResult {
   }
 }
 
-// convex/types/maintenance.ts
 export type MaintenanceTemplateItem = {
   name: string;
   category: string;
-  intervalMiles: number | null;
-  intervalMonths: number | null;
-  severity?: "normal" | "severe" | null;
-  estimatedCostUsd?: number | null;
-  notes?: string | null;
+  intervalMiles?: number;
+  intervalMonths?: number;
+  severity?: 'normal' | 'severe';
+  estimatedCostUsd?: number;
+  notes?: string;
 };
-
 export function parseMaintenanceItems(
-  jsonString: string
+  jsonString: string,
 ): MaintenanceTemplateItem[] {
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonString);
   } catch {
-    throw new Error("OpenAI returned invalid JSON, could not parse");
+    throw new Error('OpenAI returned invalid JSON, could not parse');
   }
 
   if (!Array.isArray(parsed)) {
-    throw new Error("OpenAI returned JSON that is not an array");
+    throw new Error('OpenAI returned JSON that is not an array');
   }
 
   for (const item of parsed) {
     if (
-      typeof item !== "object" ||
+      typeof item !== 'object' ||
       !item ||
-      !("name" in item) ||
-      !("category" in item)
+      !('name' in item) ||
+      !('category' in item)
     ) {
-      throw new Error("OpenAI returned item missing required fields");
+      throw new Error('OpenAI returned item missing required fields');
     }
   }
 

@@ -1,8 +1,9 @@
-import { action } from "./_generated/server";
-import { v } from "convex/values";
-import { api, internal } from "./_generated/api";
-import { CheckOrRestoreSubscriptionResult } from "types";
-import { fetchCustomerInfo } from "./functions/revenueCat";
+import { action } from './_generated/server';
+import { v } from 'convex/values';
+import { api, internal } from './_generated/api';
+import { CheckOrRestoreSubscriptionResult } from './types';
+import { fetchCustomerInfo } from './functions/revenueCat';
+import { Id } from './_generated/dataModel';
 
 export const startYearlySubscription = action({
   args: {
@@ -10,7 +11,7 @@ export const startYearlySubscription = action({
   },
   handler: async (
     ctx,
-    { promoCode }
+    { promoCode },
   ): Promise<{
     success: boolean;
     message?: string;
@@ -18,12 +19,12 @@ export const startYearlySubscription = action({
     offeredPromoCode?: string;
   }> => {
     const user = await ctx.auth.getUserIdentity();
-    if (!user) throw new Error("Unauthenticated");
+    if (!user) throw new Error('Unauthenticated');
 
     let validatedPromo: string | undefined = undefined;
 
     if (promoCode) {
-      const result = (await ctx.runAction(api.revenueCat.validatePromoCode, {
+      const result = (await ctx.runAction(api.subscriptions.validatePromoCode, {
         promoCode,
       })) as ValidatePromoCodeResult;
 
@@ -35,8 +36,8 @@ export const startYearlySubscription = action({
     return {
       success: true,
       message: validatedPromo
-        ? "Promo code applied – ready to purchase!"
-        : "Ready to purchase",
+        ? 'Promo code applied – ready to purchase!'
+        : 'Ready to purchase',
       appUserId: user.subject,
       offeredPromoCode: validatedPromo,
     };
@@ -44,7 +45,7 @@ export const startYearlySubscription = action({
 });
 
 const VALID_CODES: Record<string, { discount: string }> = {
-  FREEYEAR: { discount: "First year free" },
+  FREEYEAR: { discount: 'First year free' },
 };
 
 export type ValidatePromoCodeResult =
@@ -58,7 +59,7 @@ export const validatePromoCode = action({
     if (VALID_CODES[code]) {
       return { valid: true, discount: VALID_CODES[code].discount };
     }
-    return { valid: false, message: "Invalid or expired code" };
+    return { valid: false, message: 'Invalid or expired code' };
   },
 });
 
@@ -66,7 +67,7 @@ export const checkOrRestoreSubscription = action({
   args: { revenueCatAppUserId: v.string() },
   handler: async (
     ctx,
-    { revenueCatAppUserId }
+    { revenueCatAppUserId },
   ): Promise<CheckOrRestoreSubscriptionResult> => {
     const customerInfo = await fetchCustomerInfo(revenueCatAppUserId);
 
@@ -74,7 +75,7 @@ export const checkOrRestoreSubscription = action({
       internal.users.getUserByRevenueCatIdInternal,
       {
         revenueCatId: revenueCatAppUserId,
-      }
+      },
     );
 
     const proEntitlement = customerInfo.subscriber.entitlements.pro;
@@ -84,10 +85,10 @@ export const checkOrRestoreSubscription = action({
       : undefined;
 
     await ctx.runMutation(internal.users.updateUser, {
-      userId: user._id,
+      userId: user?._id as Id<'users'>,
       updates: {
         hasPaid: hasActiveSubscription,
-        expiresAt: expiresAt ?? null,
+        expiresAt: expiresAt ?? undefined,
       },
     });
 
@@ -96,8 +97,8 @@ export const checkOrRestoreSubscription = action({
       hasActiveSubscription,
       expiresAt,
       message: hasActiveSubscription
-        ? "You have an active Pro subscription"
-        : "No active Pro subscription found",
+        ? 'You have an active Pro subscription'
+        : 'No active Pro subscription found',
     };
   },
 });

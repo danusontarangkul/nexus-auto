@@ -23,6 +23,7 @@ import type * as registrations from "../registrations.js";
 import type * as revenueCat from "../revenueCat.js";
 import type * as serviceRecords from "../serviceRecords.js";
 import type * as subscriptions from "../subscriptions.js";
+import type * as types from "../types.js";
 import type * as types_literals from "../types/literals.js";
 import type * as users from "../users.js";
 import type * as utils_antiAbuseLimits from "../utils/antiAbuseLimits.js";
@@ -58,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   revenueCat: typeof revenueCat;
   serviceRecords: typeof serviceRecords;
   subscriptions: typeof subscriptions;
+  types: typeof types;
   "types/literals": typeof types_literals;
   users: typeof users;
   "utils/antiAbuseLimits": typeof utils_antiAbuseLimits;

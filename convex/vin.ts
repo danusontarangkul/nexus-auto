@@ -1,7 +1,7 @@
-import { action } from "./_generated/server";
-import { v } from "convex/values";
-import { handleActionError } from "./utils/errors";
-import { DecodeVinResult } from "types";
+import { action } from './_generated/server';
+import { v } from 'convex/values';
+import { handleActionError } from './utils/errors';
+import { DecodeVinResult } from './types';
 
 export const decodeVin = action({
   args: { vin: v.string() },
@@ -11,7 +11,7 @@ export const decodeVin = action({
     if (cleanedVin.length !== 17) {
       return {
         success: false,
-        error: "VIN must be exactly 17 characters",
+        error: 'VIN must be exactly 17 characters',
       };
     }
 
@@ -25,7 +25,7 @@ export const decodeVin = action({
       if (!response.ok) {
         return {
           success: false,
-          error: "Failed to connect to VIN decoder",
+          error: 'Failed to connect to VIN decoder',
         };
       }
 
@@ -34,7 +34,7 @@ export const decodeVin = action({
       if (!responseData.Results || responseData.Results.length === 0) {
         return {
           success: false,
-          error: "No vehicle found for this VIN",
+          error: 'No vehicle found for this VIN',
         };
       }
 
@@ -69,7 +69,7 @@ export const decodeVin = action({
         },
       };
     } catch (error) {
-      return handleActionError(error, "decodeVin");
+      return handleActionError(error, 'decodeVin');
     }
   },
 });

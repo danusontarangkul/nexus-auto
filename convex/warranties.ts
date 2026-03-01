@@ -9,7 +9,7 @@ import {
   validateWarranty,
 } from './utils/validation';
 import { getCurrentUser } from './utils/auth';
-import { WarrantyWithReceipts } from 'types';
+import { WarrantyWithReceipts } from './types';
 
 export const getWarrantiesByVehicleId = query({
   args: {
