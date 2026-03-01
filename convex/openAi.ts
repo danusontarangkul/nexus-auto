@@ -2,7 +2,7 @@ import { internalAction } from './_generated/server';
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
 import { parseMaintenanceItems, parseOpenAIResponse } from './helpers/openAi';
-import { callOpenAI } from './functions/openAi';
+import { callOpenAI } from './services/openAi';
 
 export const scanReceipt = internalAction({
   args: { receiptId: v.id('receipts') },

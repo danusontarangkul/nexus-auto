@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAction } from 'convex/react';
 import { api } from '@convex/_generated/api';
 import { setErrorFromConvexError } from '@/utils/error/errorHelper';
-import { DecodeVinInput, DecodeVinResult } from '@convex/types';
+import { DecodeVinInput, VehicleData } from '@convex/types';
 
 export const useDecodeVin = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -14,7 +14,7 @@ export const useDecodeVin = () => {
 
   const decodeVin = async (
     input: DecodeVinInput,
-  ): Promise<DecodeVinResult | null> => {
+  ): Promise<VehicleData | null> => {
     setIsLoading(true);
     setError(null);
 

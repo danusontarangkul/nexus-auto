@@ -17,6 +17,8 @@ export const palette = {
     700: '#E4E7EB', // labels / subtitles
     500: '#B0B0B0', // placeholders
     400: '#9CA3AF', // disabled text
+    200: '#D1D5DB', // secondary text
+    50: '#F8FAFC', // lightest text
   },
 };
 

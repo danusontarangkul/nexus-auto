@@ -20,6 +20,8 @@ const tw = create({
         'ink-700': palette.ink[700],
         'ink-500': palette.ink[500],
         'ink-400': palette.ink[400],
+        'ink-200': palette.ink[200],
+        'ink-50': palette.ink[50],
       },
       borderRadius: {
         md: `${radii.md}px`,

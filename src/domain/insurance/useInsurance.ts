@@ -1,9 +1,9 @@
 'use client';
 
 import { useQuery } from 'convex/react';
-import { Id } from '../../convex/_generated/dataModel';
-import { api } from '../../convex/_generated/api';
-import { InsuranceWithReceipts } from '../../convex/types';
+import { Id } from '../../../convex/_generated/dataModel';
+import { api } from '../../../convex/_generated/api';
+import { InsuranceWithReceipts } from '../../../convex/types';
 
 export const useInsurance = (
   vehicleId: Id<'vehicles'>,

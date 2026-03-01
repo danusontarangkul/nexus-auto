@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   PressableProps as RNPressableProps,
   View,
+  PressableStateCallbackType,
 } from 'react-native';
 import tw from '@/styles/tw';
 
@@ -17,16 +18,14 @@ export function AppPressable({
   children,
   isLoading,
   disabled,
-  spinnerColor = '#fff', // Changed default to white
+  spinnerColor = '#fff',
   style,
   ...rest
 }: AppPressableProps) {
   const isInactive = disabled || isLoading;
 
-  const getContent = (state: { pressed: boolean }) => {
+  const getContent = (state: PressableStateCallbackType) => {
     if (isLoading) {
-      // Placing the spinner in a View helps maintain button structure
-      // if the parent has specific padding/alignment.
       return (
         <View style={tw`flex-row items-center justify-center`}>
           <ActivityIndicator size="small" color={spinnerColor} />
@@ -45,8 +44,10 @@ export function AppPressable({
     <Pressable
       {...rest}
       disabled={isInactive}
-      // style is an array, ensuring the original button borders/colors remain
-      style={[style as any, isInactive && tw`opacity-50`]}
+      style={(state) => [
+        typeof style === 'function' ? style(state) : style,
+        isInactive && tw`opacity-50`,
+      ]}
     >
       {(state) => getContent(state)}
     </Pressable>

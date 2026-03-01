@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+import { api } from '../../../convex/_generated/api';
 import { setErrorFromConvexError } from '@/utils/error/errorHelper';
-import { CreateServiceRecordInput } from '../../convex/types';
-import { Id } from '../../convex/_generated/dataModel';
+import { CreateServiceRecordInput } from '../../../convex/types';
+import { Id } from '../../../convex/_generated/dataModel';
 
 export const useCreateServiceRecord = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
