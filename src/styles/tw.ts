@@ -8,14 +8,13 @@ const tw = create({
         primary: palette.primary[500],
         'primary-600': palette.primary[600],
 
-        // surfaces
         'surface-950': palette.surface[950],
         'surface-900': palette.surface[900],
         'surface-800': palette.surface[800],
         'surface-700': palette.surface[700],
+        'surface-600': palette.surface[600],
         'surface-border': palette.surface.border,
 
-        // text
         'ink-900': palette.ink[900],
         'ink-700': palette.ink[700],
         'ink-500': palette.ink[500],

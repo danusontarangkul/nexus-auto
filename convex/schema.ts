@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
-import { authTables } from "@convex-dev/auth/server";
+import { authTables } from '@convex-dev/auth/server';
 import { ReceiptStatus, ReceiptType } from './types/literals';
 
 export default defineSchema({
@@ -14,6 +14,7 @@ export default defineSchema({
     phone: v.optional(v.string()),
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
+    isActive: v.optional(v.boolean()),
 
     // --- 2. Your Custom Fields (Make them optional for the first login!) ---
     appliedPromoCode: v.optional(v.string()),
@@ -23,7 +24,8 @@ export default defineSchema({
     revenueCatId: v.optional(v.string()),
     updatedAt: v.optional(v.number()),
   })
-    .index("email", ["email"]).index('by_revenue_cat_id', ['revenueCatId']),
+    .index('email', ['email'])
+    .index('by_revenue_cat_id', ['revenueCatId']),
 
   insurance: defineTable({
     expiresAt: v.number(),
@@ -121,35 +123,31 @@ export default defineSchema({
   vehicles: defineTable({
     isActive: v.boolean(),
     licensePlate: v.string(),
-    make: v.string(),
-    model: v.string(),
     updatedAt: v.number(),
     userId: v.id('users'),
-    vinNumber: v.string(),
-    year: v.number(),
-    details: v.optional(
-      v.object({
-        bodyClass: v.optional(v.string()),
-        driveType: v.optional(v.string()),
-        engineDisplacement: v.optional(v.string()),
-        gvwr: v.optional(v.string()),
-        manufacturer: v.optional(v.string()),
-        plantCity: v.optional(v.string()),
-        plantCountry: v.optional(v.string()),
-        fuelType: v.optional(v.string()),
-        trim: v.optional(v.string()),
-        transmission: v.optional(v.string()),
-        safetyFeatures: v.optional(
-          v.object({
-            airbagsFront: v.optional(v.string()),
-            airbagsSide: v.optional(v.string()),
-            abs: v.optional(v.string()),
-            seatBelts: v.optional(v.string()),
-            tractionControl: v.optional(v.string()),
-          }),
-        ),
+    vehicleData: v.object({
+      bodyClass: v.union(v.string(), v.null()),
+      doors: v.union(v.number(), v.null()),
+      driveType: v.union(v.string(), v.null()),
+      engine: v.object({
+        cylinders: v.union(v.number(), v.null()),
+        displacement: v.union(v.number(), v.null()),
+        fuelType: v.union(v.string(), v.null()),
+        horsepower: v.union(v.number(), v.null()),
       }),
-    ),
+      fuelType: v.union(v.string(), v.null()),
+      gvwr: v.union(v.string(), v.null()),
+      make: v.union(v.string(), v.null()),
+      manufacturer: v.union(v.string(), v.null()),
+      model: v.union(v.string(), v.null()),
+      plantCountry: v.union(v.string(), v.null()),
+      series: v.union(v.string(), v.null()),
+      transmission: v.union(v.string(), v.null()),
+      trim: v.union(v.string(), v.null()),
+      vehicleType: v.union(v.string(), v.null()),
+      year: v.union(v.number(), v.null()),
+    }),
+    vinNumber: v.string(),
   }).index('by_user', ['userId']),
 
   warranties: defineTable({

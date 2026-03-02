@@ -32,7 +32,6 @@ const darkNav = {
   },
 };
 
-// This Gate sets the stack based on the app state
 function Gate() {
   const { isAuthenticated, hasCar } = useAppState();
   const navigation =
@@ -65,7 +64,6 @@ export function RootNavigator() {
         <Root.Screen name={ROOT.Auth} component={AuthStack} />
         <Root.Screen name={ROOT.Onboarding} component={OnboardingStack} />
         <Root.Screen name={ROOT.App} component={AppTabs} />
-        {/* Dev Button for navigating */}
         {__DEV__ && <Root.Screen name={ROOT.Dev} component={DevSwitcher} />}
       </Root.Navigator>
     </NavigationContainer>

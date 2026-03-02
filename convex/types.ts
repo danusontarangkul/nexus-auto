@@ -31,6 +31,7 @@ export type VehicleData = {
   vehicleType: string | null;
   trim: string | null;
   series: string | null;
+  fuelType: string | null;
   engine: {
     displacement: number | null;
     cylinders: number | null;
@@ -44,11 +45,8 @@ export type VehicleData = {
 };
 export type CreateVehicleInput = {
   licensePlate: string;
-  make: string;
-  model: string;
-  year: number;
   vinNumber: string;
-  details?: VehicleDetails;
+  vehicleData: VehicleData;
 };
 
 export type VehicleDetails = {

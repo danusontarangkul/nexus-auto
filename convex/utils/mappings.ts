@@ -13,6 +13,7 @@ export function mapNhtsaToVehicleData(v: NhtsaRawVehicle): VehicleData {
     vehicleType: v.VehicleType || null,
     trim: v.Trim || null,
     series: v.Series || null,
+    fuelType: v.FuelTypePrimary || null,
     engine: {
       displacement: parseNum(v.DisplacementL),
       cylinders: parseNum(v.EngineCylinders),

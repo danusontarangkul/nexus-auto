@@ -1,3 +1,5 @@
+import { VehicleData } from '@convex/types';
+
 export const ROOT = {
   Gate: 'Gate',
   Auth: 'Auth',
@@ -24,12 +26,11 @@ export type AuthStackParamList = {
   [AUTH.Login]: undefined;
 };
 
-// ✅ keep names 1:1 with what you register in the stack
 export const ONBOARD = {
   AddCarStart: 'AddCarStart',
-  EnterVin: 'EnterVin', // manual VIN input screen
-  EnterManual: 'EnterManual', // full manual entry details screen
-  VinScan: 'VinScan', // camera scanning screen
+  EnterVin: 'EnterVin',
+  EnterManual: 'EnterManual',
+  VinScan: 'VinScan',
   UploadVINPhoto: 'UploadVINPhoto',
   ConfirmCar: 'ConfirmCar',
 } as const;
@@ -40,7 +41,7 @@ export type OnboardingStackParamList = {
   [ONBOARD.EnterManual]: undefined;
   [ONBOARD.VinScan]: undefined;
   [ONBOARD.UploadVINPhoto]: undefined;
-  [ONBOARD.ConfirmCar]: undefined;
+  [ONBOARD.ConfirmCar]: { car: VehicleData; plate: string; vinNumber: string };
 };
 
 export const TABS = {
