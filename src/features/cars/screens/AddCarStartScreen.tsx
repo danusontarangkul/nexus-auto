@@ -18,6 +18,10 @@ import { VinScanLink } from '../components/VinScanLink';
 import { useDecodeVin } from '@/domain/vin';
 import { InputGroup } from '@/shared/components/InputGroup';
 import { MAX_PLATE_LENGTH, sanitizePlateInput } from '../utils/licensepPlate';
+import { ScreenHeader } from '@/shared/components/ScreenHeader';
+import { ButtonContainer } from '@/shared/components/ButtonContainer';
+import { sanitizeCapitalizeString } from '@convex/utils/sanatize';
+import { ActionGroup } from '@/shared/components/ActionGroup';
 
 export function AddCarStartScreen() {
   const nav = useNavigation();
@@ -70,18 +74,19 @@ export function AddCarStartScreen() {
     }
 
     completeAddCar();
-    nav.navigate(ONBOARD.ConfirmCar);
+    nav.navigate(ONBOARD.ConfirmCar, {
+      car: result,
+      plate: plate,
+      vinNumber: sanitizeCapitalizeString(vin),
+    });
   };
 
   const isSubmitReady = vin.length === VIN_LENGTH && plate.length !== 0;
-  const displayVinError = vinError ?? decodeError;
 
   return (
     <Screen>
-      <CustomText variant="titleXL" color={tw.color('ink-900')}>
-        Enter Car Details
-      </CustomText>
-      <InputGroup style={tw`mt-6`}>
+      <ScreenHeader title="Enter Car Details" />
+      <InputGroup>
         <Input
           label="License Plate #"
           placeholder="License Plate #"
@@ -98,26 +103,28 @@ export function AddCarStartScreen() {
           value={vin}
           onChangeText={handleVinChange}
           maxLength={VIN_LENGTH}
-          errorText={displayVinError}
+          errorText={vinError}
           helperText={vinMessage}
           onClear={() => handleVinChange('')}
         />
       </InputGroup>
-      <View style={tw`my-8`}>
+      <View style={tw`mb-8 mt-6`}>
         <CustomText variant="titleLg" color={tw.color('ink-900')}>
           Or
         </CustomText>
       </View>
       <VinScanLink onPress={() => nav.navigate(ONBOARD.VinScan)} />
-      <View style={tw`mt-12`}>
-        <PrimaryButton
-          title="Submit"
-          style={tw`rounded-xl py-4`}
-          onPress={handleSubmit}
-          disabled={!isSubmitReady}
-          isLoading={isDecoding}
-        />
-      </View>
+      <ButtonContainer>
+        <ActionGroup error={decodeError}>
+          <PrimaryButton
+            title="Submit"
+            style={tw`rounded-xl py-4`}
+            onPress={handleSubmit}
+            disabled={!isSubmitReady}
+            isLoading={isDecoding}
+          />
+        </ActionGroup>
+      </ButtonContainer>
     </Screen>
   );
 }

@@ -34,6 +34,8 @@ import type * as utils_errors from "../utils/errors.js";
 import type * as utils_fetch from "../utils/fetch.js";
 import type * as utils_mappings from "../utils/mappings.js";
 import type * as utils_pares from "../utils/pares.js";
+import type * as utils_sanatize from "../utils/sanatize.js";
+import type * as utils_schemaUtils from "../utils/schemaUtils.js";
 import type * as utils_storage from "../utils/storage.js";
 import type * as utils_validateKey from "../utils/validateKey.js";
 import type * as utils_validation from "../utils/validation.js";
@@ -75,6 +77,8 @@ declare const fullApi: ApiFromModules<{
   "utils/fetch": typeof utils_fetch;
   "utils/mappings": typeof utils_mappings;
   "utils/pares": typeof utils_pares;
+  "utils/sanatize": typeof utils_sanatize;
+  "utils/schemaUtils": typeof utils_schemaUtils;
   "utils/storage": typeof utils_storage;
   "utils/validateKey": typeof utils_validateKey;
   "utils/validation": typeof utils_validation;

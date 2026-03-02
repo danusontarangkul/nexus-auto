@@ -1,15 +1,24 @@
-import { v } from "convex/values";
-import { internalMutation, internalQuery, query } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
-import { validateUser } from "./utils/validation";
-import { getCurrentUser } from "./utils/auth";
+import { v } from 'convex/values';
+import { internalMutation, internalQuery, query } from './_generated/server';
+import { Doc, Id } from './_generated/dataModel';
+import { validateUser } from './utils/validation';
+import { getCurrentUser } from './utils/auth';
 
 export const getUserById = query({
   args: {},
-  handler: async (ctx): Promise<Doc<"users">> => {
+  handler: async (ctx): Promise<Doc<'users'>> => {
     const user = await getCurrentUser(ctx);
 
     return user;
+  },
+});
+
+export const getUserByIdInternal = internalQuery({
+  args: {
+    userId: v.id('users'),
+  },
+  handler: async (ctx, { userId }): Promise<Doc<'users'> | null> => {
+    return await ctx.db.get(userId);
   },
 });
 
@@ -17,10 +26,10 @@ export const getUserByRevenueCatIdInternal = internalQuery({
   args: {
     revenueCatId: v.string(),
   },
-  handler: async (ctx, { revenueCatId }): Promise<Doc<"users"> | null> => {
+  handler: async (ctx, { revenueCatId }): Promise<Doc<'users'> | null> => {
     return await ctx.db
-      .query("users")
-      .withIndex("by_revenue_cat_id", (q) => q.eq("revenueCatId", revenueCatId))
+      .query('users')
+      .withIndex('by_revenue_cat_id', (q) => q.eq('revenueCatId', revenueCatId))
       .first();
   },
 });
@@ -34,9 +43,9 @@ export const insertUser = internalMutation({
   },
   handler: async (
     ctx,
-    { email, expiresAt, hasPaid, revenueCatId }
-  ): Promise<Id<"users">> => {
-    return await ctx.db.insert("users", {
+    { email, expiresAt, hasPaid, revenueCatId },
+  ): Promise<Id<'users'>> => {
+    return await ctx.db.insert('users', {
       email,
       expiresAt,
       hasPaid,
@@ -48,7 +57,7 @@ export const insertUser = internalMutation({
 
 export const updateUser = internalMutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     updates: v.object({
       expiresAt: v.optional(v.number()),
       hasPaid: v.optional(v.boolean()),
