@@ -1,16 +1,9 @@
 import { v } from 'convex/values';
-import {
-  action,
-  internalMutation,
-  internalQuery,
-  mutation,
-  query,
-} from './_generated/server';
+import { internalQuery, mutation, query } from './_generated/server';
 import { Doc, Id } from './_generated/dataModel';
 import { isIdentityOwnerOfVehicle, validateVehicle } from './utils/validation';
 import { getCurrentUser } from './utils/auth';
 import { internal } from './_generated/api';
-import type { MaintenanceTemplateItem } from './helpers/openAi';
 import { vehicleDataValidator } from './utils/schemaUtils';
 import { sanitizeCapitalizeString } from './utils/sanatize';
 
@@ -73,100 +66,30 @@ export const insertVehicle = mutation({
       vinNumber: sanitizeCapitalizeString(vinNumber),
     });
 
-    // To do get vehicle maintenance template
+    const template = await ctx.runQuery(
+      internal.maintenanceTemplates.getMaintenanceTemplatesByMakeModelYear,
+      {
+        make: vehicleData.make ?? '',
+        model: vehicleData.model ?? '',
+        year: vehicleData.year ?? 0,
+      },
+    );
+
+    if (template && template.length > 0) {
+      for (const item of template[0].defaultItems) {
+        await ctx.runMutation(internal.maintenanceItems.insertMaintenanceItem, {
+          vehicleId,
+          name: item.name,
+          category: item.category,
+          intervalMiles: item.intervalMiles ?? undefined,
+          intervalMonths: item.intervalMonths ?? undefined,
+        });
+      }
+    }
 
     return vehicleId;
   },
 });
-// export const insertVehicle = action({
-//   args: {
-//     licensePlate: v.string(),
-//     make: v.string(),
-//     model: v.string(),
-//     year: v.number(),
-//     vinNumber: v.optional(v.string()),
-//     details: v.optional(v.any()),
-//   },
-//   handler: async (
-//     ctx,
-//     args,
-//   ): Promise<{ vehicleId: Id<'vehicles'>; itemsAdded: number }> => {
-//     const user = await getCurrentUser(ctx);
-
-//     const vehicleId = await ctx.runMutation(
-//       internal.vehicles.insertVehicleInternal,
-//       {
-//         userId: user._id,
-//         licensePlate: args.licensePlate.toUpperCase().trim(),
-//         make: args.make.trim(),
-//         model: args.model.trim(),
-//         year: args.year,
-//         vinNumber: args.vinNumber?.trim() ?? '',
-//         details: args.details,
-//       },
-//     );
-
-//     let templates: Array<{ defaultItems: MaintenanceTemplateItem[] }> =
-//       await ctx.runQuery(
-//         internal.maintenanceTemplates.getMaintenanceTemplatesByMakeModelYear,
-//         {
-//           make: args.make,
-//           model: args.model,
-//           year: args.year,
-//         },
-//       );
-
-//     if (templates.length === 0) {
-//       const aiItems = await ctx.runAction(
-//         internal.openAi.generateMaintenanceTemplate,
-//         {
-//           make: args.make,
-//           model: args.model,
-//           year: args.year,
-//         },
-//       );
-
-//       templates = [{ defaultItems: aiItems }];
-//     }
-
-//     let itemsAdded = 0;
-//     for (const template of templates) {
-//       for (const item of template.defaultItems) {
-//         await ctx.runMutation(internal.maintenanceItems.insertMaintenanceItem, {
-//           vehicleId,
-//           ...item,
-//         });
-//         itemsAdded++;
-//       }
-//     }
-
-//     return { vehicleId, itemsAdded };
-//   },
-// });
-// export const insertVehicleInternal = internalMutation({
-//   args: {
-//     userId: v.id('users'),
-//     licensePlate: v.string(),
-//     make: v.string(),
-//     model: v.string(),
-//     year: v.number(),
-//     vinNumber: v.string(),
-//     details: v.optional(v.any()),
-//   },
-//   handler: async (ctx, args): Promise<Id<'vehicles'>> => {
-//     return await ctx.db.insert('vehicles', {
-//       userId: args.userId,
-//       licensePlate: args.licensePlate,
-//       make: args.make,
-//       model: args.model,
-//       year: args.year,
-//       vinNumber: args.vinNumber,
-//       details: args.details,
-//       isActive: true,
-//       updatedAt: Date.now(),
-//     });
-//   },
-// });
 
 export const updateVehicle = mutation({
   args: {
