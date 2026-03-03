@@ -77,16 +77,20 @@ export const insertVehicle = mutation({
 
     if (template && template.length > 0) {
       for (const item of template[0].defaultItems) {
-        await ctx.runMutation(internal.maintenanceItems.insertMaintenanceItem, {
+        await ctx.db.insert('maintenanceItems', {
           vehicleId,
           name: item.name,
           category: item.category,
           intervalMiles: item.intervalMiles ?? undefined,
           intervalMonths: item.intervalMonths ?? undefined,
+          updatedAt: now,
         });
       }
     }
-
+    await ctx.db.patch(user._id, {
+      lastSelectedVehicleId: vehicleId,
+      updatedAt: now,
+    });
     return vehicleId;
   },
 });

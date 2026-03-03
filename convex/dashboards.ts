@@ -1,40 +1,57 @@
-import { v } from "convex/values";
-import { query } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
-import { isIdentityOwnerOfVehicle, validateVehicle } from "./utils/validation";
-import { internal } from "./_generated/api";
-import { getCurrentUser } from "./utils/auth";
+import { query } from './_generated/server';
+import { getCurrentUser } from './utils/auth';
+import { Dashboard } from './types';
+import { formatVehicleListItem } from './utils/mappings';
+import { resolveActiveVehicle } from './utils/helpers/vehicles';
 
-type Dashboard = {
-  registrations: Doc<"registrations"> | null;
-  insurance: Doc<"insurance"> | null;
-  maintenanceItems: Doc<"maintenanceItems">[];
-};
 export const getDashboard = query({
-  args: {
-    vehicleId: v.id("vehicles"),
-  },
-  handler: async (ctx, { vehicleId }): Promise<Dashboard> => {
+  args: {},
+  handler: async (ctx): Promise<Dashboard> => {
     const user = await getCurrentUser(ctx);
-    const vehicle = validateVehicle(await ctx.db.get(vehicleId));
 
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    const vehicles = await ctx.db
+      .query('vehicles')
+      .withIndex('by_user', (q) => q.eq('userId', user._id))
+      .filter((q) => q.eq(q.field('isActive'), true))
+      .order('desc')
+      .collect();
 
-    const registrations = await ctx.runQuery(
-      internal.registrations.getRegistrationByVehicleIdInternal,
-      { vehicleId }
-    );
+    if (vehicles.length === 0) {
+      return {
+        vehicles: [],
+        active: null,
+      };
+    }
 
-    const insurance = await ctx.runQuery(
-      internal.insurance.getInsuranceByVehicleIdInternal,
-      { vehicleId }
-    );
+    const vehicleListItems = vehicles.map(formatVehicleListItem);
 
-    const maintenanceItems = await ctx.runQuery(
-      internal.maintenanceItems.getMaintenanceItemsByVehicleId,
-      { vehicleId }
-    );
+    const selectedVehicle = resolveActiveVehicle(user, vehicles);
 
-    return { registrations, insurance, maintenanceItems };
+    const [registration, insurance, maintenanceItems] = await Promise.all([
+      ctx.db
+        .query('registrations')
+        .withIndex('by_vehicle', (q) => q.eq('vehicleId', selectedVehicle._id))
+        .unique(),
+
+      ctx.db
+        .query('insurance')
+        .withIndex('by_vehicle', (q) => q.eq('vehicleId', selectedVehicle._id))
+        .unique(),
+
+      ctx.db
+        .query('maintenanceItems')
+        .withIndex('by_vehicle', (q) => q.eq('vehicleId', selectedVehicle._id))
+        .collect(),
+    ]);
+
+    return {
+      vehicles: vehicleListItems,
+      active: {
+        vehicle: selectedVehicle,
+        registration,
+        insurance,
+        maintenanceItems,
+      },
+    };
   },
 });

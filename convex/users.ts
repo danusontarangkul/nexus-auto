@@ -1,7 +1,17 @@
 import { v } from 'convex/values';
-import { internalMutation, internalQuery, query } from './_generated/server';
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from './_generated/server';
 import { Doc, Id } from './_generated/dataModel';
-import { validateUser } from './utils/validation';
+import {
+  isIdentityOwnerOfVehicle,
+  isUserOwnerOfVehicle,
+  validateUser,
+  validateVehicle,
+} from './utils/validation';
 import { getCurrentUser } from './utils/auth';
 
 export const getUserById = query({
@@ -61,14 +71,34 @@ export const updateUser = internalMutation({
     updates: v.object({
       expiresAt: v.optional(v.number()),
       hasPaid: v.optional(v.boolean()),
+      lastSelectedVehicleId: v.optional(v.id('vehicles')),
     }),
   },
   handler: async (ctx, { userId, updates }): Promise<void> => {
-    validateUser(await ctx.db.get(userId));
-
     await ctx.db.patch(userId, {
       ...updates,
       updatedAt: Date.now(),
     });
+  },
+});
+
+export const updateLastSelectedVehicle = mutation({
+  args: {
+    vehicleId: v.id('vehicles'),
+  },
+  handler: async (ctx, { vehicleId }): Promise<boolean> => {
+    const user = await getCurrentUser(ctx);
+    const now = Date.now();
+
+    const vehicle = validateVehicle(await ctx.db.get(vehicleId));
+
+    isUserOwnerOfVehicle(user._id, vehicle);
+
+    await ctx.db.patch(user._id, {
+      lastSelectedVehicleId: vehicleId,
+      updatedAt: now,
+    });
+
+    return true;
   },
 });

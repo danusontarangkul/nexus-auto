@@ -234,3 +234,20 @@ export interface NhtsaRawVehicle {
   TransmissionStyle: string | null;
   ErrorCode: string;
 }
+
+export interface VehicleListItem {
+  _id: Id<'vehicles'>;
+  year: number | null;
+  make: string | null;
+  model: string | null;
+}
+
+export interface Dashboard {
+  vehicles: VehicleListItem[];
+  active: {
+    vehicle: Doc<'vehicles'>;
+    registration: Doc<'registrations'> | null;
+    insurance: Doc<'insurance'> | null;
+    maintenanceItems: Doc<'maintenanceItems'>[];
+  } | null;
+}

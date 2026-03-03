@@ -1,3 +1,5 @@
+import Toast from 'react-native-toast-message';
+
 interface ConvexErrorLike {
   data?: unknown;
 }
@@ -24,4 +26,22 @@ export function setErrorFromConvexError(
   const message = getErrorMessage(error);
   console.error('[Action Failure]:', error);
   setError(message);
+}
+
+export function toastConvexError(
+  error: unknown,
+  title: string = 'Action Failed',
+): void {
+  const message = getErrorMessage(error);
+
+  console.error(`[${title}]:`, error);
+
+  Toast.show({
+    type: 'error',
+    text1: title,
+    text2: message,
+    position: 'bottom',
+    visibilityTime: 4000,
+    autoHide: true,
+  });
 }

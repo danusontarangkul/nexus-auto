@@ -21,16 +21,19 @@ export function ConfirmCarScreen() {
   // Test Vin: 1HGCM82633A004352
 
   const handleConfirm = async () => {
-    await createVehicle({
+    const vehicleId = await createVehicle({
       vehicleData: car,
       licensePlate: plate,
       vinNumber,
     });
-    completeAddCar();
-    nav.reset({
-      index: 0,
-      routes: [{ name: 'App' as never }],
-    });
+
+    if (vehicleId) {
+      completeAddCar();
+      nav.reset({
+        index: 0,
+        routes: [{ name: 'App' as never }],
+      });
+    }
   };
 
   return (

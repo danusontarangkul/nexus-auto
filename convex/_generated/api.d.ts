@@ -10,7 +10,6 @@
 
 import type * as auth from "../auth.js";
 import type * as dashboards from "../dashboards.js";
-import type * as helpers_openAi from "../helpers/openAi.js";
 import type * as http from "../http.js";
 import type * as insurance from "../insurance.js";
 import type * as maintenanceItems from "../maintenanceItems.js";
@@ -32,6 +31,8 @@ import type * as utils_auth from "../utils/auth.js";
 import type * as utils_const from "../utils/const.js";
 import type * as utils_errors from "../utils/errors.js";
 import type * as utils_fetch from "../utils/fetch.js";
+import type * as utils_helpers_openAi from "../utils/helpers/openAi.js";
+import type * as utils_helpers_vehicles from "../utils/helpers/vehicles.js";
 import type * as utils_mappings from "../utils/mappings.js";
 import type * as utils_pares from "../utils/pares.js";
 import type * as utils_sanatize from "../utils/sanatize.js";
@@ -53,7 +54,6 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   dashboards: typeof dashboards;
-  "helpers/openAi": typeof helpers_openAi;
   http: typeof http;
   insurance: typeof insurance;
   maintenanceItems: typeof maintenanceItems;
@@ -75,6 +75,8 @@ declare const fullApi: ApiFromModules<{
   "utils/const": typeof utils_const;
   "utils/errors": typeof utils_errors;
   "utils/fetch": typeof utils_fetch;
+  "utils/helpers/openAi": typeof utils_helpers_openAi;
+  "utils/helpers/vehicles": typeof utils_helpers_vehicles;
   "utils/mappings": typeof utils_mappings;
   "utils/pares": typeof utils_pares;
   "utils/sanatize": typeof utils_sanatize;
