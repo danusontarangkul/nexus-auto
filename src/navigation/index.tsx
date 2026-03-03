@@ -17,6 +17,7 @@ import { OnboardingStack } from './stacks/OnboardingStack';
 import { AppTabs } from './tabs/AppTabs';
 import DevSwitcher from './dev/DevSwitcher';
 import tw from '../styles/tw';
+import { DashboardProvider } from '@/providers/DashboardProvider';
 
 const Root = createNativeStackNavigator<RootStackParamList>();
 
@@ -56,16 +57,18 @@ function Gate() {
 export function RootNavigator() {
   return (
     <NavigationContainer ref={navRef} theme={darkNav as any}>
-      <Root.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={ROOT.Gate}
-      >
-        <Root.Screen name={ROOT.Gate} component={Gate} />
-        <Root.Screen name={ROOT.Auth} component={AuthStack} />
-        <Root.Screen name={ROOT.Onboarding} component={OnboardingStack} />
-        <Root.Screen name={ROOT.App} component={AppTabs} />
-        {__DEV__ && <Root.Screen name={ROOT.Dev} component={DevSwitcher} />}
-      </Root.Navigator>
+      <DashboardProvider>
+        <Root.Navigator
+          screenOptions={{ headerShown: false }}
+          initialRouteName={ROOT.Gate}
+        >
+          <Root.Screen name={ROOT.Gate} component={Gate} />
+          <Root.Screen name={ROOT.Auth} component={AuthStack} />
+          <Root.Screen name={ROOT.Onboarding} component={OnboardingStack} />
+          <Root.Screen name={ROOT.App} component={AppTabs} />
+          {__DEV__ && <Root.Screen name={ROOT.Dev} component={DevSwitcher} />}
+        </Root.Navigator>
+      </DashboardProvider>
     </NavigationContainer>
   );
 }

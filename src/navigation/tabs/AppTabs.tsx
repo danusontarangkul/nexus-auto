@@ -1,8 +1,7 @@
-// src/navigation/tabs/AppTabs.tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AppTabsParamList, TABS } from '../routes';
 import { tabDark } from '../options';
-import DashboardScreen from '../../features/dashboard/screens/DashboardScreen';
+import DashboardScreen from '@/features/dashboard/screens/DashboardScreen';
 
 const Tab = createBottomTabNavigator<AppTabsParamList>();
 export function AppTabs() {

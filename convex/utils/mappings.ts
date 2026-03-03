@@ -1,4 +1,5 @@
-import { NhtsaRawVehicle } from '../types';
+import { Doc } from '../_generated/dataModel';
+import { NhtsaRawVehicle, VehicleListItem } from '../types';
 import { VehicleData } from '../types';
 import { parseNum } from './pares';
 
@@ -24,5 +25,16 @@ export function mapNhtsaToVehicleData(v: NhtsaRawVehicle): VehicleData {
     doors: parseNum(v.Doors),
     driveType: v.DriveType || null,
     transmission: v.TransmissionStyle || null,
+  };
+}
+
+export function formatVehicleListItem(
+  vehicle: Doc<'vehicles'>,
+): VehicleListItem {
+  return {
+    _id: vehicle._id,
+    year: vehicle.vehicleData.year,
+    make: vehicle.vehicleData.make,
+    model: vehicle.vehicleData.model,
   };
 }

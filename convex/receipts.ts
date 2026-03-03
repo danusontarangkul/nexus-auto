@@ -2,7 +2,7 @@ import { v } from 'convex/values';
 import { action, internalMutation, internalQuery } from './_generated/server';
 import { Doc } from './_generated/dataModel';
 import { isIdentityOwnerOfVehicle, validateVehicle } from './utils/validation';
-import { getCurrentUser } from './utils/auth';
+import { getCurrentActionUser } from './utils/auth';
 import { internal } from './_generated/api';
 import { uploadFile } from './utils/storage';
 import { ReceiptStatus, ReceiptType } from './types/literals';
@@ -94,7 +94,7 @@ export const insertReceipt = action({
   },
   handler: async (ctx, args): Promise<InsertReceiptResponse> => {
     const { vehicleId, file, fileName, type } = args;
-    const user = await getCurrentUser(ctx);
+    const user = await getCurrentActionUser(ctx);
     await enforceReceiptUploadRateLimit(ctx, user._id);
     const vehicle = validateVehicle(
       await ctx.runQuery(internal.vehicles.getVehicleByIdInternal, {

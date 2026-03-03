@@ -35,7 +35,31 @@ export async function getRevenueCatId(
 // }
 
 export const getCurrentUser = async (
-  ctx: QueryCtx | MutationCtx | ActionCtx,
+  ctx: QueryCtx | MutationCtx,
+): Promise<Doc<'users'>> => {
+  const userId = await getAuthUserId(ctx);
+
+  if (userId === null) {
+    throwDomainError(
+      'getCurrentUser',
+      'Authentication required. Please log in.',
+    );
+  }
+
+  const user = await ctx.db.get(userId);
+  if (!user) {
+    throwDomainError('getCurrentUser', 'User account not found.');
+  }
+
+  if (user.isActive === false) {
+    throwDomainError('getCurrentUser', 'This account has been deactivated.');
+  }
+
+  return user;
+};
+
+export const getCurrentActionUser = async (
+  ctx: ActionCtx,
 ): Promise<Doc<'users'>> => {
   const userId = await getAuthUserId(ctx);
 
@@ -49,7 +73,6 @@ export const getCurrentUser = async (
   const user = await ctx.runQuery(internal.users.getUserByIdInternal, {
     userId,
   });
-
   if (!user) {
     throwDomainError('getCurrentUser', 'User account not found.');
   }

@@ -17,6 +17,7 @@ export default defineSchema({
     isActive: v.optional(v.boolean()),
 
     // --- 2. Your Custom Fields (Make them optional for the first login!) ---
+    lastSelectedVehicleId: v.optional(v.id('vehicles')),
     appliedPromoCode: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
     hasPaid: v.optional(v.boolean()),
