@@ -1,3 +1,4 @@
+import { Id } from '@convex/_generated/dataModel';
 import { VehicleData } from '@convex/types';
 
 export const ROOT = {
@@ -59,5 +60,5 @@ export const DASHBOARD = {
 
 export type DashboardStackParamList = {
   [DASHBOARD.DashboardMain]: undefined;
-  [DASHBOARD.Registration]: undefined;
+  [DASHBOARD.Registration]: { vehicleId: Id<'vehicles'> };
 };

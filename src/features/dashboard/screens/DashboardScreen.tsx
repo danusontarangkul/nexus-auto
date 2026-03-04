@@ -36,7 +36,9 @@ export default function DashboardScreen() {
     nav.navigate('Onboarding' as never);
   };
   const handleNavRegistration = () => {
-    nav.navigate(DASHBOARD.Registration);
+    nav.navigate(DASHBOARD.Registration, {
+      vehicleId: vehicle._id,
+    });
   };
   const handleNavInsurance = () => {
     nav.navigate('Insurance' as never);
