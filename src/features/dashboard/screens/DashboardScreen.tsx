@@ -11,9 +11,12 @@ import { MaintenanceList } from '../components/MaintenanceList';
 import { Id } from '@convex/_generated/dataModel';
 import { useUpdateLastSelectedVehicle } from '@/domain/users';
 import { SectionHeader } from '@/shared/components/SectionHeader';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { DASHBOARD, DashboardStackParamList } from '@/navigation/routes';
 
 export default function DashboardScreen() {
-  const nav = useNavigation();
+  const nav =
+    useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
   const { dashboard } = useDashboardContext();
   const { updateLastSelectedVehicle, isLoading } =
     useUpdateLastSelectedVehicle();
@@ -33,7 +36,7 @@ export default function DashboardScreen() {
     nav.navigate('Onboarding' as never);
   };
   const handleNavRegistration = () => {
-    nav.navigate('Registration' as never);
+    nav.navigate(DASHBOARD.Registration);
   };
   const handleNavInsurance = () => {
     nav.navigate('Insurance' as never);

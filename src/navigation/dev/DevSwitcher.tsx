@@ -1,15 +1,14 @@
-// src/navigation/DevSwitcher.tsx
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { PrimaryButton } from '../../shared/components/PrimaryButton';
-import { Screen } from '../../shared/components/Screen';
-import tw from '../../styles/tw';
-import { ONBOARD } from '../routes';
+import { Screen } from '@/shared/components/Screen';
+import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import tw from '@/styles/tw';
+import { DASHBOARD, ONBOARD, ROOT, RootStackParamList, TABS } from '../routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// This component provides buttons to quickly navigate to different parts of the app during development.
 export default function DevSwitcher() {
-  const nav = useNavigation<any>();
+  const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <Screen>
       <ScrollView contentContainerStyle={tw`gap-3 mt-40`}>
@@ -49,6 +48,25 @@ export default function DevSwitcher() {
         <PrimaryButton
           title="App → Dashboard"
           onPress={() => nav.reset({ index: 0, routes: [{ name: 'App' }] })}
+        />
+        <PrimaryButton
+          title="Registration"
+          onPress={() =>
+            nav.reset({
+              index: 0,
+              routes: [
+                {
+                  name: ROOT.App,
+                  params: {
+                    screen: TABS.Dashboard,
+                    params: {
+                      screen: DASHBOARD.Registration,
+                    },
+                  },
+                },
+              ],
+            })
+          }
         />
       </ScrollView>
     </Screen>
