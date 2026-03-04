@@ -76,7 +76,10 @@ export const isUserOwnerOfVehicle = (
   vehicleId: Doc<'vehicles'>,
 ): void => {
   if (userId !== vehicleId.userId) {
-    throwDomainError('isUserOwnerOfVehicle', 'Vehicle not found');
+    throwDomainError(
+      'isUserOwnerOfVehicle',
+      'You are not the owner of this vehicle',
+    );
   }
 };
 

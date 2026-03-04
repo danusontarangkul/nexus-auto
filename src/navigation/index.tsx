@@ -1,3 +1,4 @@
+// src/navigation/RootNavigator.tsx
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import {
@@ -9,6 +10,8 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import { ErrorBoundary } from 'react-error-boundary';
+
 import { useAppState } from '../state/AppState';
 import { navRef } from './NavRef';
 import { ROOT, RootStackParamList } from './routes';
@@ -17,7 +20,10 @@ import { OnboardingStack } from './stacks/OnboardingStack';
 import { AppTabs } from './tabs/AppTabs';
 import DevSwitcher from './dev/DevSwitcher';
 import tw from '../styles/tw';
+
 import { DashboardProvider } from '@/providers/DashboardProvider';
+import { ErrorFallback } from '@/shared/screens/ErrorFallBack';
+import { withErrorBoundary } from '@/shared/hocs/withErrorBoundary';
 
 const Root = createNativeStackNavigator<RootStackParamList>();
 
@@ -40,14 +46,14 @@ function Gate() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigation.reset({ index: 0, routes: [{ name: ROOT.Auth as never }] });
+      navigation.reset({ index: 0, routes: [{ name: ROOT.Auth as any }] });
     } else if (!hasCar) {
       navigation.reset({
         index: 0,
-        routes: [{ name: ROOT.Onboarding as never }],
+        routes: [{ name: ROOT.Onboarding as any }],
       });
     } else {
-      navigation.reset({ index: 0, routes: [{ name: ROOT.App as never }] });
+      navigation.reset({ index: 0, routes: [{ name: ROOT.App as any }] });
     }
   }, [isAuthenticated, hasCar, navigation]);
 
@@ -57,18 +63,35 @@ function Gate() {
 export function RootNavigator() {
   return (
     <NavigationContainer ref={navRef} theme={darkNav as any}>
-      <DashboardProvider>
-        <Root.Navigator
-          screenOptions={{ headerShown: false }}
-          initialRouteName={ROOT.Gate}
-        >
-          <Root.Screen name={ROOT.Gate} component={Gate} />
-          <Root.Screen name={ROOT.Auth} component={AuthStack} />
-          <Root.Screen name={ROOT.Onboarding} component={OnboardingStack} />
-          <Root.Screen name={ROOT.App} component={AppTabs} />
-          {__DEV__ && <Root.Screen name={ROOT.Dev} component={DevSwitcher} />}
-        </Root.Navigator>
-      </DashboardProvider>
+      <ErrorBoundary
+        FallbackComponent={(props) => (
+          <ErrorFallback {...props} title="Error" />
+        )}
+      >
+        <DashboardProvider>
+          <Root.Navigator
+            screenOptions={{ headerShown: false }}
+            initialRouteName={ROOT.Gate}
+          >
+            <Root.Screen name={ROOT.Gate} component={Gate} />
+
+            <Root.Screen
+              name={ROOT.Auth}
+              component={withErrorBoundary(AuthStack, 'Account Access')}
+            />
+            <Root.Screen
+              name={ROOT.Onboarding}
+              component={withErrorBoundary(OnboardingStack, 'Setup')}
+            />
+            <Root.Screen
+              name={ROOT.App}
+              component={withErrorBoundary(AppTabs, 'Dashboard')}
+            />
+
+            {__DEV__ && <Root.Screen name={ROOT.Dev} component={DevSwitcher} />}
+          </Root.Navigator>
+        </DashboardProvider>
+      </ErrorBoundary>
     </NavigationContainer>
   );
 }

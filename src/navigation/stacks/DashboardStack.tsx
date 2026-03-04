@@ -4,6 +4,7 @@ import { BackHeader } from '../components/BackHeader';
 import DashboardScreen from '@/features/dashboard/screens/DashboardScreen';
 import { RegistrationScreen } from '@/features/registration/screens/RegistrationScreen';
 import { DASHBOARD, DashboardStackParamList } from '../routes';
+import { withErrorBoundary } from '@/shared/hocs/withErrorBoundary';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
 export function DashboardStack() {
@@ -16,7 +17,7 @@ export function DashboardStack() {
       />
       <Stack.Screen
         name={DASHBOARD.Registration}
-        component={RegistrationScreen}
+        component={withErrorBoundary(RegistrationScreen, 'Registration Access')}
         options={{
           header: () => <BackHeader title="Registration" skipTopInset />,
         }}
