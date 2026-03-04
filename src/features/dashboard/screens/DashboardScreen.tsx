@@ -2,8 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from '@/shared/components/Screen';
-import { CarSwitcher } from '@/shared/components/CarSwitcher';
-import { CustomText } from '@/shared/components/CustomText';
+import { CarSwitcher } from '@/features/dashboard/components/CarSwitcher';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import tw from '@/styles/tw';
 import { ActivitySummary } from '../components/ActivitySummary';
@@ -11,6 +10,7 @@ import { DocumentSummary } from '../components/DocumentSummary';
 import { MaintenanceList } from '../components/MaintenanceList';
 import { Id } from '@convex/_generated/dataModel';
 import { useUpdateLastSelectedVehicle } from '@/domain/users';
+import { SectionHeader } from '@/shared/components/SectionHeader';
 
 export default function DashboardScreen() {
   const nav = useNavigation();
@@ -32,6 +32,12 @@ export default function DashboardScreen() {
   const handleAddCar = () => {
     nav.navigate('Onboarding' as never);
   };
+  const handleNavRegistration = () => {
+    nav.navigate('Registration' as never);
+  };
+  const handleNavInsurance = () => {
+    nav.navigate('Insurance' as never);
+  };
 
   return (
     <Screen>
@@ -49,30 +55,17 @@ export default function DashboardScreen() {
           />
         </View>
 
-        <CustomText
-          variant="titleLg"
-          color={tw.color('ink-50')}
-          style={tw`mt-1 mb-3`}
-        >
-          Dashboard
-        </CustomText>
+        <SectionHeader title="Dashboard" variant="titleLg" />
         <ActivitySummary />
-        <CustomText
-          variant="title"
-          color={tw.color('ink-50')}
-          style={tw`mt-6 mb-2`}
-        >
-          Recommended Services
-        </CustomText>
+        <SectionHeader title="Recommended Services" />
         <MaintenanceList items={maintenanceItems} />
-        <CustomText
-          variant="title"
-          color={tw.color('ink-50')}
-          style={tw`mt-6 mb-2`}
-        >
-          Vehicle Documents
-        </CustomText>
-        <DocumentSummary registration={registration} insurance={insurance} />
+        <SectionHeader title="Vehicle Documents" />
+        <DocumentSummary
+          registration={registration}
+          insurance={insurance}
+          onPressRegistration={handleNavRegistration}
+          onPressInsurance={handleNavInsurance}
+        />
       </ScrollView>
     </Screen>
   );
