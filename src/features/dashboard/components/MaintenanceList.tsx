@@ -1,30 +1,34 @@
-import { Card } from '@/shared/components/Card';
-import { CustomText } from '@/shared/components/CustomText';
-import tw from '@/styles/tw';
-import { Doc } from '@convex/_generated/dataModel';
+import React from 'react';
 import { View } from 'react-native';
+import { Doc } from '@convex/_generated/dataModel';
+import tw from '@/styles/tw';
+import { CustomText } from '@/shared/components/CustomText';
+import { MaintenanceCard } from '@/shared/components/cards/MaintenanceCard';
 
-export function MaintenanceList({
-  items,
-}: {
+interface MaintenanceListProps {
   items: Doc<'maintenanceItems'>[];
-}) {
+  onItemPress?: (item: Doc<'maintenanceItems'>) => void;
+}
+
+export function MaintenanceList({ items, onItemPress }: MaintenanceListProps) {
+  if (items.length === 0) {
+    return (
+      <CustomText color={tw.color('ink-700')}>
+        No recommendations yet.
+      </CustomText>
+    );
+  }
+
   return (
     <View style={tw`gap-3`}>
-      {items.length > 0 ? (
-        items.map((item) => (
-          <Card key={item._id}>
-            <CustomText color={tw.color('ink-50')}>🛠️ {item.name}</CustomText>
-            <CustomText color={tw.color('ink-700')}>
-              Every {item.intervalMiles?.toLocaleString()} mi.
-            </CustomText>
-          </Card>
-        ))
-      ) : (
-        <CustomText color={tw.color('ink-700')}>
-          No recommendations yet.
-        </CustomText>
-      )}
+      {items.map((item) => (
+        <MaintenanceCard
+          key={item._id}
+          name={item.name}
+          intervalMiles={item.intervalMiles}
+          onPress={onItemPress ? () => onItemPress(item) : undefined}
+        />
+      ))}
     </View>
   );
 }
