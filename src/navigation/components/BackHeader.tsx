@@ -10,16 +10,23 @@ type Props = {
   title?: string;
   hideBack?: boolean;
   onBackPress?: () => void;
+  /** Set to true when used as a stack header (navigator already applies top safe area) */
+  skipTopInset?: boolean;
 };
 
-export function BackHeader({ title, hideBack, onBackPress }: Props) {
+export function BackHeader({
+  title,
+  hideBack,
+  onBackPress,
+  skipTopInset,
+}: Props) {
   const nav = useNavigation();
   const insets = useSafeAreaInsets();
 
   return (
     <View
       style={tw.style('bg-surface-950 border-b border-surface-border', {
-        paddingTop: insets.top + 8,
+        paddingTop: skipTopInset ? 12 : insets.top + 8,
         paddingBottom: 12,
         paddingHorizontal: 16,
         marginBottom: 30,

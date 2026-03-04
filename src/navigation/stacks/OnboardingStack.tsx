@@ -1,13 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ONBOARD, OnboardingStackParamList } from '../routes';
 import { stackDark } from '../options';
 import { BackHeader } from '../components/BackHeader';
-import { AddCarStartScreen } from '../../features/cars/screens/AddCarStartScreen';
-import { EnterVinScreen } from '../../features/cars/screens/EnterVinScreen';
-import { EnterManualScreen } from '../../features/cars/screens/EnterManualScreen';
-import { UploadVinPhotoScreen } from '../../features/cars/screens/UploadVinPhotoScreen';
-import { ConfirmCarScreen } from '../../features/cars/screens/ConfirmCarScreen';
-import VinScanScreen from '../../features/cars/screens/VinScanScreen';
+import { AddCarStartScreen } from '../../features/carOnboarding/screens/AddCarStartScreen';
+import { EnterVinScreen } from '../../features/carOnboarding/screens/EnterVinScreen';
+import { EnterManualScreen } from '../../features/carOnboarding/screens/EnterManualScreen';
+import { UploadVinPhotoScreen } from '../../features/carOnboarding/screens/UploadVinPhotoScreen';
+import { ConfirmCarScreen } from '../../features/carOnboarding/screens/ConfirmCarScreen';
+import VinScanScreen from '../../features/carOnboarding/screens/VinScanScreen';
+import { OnboardingStackParamList, ONBOARD } from '../routes';
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
 

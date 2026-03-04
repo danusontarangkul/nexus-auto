@@ -51,3 +51,13 @@ export const TABS = {
 export type AppTabsParamList = {
   [TABS.Dashboard]: undefined;
 };
+
+export const DASHBOARD = {
+  DashboardMain: 'DashboardMain',
+  Registration: 'Registration',
+} as const;
+
+export type DashboardStackParamList = {
+  [DASHBOARD.DashboardMain]: undefined;
+  [DASHBOARD.Registration]: undefined;
+};
