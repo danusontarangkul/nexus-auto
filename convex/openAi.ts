@@ -16,7 +16,8 @@ export const scanReceipt = internalAction({
         receiptId,
       },
     );
-    if (!receipt || receipt.status !== 'ready' || !receipt.url) {
+    queueMicrotask;
+    if (!receipt || !receipt.isActive) {
       return;
     }
 

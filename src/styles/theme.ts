@@ -17,8 +17,12 @@ export const palette = {
     700: '#E4E7EB', // labels / subtitles
     500: '#B0B0B0', // placeholders
     400: '#9CA3AF', // disabled text
+    300: '#6B7280', // secondary text
     200: '#D1D5DB', // secondary text
     50: '#F8FAFC', // lightest text
+  },
+  error: {
+    500: '#EF4444',
   },
 };
 
@@ -47,4 +51,9 @@ export const typography = {
   body: { fontFamily: 'SourceSansPro_400Regular', fontSize: 16 },
   detail: { fontFamily: 'SourceSansPro_400Regular', fontSize: 13 },
   link: { fontFamily: 'SourceSansPro_600SemiBold', fontSize: 18 },
+  label: {
+    fontFamily: 'SourceSansPro_600SemiBold',
+    fontSize: 16,
+    color: palette.ink[500],
+  },
 };

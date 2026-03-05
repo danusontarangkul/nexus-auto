@@ -134,7 +134,7 @@ export type RegistrationWithReceipts = {
 export type UpsertRegistrationInput = {
   vehicleId: Id<'vehicles'>;
   expiresAt: number;
-  receiptIds: Id<'receipts'>[];
+  newReceiptStorageIds: Id<'_storage'>[];
   receiptIdsToRemove: Id<'receipts'>[];
 };
 

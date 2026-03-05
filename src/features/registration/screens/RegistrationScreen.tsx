@@ -1,86 +1,146 @@
-import React, { useEffect, useMemo } from 'react';
-import { View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ScrollView } from 'react-native';
+import { Id } from '@convex/_generated/dataModel';
 import { Screen } from '@/shared/components/Screen';
-import { CustomText } from '@/shared/components/CustomText';
 import { useRegistration, useUpsertRegistration } from '@/domain/registrations';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
 import { useRegistrationRouteParams } from '../hooks/useRegistrationRouteParams';
 import { useRegistrationHeader } from '../hooks/useRegistrationHeader';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
-import tw from '@/styles/tw';
+import { ScannerCamera } from '@/shared/components/camera/ScannerCamera';
+import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
+import { useUploadPhoto } from '@/shared/hooks/useUploadPhoto';
 import { toDateOrNull } from '@/utils/date';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
-import { ActionGroup } from '@/shared/components/ActionGroup';
 import { ButtonContainer } from '@/shared/components/ButtonContainer';
+import { ActionGroup } from '@/shared/components/ActionGroup';
+import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import tw from '@/styles/tw';
+import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
+import { useRegistrationChanges } from '../hooks/useRegistrationChanges';
+import { EmptyState } from '@/shared/components/texts/EmptyState';
 
 export function RegistrationScreen() {
   const { vehicleId } = useRegistrationRouteParams();
   const registrationData = useRegistration(vehicleId);
+
   const registration = registrationData?.registration;
+  const existingReceipts = registrationData?.receipts || [];
 
-  const [expiryDate, setExpiryDate] = React.useState<Date | null>(null);
-  const { upsertRegistration, isLoading, error } = useUpsertRegistration();
+  const [expiryDate, setExpiryDate] = useState<Date | null>(null);
+  const [removedReceiptIds, setRemovedReceiptIds] = useState<Id<'receipts'>[]>(
+    [],
+  );
+
+  const {
+    upsertRegistration,
+    isLoading: isSaving,
+    error: saveError,
+  } = useUpsertRegistration();
+
   const { isEditing, setIsEditing } = useRegistrationHeader(!!registration);
+  const { uploadImages, isLoading: isUploading } = useUploadPhoto();
 
-  const hasChanges = useMemo(() => {
-    const originalTime = registration?.expiresAt ?? null;
-    const currentTime = expiryDate?.getTime() ?? null;
-    return originalTime !== currentTime;
-  }, [registration?.expiresAt, expiryDate]);
+  const {
+    isTakingPhoto,
+    imageUris,
+    setImageUris,
+    removeImage,
+    addCapturedPhoto,
+    openImagePicker,
+  } = usePhotoAttachment();
+
+  const hasChanges = useRegistrationChanges(registration, {
+    expiryDate,
+    removedReceiptIds,
+    imageUris,
+  });
+
+  useEffect(() => {
+    setExpiryDate(toDateOrNull(registration?.expiresAt));
+    setRemovedReceiptIds([]);
+    setImageUris([]);
+  }, [registration, isEditing, setImageUris]);
 
   const handleSave = async () => {
-    if (!expiryDate || !hasChanges) return;
+    if (!expiryDate) {
+      return;
+    }
+
+    const validStorageIds = await uploadImages(imageUris);
 
     const success = await upsertRegistration({
       vehicleId,
       expiresAt: expiryDate.getTime(),
-      receiptIds: [],
-      receiptIdsToRemove: [],
+      newReceiptStorageIds: validStorageIds,
+      receiptIdsToRemove: removedReceiptIds,
     });
 
     if (success) {
       setIsEditing(false);
+      setImageUris([]);
+      setRemovedReceiptIds([]);
     }
   };
 
-  useEffect(() => {
-    setExpiryDate(toDateOrNull(registration?.expiresAt));
-  }, [registration]);
+  if (!registrationData) {
+    return <FullScreenLoading />;
+  }
 
-  if (!registrationData) return <FullScreenLoading />;
+  if (isTakingPhoto) {
+    return (
+      <ScannerCamera
+        onCapture={async (uri) => {
+          addCapturedPhoto(uri);
+        }}
+        instructionText="Photo of Registration"
+      />
+    );
+  }
 
   return (
     <Screen>
-      <View style={tw`flex-1 p-4`}>
+      <ScrollView style={tw`flex-1 p-4`}>
         {registration || isEditing ? (
-          <ControlledDatePicker
-            label="Registration Expiration"
-            value={expiryDate}
-            isEditing={isEditing}
-            onDateChange={setExpiryDate}
-          />
-        ) : (
-          <View style={tw`items-center py-10`}>
-            <CustomText>No registration found.</CustomText>
-            <CustomText style={tw`text-ink-500 mt-2`}>
-              Tap the + icon to add one
-            </CustomText>
-          </View>
-        )}
+          <View>
+            <ControlledDatePicker
+              label="Registration Expiration"
+              value={expiryDate}
+              isEditing={isEditing}
+              onDateChange={setExpiryDate}
+            />
 
-        {isEditing && (
-          <ButtonContainer>
-            <ActionGroup error={error}>
-              <PrimaryButton
-                title="Save Registration"
-                onPress={handleSave}
-                isLoading={isLoading}
-                disabled={!expiryDate || !hasChanges}
-              />
-            </ActionGroup>
-          </ButtonContainer>
+            <DocumentGallery
+              existingReceipts={existingReceipts}
+              removedReceiptIds={removedReceiptIds}
+              pendingUris={imageUris}
+              isEditing={isEditing}
+              onRemoveExisting={(id) =>
+                setRemovedReceiptIds((prev) => [...prev, id])
+              }
+              onRemovePending={removeImage}
+              onAddPress={openImagePicker}
+            />
+          </View>
+        ) : (
+          <EmptyState
+            title="No registration records."
+            description="Tap the plus icon in the header to add."
+          />
         )}
-      </View>
+      </ScrollView>
+
+      {isEditing && (
+        <ButtonContainer>
+          <ActionGroup error={saveError}>
+            <PrimaryButton
+              title="Save Changes"
+              onPress={handleSave}
+              isLoading={isSaving || isUploading}
+              disabled={!expiryDate || !hasChanges}
+            />
+          </ActionGroup>
+        </ButtonContainer>
+      )}
     </Screen>
   );
 }
