@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react'; // Added ReactNode
 import { View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,8 +10,8 @@ type Props = {
   title?: string;
   hideBack?: boolean;
   onBackPress?: () => void;
-  /** Set to true when used as a stack header (navigator already applies top safe area) */
   skipTopInset?: boolean;
+  rightElement?: ReactNode;
 };
 
 export function BackHeader({
@@ -19,6 +19,7 @@ export function BackHeader({
   hideBack,
   onBackPress,
   skipTopInset,
+  rightElement,
 }: Props) {
   const nav = useNavigation();
   const insets = useSafeAreaInsets();
@@ -32,21 +33,25 @@ export function BackHeader({
         marginBottom: 30,
       })}
     >
-      <View style={tw`flex-row items-center`}>
-        {!hideBack && (
-          <TouchableOpacity
-            accessibilityRole="button"
-            onPress={onBackPress ?? (() => nav.goBack())}
-            style={tw`w-10 h-10 items-center justify-center -ml-2`}
-          >
-            <Ionicons
-              name="chevron-back"
-              size={24}
-              color={tw.color('ink-900') as string}
-            />
-          </TouchableOpacity>
-        )}
+      <View style={tw`flex-row items-center justify-between`}>
+        {/* Left Side: Back Button or Spacer */}
+        <View style={tw`w-10`}>
+          {!hideBack && (
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={onBackPress ?? (() => nav.goBack())}
+              style={tw`w-10 h-10 items-center justify-center -ml-2`}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={24}
+                color={tw.color('ink-900') as string}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
 
+        {/* Center: Title */}
         <View style={tw`flex-1 items-center`}>
           {!!title && (
             <CustomText variant="titleLg" color={tw.color('ink-900') as string}>
@@ -55,8 +60,10 @@ export function BackHeader({
           )}
         </View>
 
-        {/* right spacer to balance back button */}
-        <View style={tw`w-10`} />
+        {/* Right Side: Right Element or Spacer */}
+        <View style={tw`w-10 items-center justify-center`}>
+          {rightElement ? rightElement : <View style={tw`w-10`} />}
+        </View>
       </View>
     </View>
   );

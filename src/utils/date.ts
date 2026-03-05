@@ -1,3 +1,5 @@
+import { isValid } from 'date-fns';
+
 export const formatExpiryDate = (
   timestamp: number | string | undefined | null,
 ): string => {
@@ -12,4 +14,15 @@ export const formatExpiryDate = (
   }
 
   return `Exp. ${dateInstance.toLocaleDateString()}`;
+};
+
+export const toDateOrNull = (
+  value: number | string | Date | null | undefined,
+): Date | null => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const date = new Date(value);
+  return isValid(date) ? date : null;
 };

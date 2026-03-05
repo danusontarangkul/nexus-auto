@@ -1,4 +1,3 @@
-// src/shared/screens/ErrorFallBack.tsx
 import React from 'react';
 import { View } from 'react-native';
 import { CustomText } from '../components/CustomText';
@@ -22,7 +21,6 @@ export function ErrorFallback({ error, resetErrorBoundary, title }: Props) {
   const handleReturnHome = () => {
     resetErrorBoundary();
     if (navRef.isReady()) {
-      // Resets the app to the Gate or App root to clear stuck states
       navRef.reset({
         index: 0,
         routes: [{ name: ROOT.App as any }],

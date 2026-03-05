@@ -65,7 +65,7 @@ export const upsertRegistration = mutation({
     const user = await getCurrentUser(ctx);
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     const registration = await ctx.runQuery(
       internal.registrations.getRegistrationByVehicleIdInternal,

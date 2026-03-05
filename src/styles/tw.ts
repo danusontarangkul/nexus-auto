@@ -5,7 +5,9 @@ const tw = create({
   theme: {
     extend: {
       colors: {
-        primary: palette.primary[500],
+        primary: '#3B82F6',
+        surface: '#FFFFFF',
+        'primary-500': palette.primary[500],
         'primary-600': palette.primary[600],
 
         'surface-950': palette.surface[950],
