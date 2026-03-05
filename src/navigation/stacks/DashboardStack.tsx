@@ -7,6 +7,7 @@ import { DASHBOARD, DashboardStackParamList } from '../routes';
 import { withErrorBoundary } from '@/shared/hocs/withErrorBoundary';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
+
 export function DashboardStack() {
   return (
     <Stack.Navigator screenOptions={stackDark}>
@@ -18,9 +19,7 @@ export function DashboardStack() {
       <Stack.Screen
         name={DASHBOARD.Registration}
         component={withErrorBoundary(RegistrationScreen, 'Registration Access')}
-        options={{
-          header: () => <BackHeader title="Registration" skipTopInset />,
-        }}
+        // We remove the static header here to let the Screen set it dynamically
       />
     </Stack.Navigator>
   );
