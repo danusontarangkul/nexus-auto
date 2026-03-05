@@ -37,7 +37,7 @@ export function ControlledDatePicker({
 
   return (
     <View style={tw`mb-4`}>
-      <CustomText color={tw.color('ink-500') as string}>{label}</CustomText>
+      <CustomText variant="label">{label}</CustomText>
 
       <TouchableOpacity
         disabled={!isEditing}

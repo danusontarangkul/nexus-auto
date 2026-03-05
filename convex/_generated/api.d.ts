@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as dashboards from "../dashboards.js";
 import type * as http from "../http.js";
+import type * as image from "../image.js";
 import type * as insurance from "../insurance.js";
 import type * as maintenanceItems from "../maintenanceItems.js";
 import type * as maintenanceTemplates from "../maintenanceTemplates.js";
@@ -55,6 +56,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   dashboards: typeof dashboards;
   http: typeof http;
+  image: typeof image;
   insurance: typeof insurance;
   maintenanceItems: typeof maintenanceItems;
   maintenanceTemplates: typeof maintenanceTemplates;

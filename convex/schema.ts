@@ -96,18 +96,15 @@ export default defineSchema({
   }).index('by_vehicle', ['vehicleId']),
 
   receipts: defineTable({
-    fileId: v.id('_storage'),
-    fileName: v.string(),
+    storageId: v.id('_storage'),
     insuranceId: v.optional(v.id('insurance')),
-    parsedData: v.optional(v.any()),
     serviceRecordId: v.optional(v.id('serviceRecords')),
     registrationId: v.optional(v.id('registrations')),
-    status: ReceiptStatus,
     updatedAt: v.number(),
-    url: v.string(),
     userId: v.id('users'),
     warrantyId: v.optional(v.id('warranties')),
     type: ReceiptType,
+    isActive: v.boolean(),
   })
     .index('by_insurance', ['insuranceId'])
     .index('by_serviceRecord', ['serviceRecordId'])
