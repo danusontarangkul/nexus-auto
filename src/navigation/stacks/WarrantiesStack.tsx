@@ -1,7 +1,13 @@
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import { stackDark } from '../options';
 import { WARRANTIES, WarrantiesStackParamList } from '../routes';
 import { WarrantiesScreen } from '@/features/warranties/screens/WarrantiesScreen';
+import { AddWarrantyScreen } from '@/features/warranties/screens/AddWarranty';
+import { BackHeader } from '../components/BackHeader';
+import tw from '@/styles/tw';
 
 const Stack = createNativeStackNavigator<WarrantiesStackParamList>();
 
@@ -9,9 +15,43 @@ export function WarrantiesStack() {
   return (
     <Stack.Navigator screenOptions={stackDark}>
       <Stack.Screen
-        name={WARRANTIES.Warranties}
+        name={WARRANTIES.WarrantiesList}
         component={WarrantiesScreen}
-        options={{ headerShown: false }}
+        options={({ navigation }) => ({
+          header: () => (
+            <BackHeader
+              title="Warranties"
+              hideBack
+              skipTopInset={true}
+              leftElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(WARRANTIES.AddWarranty);
+                  }}
+                >
+                  <Ionicons name="add" size={28} color={tw.color('ink-900')} />
+                </TouchableOpacity>
+              }
+              rightElement={
+                <TouchableOpacity onPress={() => console.log('Search')}>
+                  <Ionicons
+                    name="search-outline"
+                    size={24}
+                    color={tw.color('ink-900')}
+                  />
+                </TouchableOpacity>
+              }
+            />
+          ),
+        })}
+      />
+
+      <Stack.Screen
+        name={WARRANTIES.AddWarranty}
+        component={AddWarrantyScreen}
+        options={{
+          header: () => <BackHeader title="Add Warranty" skipTopInset={true} />,
+        }}
       />
     </Stack.Navigator>
   );

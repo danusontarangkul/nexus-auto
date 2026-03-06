@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'; // Added ReactNode
+import React, { ReactNode } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ type Props = {
   onBackPress?: () => void;
   skipTopInset?: boolean;
   rightElement?: ReactNode;
+  leftElement?: ReactNode; // Added for top-level tabs like Warranties
 };
 
 export function BackHeader({
@@ -20,6 +21,7 @@ export function BackHeader({
   onBackPress,
   skipTopInset,
   rightElement,
+  leftElement,
 }: Props) {
   const nav = useNavigation();
   const insets = useSafeAreaInsets();
@@ -27,16 +29,20 @@ export function BackHeader({
   return (
     <View
       style={tw.style('bg-surface-950 border-b border-surface-border', {
+        // Automatically handles the iPhone 16e notch spacing
         paddingTop: skipTopInset ? 12 : insets.top + 8,
         paddingBottom: 12,
         paddingHorizontal: 16,
-        marginBottom: 30,
       })}
     >
       <View style={tw`flex-row items-center justify-between`}>
-        {/* Left Side: Back Button or Spacer */}
+        {/* Left Side: Custom Element or Back Button */}
         <View style={tw`w-10`}>
-          {!hideBack && (
+          {leftElement ? (
+            <View style={tw`w-10 h-10 items-center justify-center -ml-2`}>
+              {leftElement}
+            </View>
+          ) : !hideBack ? (
             <TouchableOpacity
               accessibilityRole="button"
               onPress={onBackPress ?? (() => nav.goBack())}
@@ -48,7 +54,7 @@ export function BackHeader({
                 color={tw.color('ink-900') as string}
               />
             </TouchableOpacity>
-          )}
+          ) : null}
         </View>
 
         {/* Center: Title */}
@@ -60,9 +66,15 @@ export function BackHeader({
           )}
         </View>
 
-        {/* Right Side: Right Element or Spacer */}
+        {/* Right Side: Right Element (e.g., Search or Edit) */}
         <View style={tw`w-10 items-center justify-center`}>
-          {rightElement ? rightElement : <View style={tw`w-10`} />}
+          {rightElement ? (
+            <View style={tw`w-10 h-10 items-center justify-center -mr-2`}>
+              {rightElement}
+            </View>
+          ) : (
+            <View style={tw`w-10`} />
+          )}
         </View>
       </View>
     </View>
