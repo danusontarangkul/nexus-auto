@@ -4,6 +4,7 @@ import { mutation, query } from './_generated/server';
 import { internal } from './_generated/api';
 import {
   isIdentityOwnerOfVehicle,
+  isUserOwnerOfVehicle,
   validateReceipt,
   validateVehicle,
   validateWarranty,
@@ -53,41 +54,44 @@ export const insertWarranty = mutation({
     vehicleId: v.id('vehicles'),
     expiresAt: v.number(),
     manufacturer: v.string(),
-    receiptIds: v.array(v.id('receipts')),
+    titleOfManufacturer: v.string(),
+    storageIds: v.array(v.id('_storage')),
   },
   handler: async (
     ctx,
-    { vehicleId, expiresAt, manufacturer, receiptIds },
+    { vehicleId, expiresAt, manufacturer, titleOfManufacturer, storageIds },
   ): Promise<Id<'warranties'>> => {
     const user = await getCurrentUser(ctx);
+    const now = Date.now();
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     const warrantyId = await ctx.db.insert('warranties', {
       vehicleId,
+      titleOfManufacturer,
       expiresAt,
       manufacturer,
-      updatedAt: Date.now(),
+      updatedAt: now,
       isActive: true,
     });
 
-    const hasReceipts = receiptIds.length > 0;
-    if (hasReceipts) {
-      for (const receiptId of receiptIds) {
-        validateReceipt(await ctx.db.get(receiptId));
-      }
-    }
-    if (hasReceipts) {
+    const hasStorageIds = storageIds.length > 0;
+    if (hasStorageIds) {
       await Promise.all(
-        receiptIds.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: { warrantyId },
+        storageIds.map((storageId) =>
+          ctx.db.insert('receipts', {
+            storageId,
+            warrantyId,
+            userId: user._id,
+            type: 'warranty',
+            isActive: true,
+            updatedAt: now,
           }),
         ),
       );
     }
+
     return warrantyId;
   },
 });

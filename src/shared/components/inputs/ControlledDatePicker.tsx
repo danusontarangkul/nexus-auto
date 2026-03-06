@@ -1,11 +1,9 @@
 import tw from '@/styles/tw';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Platform, Modal } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { CustomText } from '../CustomText';
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
-import { getDisplayDate, getSafePickerDate } from '@/utils/format';
+import { getDisplayDate } from '@/utils/format';
+import { DatePickerModal } from './DatePickerModal';
 
 type Props = {
   label: string;
@@ -17,31 +15,18 @@ type Props = {
 export function ControlledDatePicker({
   label,
   value,
-  isEditing,
+  isEditing = true,
   onDateChange,
 }: Props) {
   const [showPicker, setShowPicker] = useState(false);
   const displayText = getDisplayDate(value, isEditing);
 
-  const openPicker = () => isEditing && setShowPicker(true);
-  const closePicker = () => setShowPicker(false);
-
-  const handleChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (selectedDate) {
-      onDateChange(selectedDate);
-    }
-    if (Platform.OS !== 'ios') {
-      closePicker();
-    }
-  };
-
   return (
     <View style={tw`mb-4`}>
       <CustomText variant="label">{label}</CustomText>
-
       <TouchableOpacity
         disabled={!isEditing}
-        onPress={openPicker}
+        onPress={() => setShowPicker(true)}
         style={tw.style('py-2 border-b', {
           'border-surface-border': isEditing,
           'border-transparent': !isEditing,
@@ -57,39 +42,12 @@ export function ControlledDatePicker({
         </CustomText>
       </TouchableOpacity>
 
-      <Modal visible={showPicker} transparent animationType="slide">
-        <View style={tw`flex-1 justify-end bg-black/40`}>
-          <View style={tw`bg-surface rounded-t-3xl pb-10`}>
-            <View
-              style={tw`flex-row justify-between p-4 border-b border-surface-border`}
-            >
-              <TouchableOpacity onPress={closePicker}>
-                <CustomText color={tw.color('ink-500') as string}>
-                  Cancel
-                </CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={closePicker}>
-                <CustomText
-                  color={tw.color('primary-500') as string}
-                  variant="body"
-                  style={tw`font-semibold`}
-                >
-                  Done
-                </CustomText>
-              </TouchableOpacity>
-            </View>
-            <View style={tw`p-2`}>
-              <DateTimePicker
-                value={getSafePickerDate(value)}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                onChange={handleChange}
-                themeVariant="light"
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <DatePickerModal
+        isVisible={showPicker}
+        value={value}
+        onClose={() => setShowPicker(false)}
+        onConfirm={onDateChange}
+      />
     </View>
   );
 }

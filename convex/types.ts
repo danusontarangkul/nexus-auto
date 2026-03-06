@@ -4,7 +4,8 @@ export type CreateWarrantyInput = {
   vehicleId: Id<'vehicles'>;
   expiresAt: number;
   manufacturer: string;
-  receiptIds: Id<'receipts'>[];
+  titleOfManufacturer: string;
+  storageIds: Id<'_storage'>[];
 };
 
 export type UpdateWarrantyInput = {

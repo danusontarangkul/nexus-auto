@@ -152,6 +152,7 @@ export default defineSchema({
     expiresAt: v.number(),
     isActive: v.boolean(),
     manufacturer: v.string(),
+    titleOfManufacturer: v.string(),
     updatedAt: v.number(),
     vehicleId: v.id('vehicles'),
   }).index('by_vehicle', ['vehicleId']),
