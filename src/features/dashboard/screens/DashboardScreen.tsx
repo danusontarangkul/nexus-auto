@@ -41,7 +41,9 @@ export default function DashboardScreen() {
     });
   };
   const handleNavInsurance = () => {
-    nav.navigate('Insurance' as never);
+    nav.navigate(DASHBOARD.Insurance, {
+      vehicleId: vehicle._id,
+    });
   };
 
   return (

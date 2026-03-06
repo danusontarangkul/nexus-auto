@@ -30,7 +30,7 @@ export default defineSchema({
 
   insurance: defineTable({
     expiresAt: v.number(),
-    name: v.string(),
+    providerName: v.string(),
     updatedAt: v.number(),
     vehicleId: v.id('vehicles'),
   }).index('by_vehicle', ['vehicleId']),

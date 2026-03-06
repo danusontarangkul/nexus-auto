@@ -1,7 +1,6 @@
 import { v } from 'convex/values';
 import { internalQuery, mutation, query } from './_generated/server';
 import { Doc, Id } from './_generated/dataModel';
-import { internal } from './_generated/api';
 import { isUserOwnerOfVehicle, validateVehicle } from './utils/validation';
 import { getCurrentUser } from './utils/auth';
 import { RegistrationWithReceipts } from './types';
@@ -16,10 +15,10 @@ export const getRegistrationWithReceiptsByVehicleId = query({
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
     isUserOwnerOfVehicle(user._id, vehicle);
 
-    const registration = await ctx.runQuery(
-      internal.registrations.getRegistrationByVehicleIdInternal,
-      { vehicleId },
-    );
+    const registration = await ctx.db
+      .query('registrations')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
+      .unique();
 
     if (!registration) {
       return { registration: null, receipts: [] };

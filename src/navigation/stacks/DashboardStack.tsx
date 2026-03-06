@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { stackDark } from '../options';
-import { BackHeader } from '../components/BackHeader';
 import DashboardScreen from '@/features/dashboard/screens/DashboardScreen';
 import { RegistrationScreen } from '@/features/registration/screens/RegistrationScreen';
 import { DASHBOARD, DashboardStackParamList } from '../routes';
 import { withErrorBoundary } from '@/shared/hocs/withErrorBoundary';
+import { InsuranceScreen } from '@/features/insurance/screens/InsuranceScreen';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
 
@@ -19,7 +19,10 @@ export function DashboardStack() {
       <Stack.Screen
         name={DASHBOARD.Registration}
         component={withErrorBoundary(RegistrationScreen, 'Registration Access')}
-        // We remove the static header here to let the Screen set it dynamically
+      />
+      <Stack.Screen
+        name={DASHBOARD.Insurance}
+        component={withErrorBoundary(InsuranceScreen, 'Insurance Access')}
       />
     </Stack.Navigator>
   );
