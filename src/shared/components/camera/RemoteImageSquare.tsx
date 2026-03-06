@@ -24,9 +24,9 @@ export function RemoteImageSquare({
   if (storageId && imageUrl === undefined) {
     return (
       <View
-        style={tw`w-24 h-24 bg-surface-800 rounded-xl items-center justify-center border border-surface-border`}
+        style={tw`w-28 h-28 bg-surface-800 rounded-2xl items-center justify-center border border-surface-border`}
       >
-        <ActivityIndicator size="small" color={tw.color('primary-500')} />
+        <ActivityIndicator size="small" color={tw.color('ink-500')} />
       </View>
     );
   }

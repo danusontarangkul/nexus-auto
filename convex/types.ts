@@ -139,16 +139,16 @@ export type UpsertRegistrationInput = {
 };
 
 export type InsuranceWithReceipts = {
-  insurance: Doc<'insurance'>;
+  insurance: Doc<'insurance'> | null;
   receipts: Doc<'receipts'>[];
 };
 
 export type UpsertInsuranceInput = {
   vehicleId: Id<'vehicles'>;
   expiresAt: number;
-  receiptIds: Id<'receipts'>[];
+  newReceiptStorageIds: Id<'_storage'>[];
   receiptIdsToRemove: Id<'receipts'>[];
-  name: string;
+  providerName: string;
 };
 
 export type CreateReceiptInput = {

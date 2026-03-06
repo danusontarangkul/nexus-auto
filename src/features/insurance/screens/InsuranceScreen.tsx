@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Id } from '@convex/_generated/dataModel';
 import { Screen } from '@/shared/components/Screen';
-import { useRegistration, useUpsertRegistration } from '@/domain/registrations';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
-import { useRegistrationRouteParams } from '../hooks/useRegistrationRouteParams';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
 import { ScannerCamera } from '@/shared/components/camera/ScannerCamera';
 import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
@@ -15,33 +13,42 @@ import { ActionGroup } from '@/shared/components/ActionGroup';
 import { PrimaryButton } from '@/shared/components/PrimaryButton';
 import tw from '@/styles/tw';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
-import { useRegistrationChanges } from '../hooks/useRegistrationChanges';
 import { EmptyState } from '@/shared/components/texts/EmptyState';
+import { useInsurance } from '@/domain/insurance/useInsurance';
+import { useUpsertInsurance } from '@/domain/insurance/useUpsertInsurance';
+import { useInsuranceRouteParams } from '../hooks/useInsuranceRouteParams';
 import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
+import { useInsuranceChanges } from '../hooks/useInsuranceChanges';
+import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
+import { isEmptyString } from '@/utils/format';
 
-export function RegistrationScreen() {
-  const { vehicleId } = useRegistrationRouteParams();
-  const registrationData = useRegistration(vehicleId);
+export function InsuranceScreen() {
+  const { vehicleId } = useInsuranceRouteParams();
+  const insuranceData = useInsurance(vehicleId);
 
-  const registration = registrationData?.registration;
-  const existingReceipts = registrationData?.receipts || [];
+  const insurance = insuranceData?.insurance;
+  const existingReceipts = insuranceData?.receipts || [];
 
   const [expiryDate, setExpiryDate] = useState<Date | null>(null);
   const [removedReceiptIds, setRemovedReceiptIds] = useState<Id<'receipts'>[]>(
     [],
   );
-
+  const [providerName, setProviderName] = useState<string>('');
   const {
-    upsertRegistration,
+    upsertInsurance,
     isLoading: isSaving,
     error: saveError,
-  } = useUpsertRegistration();
+  } = useUpsertInsurance();
 
   const { isEditing, setIsEditing } = useEditableHeader(
-    'Registration',
-    !!registration,
+    'Insurance',
+    !!insurance,
   );
-  const { uploadImages, isLoading: isUploading } = useUploadPhoto();
+  const {
+    uploadImages,
+    isLoading: isUploading,
+    error: uploadError,
+  } = useUploadPhoto();
 
   const {
     isTakingPhoto,
@@ -52,40 +59,47 @@ export function RegistrationScreen() {
     openImagePicker,
   } = usePhotoAttachment();
 
-  const hasChanges = useRegistrationChanges(registration, {
+  const hasChanges = useInsuranceChanges(insurance, {
     expiryDate,
     removedReceiptIds,
     imageUris,
+    providerName,
   });
 
   useEffect(() => {
-    setExpiryDate(toDateOrNull(registration?.expiresAt));
+    setExpiryDate(toDateOrNull(insurance?.expiresAt));
     setRemovedReceiptIds([]);
     setImageUris([]);
-  }, [registration, isEditing, setImageUris]);
+    setProviderName(insurance?.providerName || '');
+  }, [insurance, isEditing, setImageUris]);
 
   const handleSave = async () => {
-    if (!expiryDate) {
+    if (!expiryDate || isEmptyString(providerName)) {
       return;
     }
 
     const validStorageIds = await uploadImages(imageUris);
 
-    const success = await upsertRegistration({
+    const success = await upsertInsurance({
       vehicleId,
       expiresAt: expiryDate.getTime(),
       newReceiptStorageIds: validStorageIds,
       receiptIdsToRemove: removedReceiptIds,
+      providerName,
     });
 
     if (success) {
       setIsEditing(false);
       setImageUris([]);
       setRemovedReceiptIds([]);
+      setProviderName('');
+      setExpiryDate(null);
     }
   };
 
-  if (!registrationData) {
+  const isDisabled = !expiryDate || isEmptyString(providerName) || !hasChanges;
+
+  if (!insuranceData) {
     return <FullScreenLoading />;
   }
 
@@ -95,7 +109,7 @@ export function RegistrationScreen() {
         onCapture={async (uri) => {
           addCapturedPhoto(uri);
         }}
-        instructionText="Photo of Registration"
+        instructionText="Photo of Insurance"
       />
     );
   }
@@ -103,10 +117,18 @@ export function RegistrationScreen() {
   return (
     <Screen>
       <ScrollView style={tw`flex-1 p-4`}>
-        {registration || isEditing ? (
+        {insurance || isEditing ? (
           <View>
+            <ControlledInput
+              label="Insurance Provider"
+              value={providerName}
+              isEditing={isEditing}
+              onChangeText={setProviderName}
+              placeholder="e.g. State Farm"
+              autoCapitalize="words"
+            />
             <ControlledDatePicker
-              label="Registration Expiration"
+              label="Insurance Expiration"
               value={expiryDate}
               isEditing={isEditing}
               onDateChange={setExpiryDate}
@@ -126,7 +148,7 @@ export function RegistrationScreen() {
           </View>
         ) : (
           <EmptyState
-            title="No registration records."
+            title="No insurance records."
             description="Tap the plus icon in the header to add."
           />
         )}
@@ -134,12 +156,12 @@ export function RegistrationScreen() {
 
       {isEditing && (
         <ButtonContainer>
-          <ActionGroup error={saveError}>
+          <ActionGroup error={saveError || uploadError}>
             <PrimaryButton
               title="Save Changes"
               onPress={handleSave}
               isLoading={isSaving || isUploading}
-              disabled={!expiryDate || !hasChanges}
+              disabled={isDisabled}
             />
           </ActionGroup>
         </ButtonContainer>

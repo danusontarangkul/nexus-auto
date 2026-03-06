@@ -56,9 +56,11 @@ export type AppTabsParamList = {
 export const DASHBOARD = {
   DashboardMain: 'DashboardMain',
   Registration: 'Registration',
+  Insurance: 'Insurance',
 } as const;
 
 export type DashboardStackParamList = {
   [DASHBOARD.DashboardMain]: undefined;
   [DASHBOARD.Registration]: { vehicleId: Id<'vehicles'> };
+  [DASHBOARD.Insurance]: { vehicleId: Id<'vehicles'> };
 };

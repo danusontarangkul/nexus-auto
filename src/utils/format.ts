@@ -31,3 +31,7 @@ export const getSafePickerDate = (
   const date = value ? new Date(value) : null;
   return date && isValid(date) ? date : new Date();
 };
+
+export const isEmptyString = (value: string | null | undefined): boolean => {
+  return !value || value.trim() === '';
+};

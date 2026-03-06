@@ -4,6 +4,7 @@ import { Doc, Id } from './_generated/dataModel';
 import { internal } from './_generated/api';
 import {
   isIdentityOwnerOfVehicle,
+  isUserOwnerOfVehicle,
   validateInsurance,
   validateVehicle,
 } from './utils/validation';
@@ -18,18 +19,22 @@ export const getInsuranceWithReceiptsByVehicleId = query({
     const user = await getCurrentUser(ctx);
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
-    const insurance = validateInsurance(
-      await ctx.runQuery(internal.insurance.getInsuranceByVehicleIdInternal, {
-        vehicleId,
-      }),
-    );
+    const insurance = await ctx.db
+      .query('insurance')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
+      .unique();
 
-    const receipts = await ctx.runQuery(
-      internal.receipts.getReceiptByInsuranceIdInternal,
-      { insuranceId: insurance._id },
-    );
+    if (!insurance) {
+      return { insurance: null, receipts: [] };
+    }
+
+    const receipts = await ctx.db
+      .query('receipts')
+      .withIndex('by_insurance', (q) => q.eq('insuranceId', insurance._id))
+      .filter((q) => q.eq(q.field('isActive'), true))
+      .collect();
 
     return { insurance, receipts };
   },
@@ -51,62 +56,73 @@ export const upsertInsurance = mutation({
   args: {
     vehicleId: v.id('vehicles'),
     expiresAt: v.number(),
-    receiptIds: v.array(v.id('receipts')),
+    newReceiptStorageIds: v.array(v.id('_storage')),
     receiptIdsToRemove: v.array(v.id('receipts')),
-    name: v.string(),
+    providerName: v.string(),
   },
   handler: async (
     ctx,
-    { vehicleId, expiresAt, receiptIds, receiptIdsToRemove, name },
+    {
+      vehicleId,
+      expiresAt,
+      newReceiptStorageIds,
+      receiptIdsToRemove,
+      providerName,
+    },
   ): Promise<boolean> => {
     const user = await getCurrentUser(ctx);
+    const now = Date.now();
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
-    const insurance = await ctx.runQuery(
-      internal.insurance.getInsuranceByVehicleIdInternal,
-      { vehicleId },
-    );
+    const insurance = await ctx.db
+      .query('insurance')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
+      .unique();
 
     let insuranceId: Id<'insurance'> | null = insurance?._id ?? null;
 
     if (insurance) {
       await ctx.db.patch(insurance._id, {
         expiresAt,
-        name,
-        updatedAt: Date.now(),
+        providerName,
+        updatedAt: now,
       });
     } else {
       insuranceId = await ctx.db.insert('insurance', {
         vehicleId,
         expiresAt,
-        name,
-        updatedAt: Date.now(),
+        providerName,
+        updatedAt: now,
       });
     }
 
-    if (receiptIds && receiptIds.length > 0 && insuranceId) {
+    if (
+      newReceiptStorageIds &&
+      newReceiptStorageIds.length > 0 &&
+      insuranceId
+    ) {
       await Promise.all(
-        receiptIds.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: {
-              insuranceId,
-            },
+        newReceiptStorageIds.map((storageId) =>
+          ctx.db.insert('receipts', {
+            storageId,
+            insuranceId,
+            userId: user._id,
+            type: 'insurance',
+            isActive: true,
+            updatedAt: now,
           }),
         ),
       );
     }
 
-    if (receiptIdsToRemove && receiptIdsToRemove.length > 0) {
+    if (receiptIdsToRemove.length > 0) {
       await Promise.all(
         receiptIdsToRemove.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: {
-              insuranceId: undefined,
-            },
+          ctx.db.patch(receiptId, {
+            isActive: false,
+            updatedAt: now,
           }),
         ),
       );
