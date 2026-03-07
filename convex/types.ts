@@ -13,7 +13,8 @@ export type UpdateWarrantyInput = {
   updates: {
     expiresAt: number;
     manufacturer: string;
-    receiptIds?: Id<'receipts'>[];
+    titleOfManufacturer: string;
+    storageIds?: Id<'_storage'>[];
     receiptIdsToRemove?: Id<'receipts'>[];
   };
 };
