@@ -13,7 +13,6 @@ export function AppTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         ...tabDark,
-        // Make sure you are passing the actual rendered icon component here
         tabBarIcon: (props) =>
           getTabBarIcon(route, props.focused, props.color, props.size),
       })}

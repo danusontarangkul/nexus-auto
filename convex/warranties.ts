@@ -20,7 +20,7 @@ export const getWarrantiesByVehicleId = query({
     const user = await getCurrentUser(ctx);
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     return await ctx.db
       .query('warranties')
@@ -39,12 +39,17 @@ export const getWarrantyById = query({
     const user = await getCurrentUser(ctx);
 
     const warranty = validateWarranty(await ctx.db.get(warrantyId));
-    isIdentityOwnerOfVehicle(user._id, warranty.vehicleId);
+    const vehicle = validateVehicle(await ctx.db.get(warranty.vehicleId));
 
-    const receipts = await ctx.runQuery(
-      internal.receipts.getReceiptByWarrantyIdInternal,
-      { warrantyId },
-    );
+    isUserOwnerOfVehicle(user._id, vehicle);
+
+    const receipts = await ctx.db
+      .query('receipts')
+      .withIndex('by_warranty', (q) => q.eq('warrantyId', warrantyId))
+      .order('desc')
+      .filter((q) => q.eq(q.field('isActive'), true))
+      .collect();
+
     return { warranty, receipts };
   },
 });
@@ -101,50 +106,47 @@ export const updateWarranty = mutation({
     warrantyId: v.id('warranties'),
     updates: v.object({
       expiresAt: v.optional(v.number()),
+      titleOfManufacturer: v.optional(v.string()),
       manufacturer: v.optional(v.string()),
-      receiptIds: v.optional(v.array(v.id('receipts'))),
+      storageIds: v.optional(v.array(v.id('_storage'))),
       receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
     }),
   },
   handler: async (ctx, { warrantyId, updates }): Promise<boolean> => {
     const user = await getCurrentUser(ctx);
+    const now = Date.now();
 
     const warranty = validateWarranty(await ctx.db.get(warrantyId));
-    isIdentityOwnerOfVehicle(user._id, warranty.vehicleId);
+    const vehicle = validateVehicle(await ctx.db.get(warranty.vehicleId));
+    isUserOwnerOfVehicle(user._id, vehicle);
 
+    const { storageIds, receiptIdsToRemove, ...warrantyUpdates } = updates;
     await ctx.db.patch(warranty._id, {
-      ...updates,
-      updatedAt: Date.now(),
+      ...warrantyUpdates,
+      updatedAt: now,
     });
 
-    if (updates.receiptIds) {
-      for (const receiptId of updates.receiptIds) {
-        validateReceipt(await ctx.db.get(receiptId));
-      }
-    }
-
-    if (updates.receiptIdsToRemove) {
-      for (const receiptId of updates.receiptIdsToRemove) {
-        validateReceipt(await ctx.db.get(receiptId));
-      }
-    }
-
-    if (updates.receiptIds) {
+    if (updates.storageIds && updates.storageIds.length > 0) {
       await Promise.all(
-        updates.receiptIds.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: { warrantyId },
+        updates.storageIds.map((storageId) =>
+          ctx.db.insert('receipts', {
+            storageId,
+            warrantyId,
+            userId: user._id,
+            type: 'warranty',
+            isActive: true,
+            updatedAt: now,
           }),
         ),
       );
     }
-    if (updates.receiptIdsToRemove) {
+
+    if (updates.receiptIdsToRemove && updates.receiptIdsToRemove.length > 0) {
       await Promise.all(
         updates.receiptIdsToRemove.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: { warrantyId: undefined },
+          ctx.db.patch(receiptId, {
+            isActive: false,
+            updatedAt: now,
           }),
         ),
       );

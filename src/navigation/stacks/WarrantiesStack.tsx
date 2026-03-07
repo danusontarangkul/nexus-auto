@@ -8,6 +8,7 @@ import { WarrantiesScreen } from '@/features/warranties/screens/WarrantiesScreen
 import { AddWarrantyScreen } from '@/features/warranties/screens/AddWarranty';
 import { BackHeader } from '../components/BackHeader';
 import tw from '@/styles/tw';
+import { WarrantiesDetailsScreen } from '@/features/warranties/screens/WarrantiesDetails';
 
 const Stack = createNativeStackNavigator<WarrantiesStackParamList>();
 
@@ -51,6 +52,15 @@ export function WarrantiesStack() {
         component={AddWarrantyScreen}
         options={{
           header: () => <BackHeader title="Add Warranty" skipTopInset={true} />,
+        }}
+      />
+      <Stack.Screen
+        name={WARRANTIES.WarrantyDetails}
+        component={WarrantiesDetailsScreen}
+        options={{
+          header: () => (
+            <BackHeader title="Warranty Details" skipTopInset={true} />
+          ),
         }}
       />
     </Stack.Navigator>

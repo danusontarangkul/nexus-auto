@@ -82,11 +82,13 @@ export type RecordsStackParamList = {
 export const WARRANTIES = {
   WarrantiesList: 'WarrantiesList',
   AddWarranty: 'AddWarranty',
+  WarrantyDetails: 'WarrantyDetails',
 } as const;
 
 export type WarrantiesStackParamList = {
   [WARRANTIES.WarrantiesList]: undefined;
   [WARRANTIES.AddWarranty]: undefined;
+  [WARRANTIES.WarrantyDetails]: { warrantyId: Id<'warranties'> };
 };
 
 export const ABOUT = {
