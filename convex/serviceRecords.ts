@@ -2,8 +2,7 @@ import { v } from 'convex/values';
 import { Doc, Id } from './_generated/dataModel';
 import { internalMutation, mutation, query } from './_generated/server';
 import {
-  isIdentityOwnerOfVehicle,
-  validateReceipt,
+  isUserOwnerOfVehicle,
   validateServiceRecord,
   validateVehicle,
 } from './utils/validation';
@@ -19,7 +18,7 @@ export const getServiceRecordsByVehicleId = query({
     const user = await getCurrentUser(ctx);
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     return await ctx.db
       .query('serviceRecords')
@@ -34,7 +33,6 @@ export const insertServiceRecord = mutation({
   args: {
     vehicleId: v.id('vehicles'),
     serviceRecord: v.object({
-      isActive: v.boolean(),
       performed: v.array(
         v.object({
           category: v.string(),
@@ -47,7 +45,7 @@ export const insertServiceRecord = mutation({
       ),
       serviceCenter: v.optional(v.string()),
       serviceDate: v.number(),
-      receiptIds: v.optional(v.array(v.id('receipts'))),
+      storageIds: v.array(v.id('_storage')),
     }),
   },
   handler: async (
@@ -55,12 +53,12 @@ export const insertServiceRecord = mutation({
     { vehicleId, serviceRecord },
   ): Promise<Id<'serviceRecords'>> => {
     const user = await getCurrentUser(ctx);
+    const now = Date.now();
 
     const vehicle = validateVehicle(await ctx.db.get(vehicleId));
-    isIdentityOwnerOfVehicle(user._id, vehicle._id);
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     const serviceRecordId = await ctx.db.insert('serviceRecords', {
-      isActive: serviceRecord.isActive,
       performed: serviceRecord.performed.map((performed) => ({
         ...performed,
         notes: performed.notes ?? null,
@@ -69,21 +67,20 @@ export const insertServiceRecord = mutation({
       serviceCenter: serviceRecord.serviceCenter ?? null,
       serviceDate: serviceRecord.serviceDate,
       vehicleId,
-      updatedAt: Date.now(),
+      updatedAt: now,
+      isActive: true,
     });
 
-    if (serviceRecord.receiptIds) {
-      for (const receiptId of serviceRecord.receiptIds) {
-        validateReceipt(await ctx.db.get(receiptId));
-      }
-    }
-
-    if (serviceRecord.receiptIds) {
+    if (serviceRecord.storageIds) {
       await Promise.all(
-        serviceRecord.receiptIds.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: { serviceRecordId },
+        serviceRecord.storageIds.map((storageId) =>
+          ctx.db.insert('receipts', {
+            storageId,
+            serviceRecordId,
+            userId: user._id,
+            type: 'serviceRecord',
+            isActive: true,
+            updatedAt: now,
           }),
         ),
       );
@@ -93,7 +90,9 @@ export const insertServiceRecord = mutation({
       vehicleId,
       serviceRecordId,
       serviceDate: serviceRecord.serviceDate,
-      performedItems: serviceRecord.performed,
+      performedItems: serviceRecord.performed.map((p) => ({
+        templateItemId: p.templateItemId,
+      })),
     });
     return serviceRecordId;
   },
@@ -118,17 +117,19 @@ export const updateServiceRecord = mutation({
       ),
       serviceCenter: v.optional(v.string()),
       serviceDate: v.optional(v.number()),
-      receiptIds: v.optional(v.array(v.id('receipts'))),
+      storageIds: v.optional(v.array(v.id('_storage'))),
       receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
     }),
   },
   handler: async (ctx, { serviceRecordId, updates }): Promise<boolean> => {
     const user = await getCurrentUser(ctx);
+    const now = Date.now();
 
     const serviceRecord = validateServiceRecord(
       await ctx.db.get(serviceRecordId),
     );
-    isIdentityOwnerOfVehicle(user._id, serviceRecord.vehicleId);
+    const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     await ctx.db.patch(serviceRecordId, {
       ...updates,
@@ -139,51 +140,48 @@ export const updateServiceRecord = mutation({
       })),
       serviceCenter: updates.serviceCenter ?? null,
       serviceDate: updates.serviceDate ?? undefined,
-      updatedAt: Date.now(),
+      updatedAt: now,
     });
 
-    if (updates.receiptIds) {
-      for (const receiptId of updates.receiptIds) {
-        validateReceipt(await ctx.db.get(receiptId));
-      }
-    }
-
-    if (updates.receiptIdsToRemove) {
-      for (const receiptId of updates.receiptIdsToRemove) {
-        validateReceipt(await ctx.db.get(receiptId));
-      }
-    }
-
-    if (updates.receiptIds) {
+    if (updates.storageIds) {
       await Promise.all(
-        updates.receiptIds.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: { serviceRecordId },
+        updates.storageIds.map((storageId) =>
+          ctx.db.insert('receipts', {
+            storageId,
+            serviceRecordId,
+            userId: user._id,
+            type: 'serviceRecord',
+            isActive: true,
+            updatedAt: now,
           }),
         ),
       );
     }
+
     if (updates.receiptIdsToRemove) {
       await Promise.all(
         updates.receiptIdsToRemove.map((receiptId) =>
-          ctx.runMutation(internal.receipts.updateReceiptInternal, {
-            receiptId,
-            updates: { serviceRecordId: undefined },
+          ctx.db.patch(receiptId, {
+            isActive: false,
+            updatedAt: now,
           }),
         ),
       );
     }
+
     if (updates.performed || updates.serviceDate !== undefined) {
       const finalRecord = await ctx.db.get(serviceRecordId);
       if (!finalRecord) {
         return true;
       }
+      const performed = updates.performed ?? finalRecord.performed;
       await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
         vehicleId: finalRecord.vehicleId,
         serviceRecordId,
         serviceDate: updates.serviceDate ?? finalRecord.serviceDate,
-        performedItems: updates.performed ?? finalRecord.performed,
+        performedItems: performed.map((p) => ({
+          templateItemId: p.templateItemId,
+        })),
       });
     }
 
@@ -204,7 +202,8 @@ export const getServiceRecordById = query({
     const serviceRecord = validateServiceRecord(
       await ctx.db.get(serviceRecordId),
     );
-    isIdentityOwnerOfVehicle(user._id, serviceRecord.vehicleId);
+    const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
+    isUserOwnerOfVehicle(user._id, vehicle);
 
     const receipts = await ctx.runQuery(
       internal.receipts.getReceiptByServiceRecordIdInternal,

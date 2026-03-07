@@ -94,18 +94,17 @@ export type ServiceRecordWithReceipts = {
 export type CreateServiceRecordInput = {
   vehicleId: Id<'vehicles'>;
   serviceRecord: {
-    isActive: boolean;
     performed: {
       category: string;
       cost: number;
       name: string;
       notes: string;
-      warrantyId: Id<'warranties'>;
-      templateItemId: Id<'maintenanceItems'>;
+      warrantyId?: Id<'warranties'>;
+      templateItemId?: Id<'maintenanceItems'>;
     }[];
     serviceCenter: string;
     serviceDate: number;
-    receiptIds: Id<'receipts'>[];
+    storageIds: Id<'_storage'>[];
   };
 };
 
@@ -123,7 +122,7 @@ export type UpdateServiceRecordInput = {
     }[];
     serviceCenter?: string;
     serviceDate?: number;
-    receiptIds?: Id<'receipts'>[];
+    storageIds?: Id<'_storage'>[];
     receiptIdsToRemove?: Id<'receipts'>[];
   };
 };
@@ -252,4 +251,9 @@ export interface Dashboard {
     insurance: Doc<'insurance'> | null;
     maintenanceItems: Doc<'maintenanceItems'>[];
   } | null;
+}
+
+export interface CategoryOption {
+  label: string;
+  value: string;
 }
