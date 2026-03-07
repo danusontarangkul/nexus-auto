@@ -1,7 +1,11 @@
 import { v } from 'convex/values';
 import { internalQuery, mutation, query } from './_generated/server';
 import { Doc, Id } from './_generated/dataModel';
-import { isIdentityOwnerOfVehicle, validateVehicle } from './utils/validation';
+import {
+  isIdentityOwnerOfVehicle,
+  isUserOwnerOfVehicle,
+  validateVehicle,
+} from './utils/validation';
 import { getCurrentUser } from './utils/auth';
 import { internal } from './_generated/api';
 import { vehicleDataValidator } from './utils/schemaUtils';
@@ -138,6 +142,42 @@ export const updateVehicle = mutation({
     await ctx.db.patch(vehicleId, {
       ...updates,
       updatedAt: Date.now(),
+    });
+
+    return true;
+  },
+});
+
+export const deleteVehicle = mutation({
+  args: {
+    vehicleId: v.id('vehicles'),
+  },
+  handler: async (ctx, { vehicleId }): Promise<boolean> => {
+    const user = await getCurrentUser(ctx);
+    const now = Date.now();
+
+    const vehicle = validateVehicle(await ctx.db.get(vehicleId));
+    isUserOwnerOfVehicle(user._id, vehicle);
+
+    await ctx.db.patch(vehicleId, {
+      isActive: false,
+      updatedAt: now,
+    });
+
+    const otherVehicle = await ctx.db
+      .query('vehicles')
+      .withIndex('by_user', (q) => q.eq('userId', user._id))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('isActive'), true),
+          q.neq(q.field('_id'), vehicleId),
+        ),
+      )
+      .first();
+
+    await ctx.db.patch(user._id, {
+      lastSelectedVehicleId: otherVehicle ? otherVehicle._id : null,
+      updatedAt: now,
     });
 
     return true;

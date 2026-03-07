@@ -4,6 +4,7 @@ import tw from '@/styles/tw';
 import { CustomText } from '../CustomText';
 import { Input } from '../Input';
 import { TextInputProps } from 'react-native';
+import { StaticField } from '../texts/StaticField';
 
 type Props = TextInputProps & {
   label: string;
@@ -22,21 +23,7 @@ export function ControlledInput({
   ...props
 }: Props) {
   if (!isEditing) {
-    return (
-      <View style={tw`mb-4`}>
-        <CustomText variant="detail" style={tw`text-ink-700 mb-1`}>
-          {label}
-        </CustomText>
-        <View style={tw`py-2 border-b border-transparent`}>
-          <CustomText
-            variant="body"
-            style={tw.style('text-ink-900', !value && 'text-ink-400 italic')}
-          >
-            {value || `No ${label.toLowerCase()} provided`}
-          </CustomText>
-        </View>
-      </View>
-    );
+    return <StaticField label={label} value={value} />;
   }
 
   return (
