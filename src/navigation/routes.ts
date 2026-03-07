@@ -72,11 +72,15 @@ export type DashboardStackParamList = {
 };
 
 export const RECORDS = {
-  Records: 'Records',
+  RecordsList: 'RecordsList',
+  RecordDetails: 'RecordDetails',
+  AddRecord: 'AddRecord',
 } as const;
 
 export type RecordsStackParamList = {
-  [RECORDS.Records]: undefined;
+  [RECORDS.RecordsList]: undefined;
+  [RECORDS.AddRecord]: undefined;
+  [RECORDS.RecordDetails]: { recordId: Id<'serviceRecords'> };
 };
 
 export const WARRANTIES = {

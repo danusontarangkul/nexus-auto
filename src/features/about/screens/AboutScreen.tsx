@@ -28,7 +28,9 @@ export function AboutScreen() {
   }, [navigation]);
 
   const handleDeletePress = () => {
-    if (!vehicle?._id) return;
+    if (!vehicle?._id) {
+      return;
+    }
     showConfirm({
       title: 'Delete Vehicle',
       message:
