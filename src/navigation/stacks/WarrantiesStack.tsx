@@ -18,33 +18,6 @@ export function WarrantiesStack() {
       <Stack.Screen
         name={WARRANTIES.WarrantiesList}
         component={WarrantiesScreen}
-        options={({ navigation }) => ({
-          header: () => (
-            <BackHeader
-              title="Warranties"
-              hideBack
-              skipTopInset={true}
-              leftElement={
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate(WARRANTIES.AddWarranty);
-                  }}
-                >
-                  <Ionicons name="add" size={28} color={tw.color('ink-900')} />
-                </TouchableOpacity>
-              }
-              rightElement={
-                <TouchableOpacity onPress={() => console.log('Search')}>
-                  <Ionicons
-                    name="search-outline"
-                    size={24}
-                    color={tw.color('ink-900')}
-                  />
-                </TouchableOpacity>
-              }
-            />
-          ),
-        })}
       />
 
       <Stack.Screen
