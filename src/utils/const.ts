@@ -26,4 +26,12 @@ export const SERVICES_BY_CATEGORY: Record<
   // Add other categories as needed...
 };
 
+export const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'expired', label: 'Expired' },
+];
+
+export type FilterType = 'all' | 'active' | 'expired';
+
 export const SUPPORT_EMAIL = 'davidanuson@gmail.com';
