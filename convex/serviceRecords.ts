@@ -102,7 +102,6 @@ export const updateServiceRecord = mutation({
   args: {
     serviceRecordId: v.id('serviceRecords'),
     updates: v.object({
-      isActive: v.optional(v.boolean()),
       performed: v.optional(
         v.array(
           v.object({
@@ -131,17 +130,42 @@ export const updateServiceRecord = mutation({
     const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
     isUserOwnerOfVehicle(user._id, vehicle);
 
-    await ctx.db.patch(serviceRecordId, {
-      ...updates,
-      performed: updates.performed?.map((performed) => ({
-        ...performed,
+    const patchPayload: {
+      performed?: {
+        category: string;
+        name: string;
+        notes: string | null;
+        cost: number | null;
+        warrantyId?: Id<'warranties'>;
+        templateItemId?: Id<'maintenanceItems'>;
+      }[];
+      serviceCenter?: string | null;
+      serviceDate?: number;
+      updatedAt: number;
+    } = {
+      updatedAt: now,
+    };
+    if (updates.performed !== undefined) {
+      patchPayload.performed = updates.performed.map((performed) => ({
+        category: performed.category,
+        name: performed.name,
         notes: performed.notes ?? null,
         cost: performed.cost ?? null,
-      })),
-      serviceCenter: updates.serviceCenter ?? null,
-      serviceDate: updates.serviceDate ?? undefined,
-      updatedAt: now,
-    });
+        ...(performed.warrantyId !== undefined && {
+          warrantyId: performed.warrantyId,
+        }),
+        ...(performed.templateItemId !== undefined && {
+          templateItemId: performed.templateItemId,
+        }),
+      }));
+    }
+    if (updates.serviceCenter !== undefined) {
+      patchPayload.serviceCenter = updates.serviceCenter ?? null;
+    }
+    if (updates.serviceDate !== undefined) {
+      patchPayload.serviceDate = updates.serviceDate;
+    }
+    await ctx.db.patch(serviceRecordId, patchPayload);
 
     if (updates.storageIds) {
       await Promise.all(

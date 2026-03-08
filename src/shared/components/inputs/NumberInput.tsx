@@ -7,11 +7,13 @@ type NumberInputProps = Omit<TextInputProps, 'onChangeText' | 'value'> & {
   value: number;
   onChangeNumber: (value: number) => void;
   errorText?: string | null;
+  onClear?: () => void;
 };
 
 export function NumberInput({
   value,
   onChangeNumber,
+  onClear,
   ...props
 }: NumberInputProps) {
   const handleChangeText = (text: string) => {
@@ -23,6 +25,7 @@ export function NumberInput({
   return (
     <Input
       {...props}
+      onClear={onClear}
       keyboardType="decimal-pad"
       value={value === 0 ? '' : value.toString()}
       onChangeText={handleChangeText}

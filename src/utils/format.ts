@@ -66,3 +66,13 @@ export const formatDateFull = (
 
   return isValid(dateObj) ? format(dateObj, dateFormat) : fallback;
 };
+
+export const formatNumberForDisplay = (
+  value: number | undefined | null,
+): string => {
+  if (!value || value === 0) {
+    return '';
+  }
+
+  return value.toLocaleString();
+};

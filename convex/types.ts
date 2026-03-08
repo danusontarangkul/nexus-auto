@@ -117,8 +117,8 @@ export type UpdateServiceRecordInput = {
       cost: number;
       name: string;
       notes: string;
-      warrantyId: Id<'warranties'>;
-      templateItemId: Id<'maintenanceItems'>;
+      warrantyId?: Id<'warranties'>;
+      templateItemId?: Id<'maintenanceItems'>;
     }[];
     serviceCenter?: string;
     serviceDate?: number;
