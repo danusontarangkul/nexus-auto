@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList } from 'react-native';
 import { Screen } from '@/shared/components/Screen';
 import { SectionHeader } from '@/shared/components/SectionHeader';
@@ -11,10 +11,9 @@ import tw from '@/styles/tw';
 import { useServiceRecords } from '@/domain/serviceRecords';
 import { ServiceRecordCard } from '@/shared/components/cards/ServiceRecordCard';
 import { SegmentedFilter } from '@/shared/components/filters/SegmentedFilter';
-import { useFilter } from '@/shared/hooks/useFilter';
+import { useListFilter } from '@/shared/hooks/useListFilter';
 import {
   RECORD_FILTER_OPTIONS,
-  RecordFilterType,
   RECORD_FILTER_LOGIC,
   getEmptyMessage,
 } from '../utils/utils';
@@ -23,15 +22,22 @@ export function RecordsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
   const { dashboard } = useDashboardContext();
   const vehicleId = dashboard?.active?.vehicle._id;
-  const [filter, setFilter] = useState<RecordFilterType>('all');
 
   const serviceRecords = useServiceRecords(vehicleId);
 
-  const filteredRecords = useFilter(
-    serviceRecords,
-    filter,
-    RECORD_FILTER_LOGIC,
-  );
+  const { filter, setFilter, finalData, searchQuery, isSearchingEmpty } =
+    useListFilter({
+      data: serviceRecords,
+      filterLogic: RECORD_FILTER_LOGIC,
+      headerTitle: 'Service Records',
+      searchFields: (item) => [
+        item.performed[0]?.name ?? '',
+        item.performed[0]?.notes ?? '',
+        item.serviceCenter ?? '',
+        item.serviceDate.toString(),
+      ],
+      onAddPress: () => navigation.navigate(RECORDS.AddRecord),
+    });
 
   if (!serviceRecords) {
     return <FullScreenLoading />;
@@ -49,16 +55,23 @@ export function RecordsScreen() {
   return (
     <Screen>
       <SectionHeader title="Service Records" variant="titleLg" />
+
       <SegmentedFilter
         options={RECORD_FILTER_OPTIONS}
         selected={filter}
         onChange={setFilter}
       />
-      {filteredRecords.length === 0 ? (
+
+      {isSearchingEmpty ? (
+        <EmptyState
+          title={`No results for "${searchQuery}"`}
+          description="Try a different search term or change your category filter."
+        />
+      ) : finalData.length === 0 ? (
         <EmptyState title={getEmptyMessage(filter)} />
       ) : (
         <FlatList
-          data={filteredRecords}
+          data={finalData}
           renderItem={({ item }) => (
             <ServiceRecordCard
               serviceRecord={item}
@@ -70,6 +83,7 @@ export function RecordsScreen() {
             />
           )}
           contentContainerStyle={tw`pb-10`}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </Screen>
