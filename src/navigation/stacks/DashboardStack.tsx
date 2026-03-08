@@ -5,6 +5,8 @@ import { RegistrationScreen } from '@/features/registration/screens/Registration
 import { DASHBOARD, DashboardStackParamList } from '../routes';
 import { withErrorBoundary } from '@/shared/hocs/withErrorBoundary';
 import { InsuranceScreen } from '@/features/insurance/screens/InsuranceScreen';
+import { AccountScreen } from '@/features/account/screens/AccountScreen';
+import { BackHeader } from '../components/BackHeader';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
 
@@ -23,6 +25,13 @@ export function DashboardStack() {
       <Stack.Screen
         name={DASHBOARD.Insurance}
         component={withErrorBoundary(InsuranceScreen, 'Insurance Access')}
+      />
+      <Stack.Screen
+        name={DASHBOARD.Account}
+        component={withErrorBoundary(AccountScreen, 'Account Access')}
+        options={{
+          header: () => <BackHeader title="Account" skipTopInset={true} />,
+        }}
       />
     </Stack.Navigator>
   );

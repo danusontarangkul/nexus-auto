@@ -20,6 +20,7 @@ export const getDashboard = query({
       return {
         vehicles: [],
         active: null,
+        user,
       };
     }
 
@@ -52,6 +53,7 @@ export const getDashboard = query({
         insurance,
         maintenanceItems,
       },
+      user,
     };
   },
 });
