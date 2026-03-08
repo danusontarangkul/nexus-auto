@@ -1,7 +1,6 @@
-import React from 'react';
 import { View, ViewStyle, StyleProp } from 'react-native';
 import tw from '@/styles/tw';
-import { FormError } from './FormError';
+import { FormError } from '../error/FormError';
 
 interface ActionGroupProps {
   children: React.ReactNode;

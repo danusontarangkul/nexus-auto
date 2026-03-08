@@ -1,7 +1,9 @@
 export const sanitizeAuthParams = (
   params: Record<string, string | string[] | undefined> | null,
 ): Record<string, string> => {
-  if (!params) return {};
+  if (!params) {
+    return {};
+  }
 
   return Object.entries(params).reduce(
     (acc, [key, value]) => {

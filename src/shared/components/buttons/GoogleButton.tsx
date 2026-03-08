@@ -1,9 +1,8 @@
-import React from 'react';
 import { Image } from 'react-native';
 import tw from '@/styles/tw';
-import { CustomText } from './CustomText';
-import { AppPressable } from './AppPressable';
+import { CustomText } from '../texts/CustomText';
 import { resolvePressableStyle } from '@/utils/style';
+import { AppPressable } from './AppPressable';
 
 type Props = React.ComponentProps<typeof AppPressable> & {
   title?: string;

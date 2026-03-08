@@ -1,7 +1,6 @@
-import React from 'react';
 import { View } from 'react-native';
 import { Doc, Id } from '@convex/_generated/dataModel';
-import { CustomText } from '../CustomText';
+import { CustomText } from '../texts/CustomText';
 import { ImageUploadSquare } from './ImageUploadSquare';
 import { EmptyState } from '@/shared/components/texts/EmptyState';
 import tw from '@/styles/tw';
@@ -42,17 +41,15 @@ export function DocumentGallery({
 
       {hasDocuments || isEditing ? (
         <View style={tw`flex-row flex-wrap gap-4`}>
-          {/* 1. Existing Photos */}
           {visibleExisting.map((receipt) => (
             <RemoteImageSquare
               key={receipt._id}
-              storageId={receipt.storageId} // Pass the storageId from the receipt object
+              storageId={receipt.storageId}
               isEditing={isEditing}
               onRemove={() => onRemoveExisting(receipt._id)}
             />
           ))}
 
-          {/* 2. Pending Photos */}
           {pendingUris.map((uri, index) => (
             <ImageUploadSquare
               key={`${uri}-${index}`}
@@ -63,7 +60,6 @@ export function DocumentGallery({
             />
           ))}
 
-          {/* 3. Add Button */}
           {isEditing && (
             <ImageUploadSquare
               imageUri={null}

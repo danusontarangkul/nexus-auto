@@ -1,7 +1,6 @@
-import React from 'react';
 import { Pressable, View, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import { VehicleListItem } from '@convex/types';
 import tw from '@/styles/tw';
 import { palette } from '@/styles/theme';
@@ -37,11 +36,7 @@ export function CarSelectorTrigger({
         {isLoading ? (
           <ActivityIndicator size="small" color={palette.primary[500]} />
         ) : (
-          <Ionicons
-            name="chevron-down"
-            size={18}
-            color={tw.color('ink-500') as string}
-          />
+          <Ionicons name="chevron-down" size={18} color={tw.color('ink-500')} />
         )}
       </View>
     </Pressable>

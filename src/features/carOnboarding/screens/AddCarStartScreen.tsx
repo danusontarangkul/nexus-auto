@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Screen } from '@/shared/components/Screen';
-import { Input } from '@/shared/components/Input';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
-import { CustomText } from '@/shared/components/CustomText';
+import { Screen } from '@/shared/components/screens/Screen';
+import { Input } from '@/shared/components/inputs/Input';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import tw from '@/styles/tw';
 import { useAppState } from '@/state/AppState';
 import { ONBOARD } from '@/navigation/routes';
@@ -16,12 +16,12 @@ import {
 } from '../utils/vin';
 import { VinScanLink } from '../components/VinScanLink';
 import { useDecodeVin } from '@/domain/vin';
-import { InputGroup } from '@/shared/components/InputGroup';
-import { MAX_PLATE_LENGTH, sanitizePlateInput } from '../utils/licensepPlate';
-import { ScreenHeader } from '@/shared/components/ScreenHeader';
-import { ButtonContainer } from '@/shared/components/ButtonContainer';
+import { InputGroup } from '@/shared/components/inputs/InputGroup';
+import { MAX_PLATE_LENGTH, sanitizePlateInput } from '../utils/licensePlate';
+import { ScreenHeader } from '@/shared/components/headers/ScreenHeader';
+import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { sanitizeCapitalizeString } from '@convex/utils/sanatize';
-import { ActionGroup } from '@/shared/components/ActionGroup';
+import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 
 export function AddCarStartScreen() {
   const nav = useNavigation();

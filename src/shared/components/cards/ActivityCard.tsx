@@ -1,6 +1,5 @@
-import React from 'react';
-import { Card } from '@/shared/components/Card';
-import { CustomText } from '@/shared/components/CustomText';
+import { Card } from '@/shared/components/cards/Card';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import tw from '@/styles/tw';
 
 interface ActivityCardProps {

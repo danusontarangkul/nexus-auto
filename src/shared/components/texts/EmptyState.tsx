@@ -1,7 +1,6 @@
-import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import tw from '@/styles/tw';
-import { CustomText } from '../CustomText';
+import { CustomText } from './CustomText';
 
 interface EmptyStateProps {
   title: string;

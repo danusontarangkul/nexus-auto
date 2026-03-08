@@ -1,14 +1,14 @@
-import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { VehiclePreviewCard } from '../components/car/VehiclePreviewCard';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { useAppState } from '@/state/AppState';
-import { Screen } from '@/shared/components/Screen';
+import { Screen } from '@/shared/components/screens/Screen';
 import { useVehicleParams } from '../hooks/useVehicleParams';
-import { ScreenHeader } from '@/shared/components/ScreenHeader';
-import { ButtonContainer } from '@/shared/components/ButtonContainer';
+import { ScreenHeader } from '@/shared/components/headers/ScreenHeader';
+import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { useCreateVehicle } from '@/domain/vehicles';
-import { ActionGroup } from '@/shared/components/ActionGroup';
+import { ActionGroup } from '@/shared/components/containers/ActionGroup';
+import { ROOT } from '@/navigation/routes';
 
 export function ConfirmCarScreen() {
   const { completeAddCar } = useAppState();
@@ -17,8 +17,6 @@ export function ConfirmCarScreen() {
   const { car, plate, hasData, vinNumber } = useVehicleParams();
 
   const { createVehicle, isLoading, error } = useCreateVehicle();
-
-  // Test Vin: 1HGCM82633A004352
 
   const handleConfirm = async () => {
     const vehicleId = await createVehicle({
@@ -31,7 +29,7 @@ export function ConfirmCarScreen() {
       completeAddCar();
       nav.reset({
         index: 0,
-        routes: [{ name: 'App' as never }],
+        routes: [{ name: ROOT.App }],
       });
     }
   };

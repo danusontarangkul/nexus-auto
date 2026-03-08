@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import tw from '@/styles/tw';
@@ -14,7 +13,7 @@ export function SearchHeader({
   value,
   onChangeText,
   onCancel,
-  placeholder = 'Search records...',
+  placeholder = 'Search...',
 }: SearchHeaderProps) {
   return (
     <View

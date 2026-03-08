@@ -1,9 +1,8 @@
-import React from 'react';
 import { View, Pressable, Text } from 'react-native';
-import { CustomText } from '../components/CustomText';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { OutlineButton } from '../components/OutlineButton';
-import { Screen } from '../components/Screen';
+import { CustomText } from '@/shared/components/texts/CustomText';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
+import { OutlineButton } from '@/shared/components/buttons/OutlineButton';
+import { Screen } from '@/shared/components/screens/Screen';
 import tw from '@/styles/tw';
 import { getErrorMessage } from '@/utils/error/errorHelper';
 import { navRef } from '@/navigation/NavRef';
@@ -23,7 +22,7 @@ export function ErrorFallback({ error, resetErrorBoundary, title }: Props) {
     if (navRef.isReady()) {
       navRef.reset({
         index: 0,
-        routes: [{ name: AUTH.Login as any }],
+        routes: [{ name: AUTH.Login }],
       });
     }
   };
@@ -32,7 +31,7 @@ export function ErrorFallback({ error, resetErrorBoundary, title }: Props) {
     resetErrorBoundary();
     setTimeout(() => {
       if (navRef.isReady()) {
-        navRef.navigate(ROOT.Dev as never);
+        navRef.navigate(ROOT.Dev);
       }
     }, 50);
   };

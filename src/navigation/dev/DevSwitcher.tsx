@@ -1,8 +1,7 @@
-import React from 'react';
 import { ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Screen } from '@/shared/components/Screen';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import { Screen } from '@/shared/components/screens/Screen';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import tw from '@/styles/tw';
 import { DASHBOARD, ONBOARD, ROOT, RootStackParamList, TABS } from '../routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

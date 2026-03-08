@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Screen } from '@/shared/components/Screen';
+import { useEffect, useState } from 'react';
+import { Screen } from '@/shared/components/screens/Screen';
 import { useAppState } from '../../../state/AppState';
 import { View, Text, Alert } from 'react-native';
 import tw from '@/styles/tw';
-import { CircleImage } from '@/shared/components/CircleImage';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import { CircleImage } from '@/shared/components/image/CircleImage';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { useNavigation } from '@react-navigation/native';
 import Purchases from 'react-native-purchases';
 

@@ -1,10 +1,9 @@
-import React from 'react';
 import { View, TouchableOpacity, Platform, Modal } from 'react-native';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import tw from '@/styles/tw';
-import { CustomText } from '../CustomText';
+import { CustomText } from '../texts/CustomText';
 import { getSafePickerDate } from '@/utils/format';
 
 type DatePickerModalProps = {

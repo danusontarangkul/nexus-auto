@@ -1,7 +1,6 @@
-import React from 'react';
 import { FlatList } from 'react-native';
-import { Screen } from '@/shared/components/Screen';
-import { SectionHeader } from '@/shared/components/SectionHeader';
+import { Screen } from '@/shared/components/screens/Screen';
+import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { useWarranties } from '@/domain/warranties';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import * as Haptics from 'expo-haptics';
 import { VehicleListItem } from '@convex/types';
 import { Id } from '@convex/_generated/dataModel';

@@ -1,6 +1,5 @@
-import React from 'react';
 import { View } from 'react-native';
-import { CustomText } from './CustomText';
+import { CustomText } from '../texts/CustomText';
 import tw from '@/styles/tw';
 
 export function FormError({ message }: { message?: string | null }) {

@@ -1,6 +1,5 @@
-import React from 'react';
 import { Text, TextProps } from 'react-native';
-import { typography } from '../../styles/theme';
+import { typography } from '@/styles/theme';
 
 type Variant = keyof typeof typography;
 

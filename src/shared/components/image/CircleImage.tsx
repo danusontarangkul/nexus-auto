@@ -1,6 +1,5 @@
-import React from 'react';
 import { Image, ImageSourcePropType } from 'react-native';
-import tw from '../../styles/tw';
+import tw from '@/styles/tw';
 
 type Props = { source: ImageSourcePropType; size?: number };
 

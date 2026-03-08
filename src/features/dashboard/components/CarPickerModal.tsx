@@ -1,11 +1,10 @@
-import React from 'react';
 import { Modal, Pressable, View, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { VehicleListItem } from '@convex/types';
 import { Id } from '@convex/_generated/dataModel';
 import tw from '@/styles/tw';
 import { palette } from '@/styles/theme';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '@/shared/components/texts/CustomText';
 
 type ModalProps = {
   visible: boolean;

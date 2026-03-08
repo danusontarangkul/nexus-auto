@@ -1,8 +1,7 @@
-import React from 'react';
 import { View } from 'react-native';
-import tw from '../../styles/tw';
+import tw from '@/styles/tw';
 
-type Props = { total: number; current: number }; // 1-based index
+type Props = { total: number; current: number };
 
 export function Stepper({ total, current }: Props) {
   return (

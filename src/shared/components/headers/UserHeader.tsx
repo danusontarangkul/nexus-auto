@@ -1,8 +1,7 @@
-import React from 'react';
 import { View } from 'react-native';
 import tw from '@/styles/tw';
-import { Avatar } from '../Avatar';
-import { CustomText } from '../CustomText';
+import { Avatar } from '../avatar/Avatar';
+import { CustomText } from '../texts/CustomText';
 import { Doc } from '@convex-dev/auth/server';
 import { formatUserName, formatUserSecondaryText } from '@/utils/format';
 

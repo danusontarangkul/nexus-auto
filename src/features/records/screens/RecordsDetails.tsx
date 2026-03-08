@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Id } from '@convex/_generated/dataModel';
-import { Screen } from '@/shared/components/Screen';
-import { SectionHeader } from '@/shared/components/SectionHeader';
+import { Screen } from '@/shared/components/screens/Screen';
+import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
 import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
-import { ActionGroup } from '@/shared/components/ActionGroup';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
-import { ButtonContainer } from '@/shared/components/ButtonContainer';
+import { ActionGroup } from '@/shared/components/containers/ActionGroup';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
+import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { useRecordsRouteParams } from '../hooks/useRecordRouteParams';
 import { useServiceRecordChanges } from '../hooks/useRecordChanges';
@@ -20,7 +20,7 @@ import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
 import { ControlledCategoryPicker } from '@/shared/components/inputs/ControlledCategoryPicker';
 import { ControlledNumberInput } from '@/shared/components/inputs/ControlledNumberInput';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
-import { InputGroup } from '@/shared/components/InputGroup';
+import { InputGroup } from '@/shared/components/inputs/InputGroup';
 import { ScrollContainer } from '@/shared/components/containers/ScrollContainer';
 import { toDateOrNull } from '@/utils/date';
 import { isEmptyString } from '@/utils/format';
@@ -72,7 +72,9 @@ export function RecordsDetailsScreen() {
   const isValid = !isEmptyString(serviceCenter) && serviceDate;
 
   const handleSave = async () => {
-    if (!serviceRecord) return;
+    if (!serviceRecord) {
+      return;
+    }
     const existing = serviceRecord.serviceRecord.performed[0];
     const success = await updateServiceRecord({
       serviceRecordId: recordId,

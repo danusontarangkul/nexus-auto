@@ -1,5 +1,4 @@
-// src/features/cars/screens/VinScanScreen.tsx
-import React, {
+import {
   useCallback,
   useEffect,
   useMemo,
@@ -14,9 +13,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { Screen } from '../../../shared/components/Screen';
-import { CustomText } from '../../../shared/components/CustomText';
-import tw from '../../../styles/tw';
+import { Screen } from '@/shared/components/screens/Screen';
+import { CustomText } from '@/shared/components/texts/CustomText';
+import tw from '@/styles/tw';
 
 import {
   CameraView,

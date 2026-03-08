@@ -1,8 +1,7 @@
-import React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import tw from '@/styles/tw';
-import { CustomText } from './CustomText';
 import { getInitials } from '@/utils/format';
+import { CustomText } from '../texts/CustomText';
 
 interface AvatarProps {
   name?: string | null;

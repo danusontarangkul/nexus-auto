@@ -1,10 +1,9 @@
-import React from 'react';
 import { View } from 'react-native';
-import { Screen } from '../../../shared/components/Screen';
-import { PrimaryButton } from '../../../shared/components/PrimaryButton';
+import { Screen } from '@/shared/components/screens/Screen';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { useNavigation } from '@react-navigation/native';
-import tw from '../../../styles/tw';
-import { CustomText } from '../../../shared/components/CustomText';
+import tw from '@/styles/tw';
+import { CustomText } from '@/shared/components/texts/CustomText';
 
 export function UploadVinPhotoScreen() {
   const nav = useNavigation();

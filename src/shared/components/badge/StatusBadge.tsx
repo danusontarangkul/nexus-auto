@@ -1,7 +1,6 @@
-import React from 'react';
 import { View } from 'react-native';
 import tw from '@/styles/tw';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '../texts/CustomText';
 
 interface StatusBadgeProps {
   label: string;

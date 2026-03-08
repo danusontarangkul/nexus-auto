@@ -1,6 +1,5 @@
-import React from 'react';
 import { Image, Pressable, ImageSourcePropType } from 'react-native';
-import tw from '../../styles/tw';
+import tw from '@/styles/tw';
 
 type Props = { source: ImageSourcePropType; onPress?: () => void };
 

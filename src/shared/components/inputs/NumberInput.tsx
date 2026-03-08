@@ -1,5 +1,4 @@
-import React from 'react';
-import { Input } from '../Input';
+import { Input } from './Input';
 import { TextInputProps } from 'react-native';
 
 type NumberInputProps = Omit<TextInputProps, 'onChangeText' | 'value'> & {
