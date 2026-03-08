@@ -1,4 +1,3 @@
-import React from 'react';
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -16,7 +15,7 @@ import { FontProvider } from './src/providers/FontProvider';
 import { RootNavigator } from './src/navigation';
 import { validateEnv, ENV } from './src/utils/env';
 import Toast from 'react-native-toast-message';
-import { DevFloatingButton } from '@/shared/components/DevFloatingButton';
+import { DevFloatingButton } from '@/shared/components/buttons/DevFloatingButton';
 
 validateEnv();
 

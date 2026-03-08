@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Screen } from '@/shared/components/Screen';
-import { CircleImage } from '@/shared/components/CircleImage';
-import { GoogleButton } from '@/shared/components/GoogleButton';
+import { Screen } from '@/shared/components/screens/Screen';
+import { CircleImage } from '@/shared/components/image/CircleImage';
+import { GoogleButton } from '@/shared/components/buttons/GoogleButton';
 import { useAppState } from '@/state/AppState';
 import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth';
 import tw from '@/styles/tw';

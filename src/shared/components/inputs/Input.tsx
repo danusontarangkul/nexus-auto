@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   TextInput,
   TextInputProps,
@@ -6,8 +5,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import tw from '../../styles/tw';
-import { CustomText } from './CustomText';
+import tw from '@/styles/tw';
+import { CustomText } from '../texts/CustomText';
 
 type Props = TextInputProps & {
   label?: string;

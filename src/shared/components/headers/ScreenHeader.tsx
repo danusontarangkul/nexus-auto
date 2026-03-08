@@ -1,6 +1,5 @@
-import React from 'react';
 import { View, ViewStyle, StyleProp } from 'react-native';
-import { CustomText } from './CustomText';
+import { CustomText } from '../texts/CustomText';
 import tw from '@/styles/tw';
 
 interface Props {

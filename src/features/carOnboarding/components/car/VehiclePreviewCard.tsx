@@ -1,6 +1,5 @@
-import React from 'react';
 import { View, Image, ImageSourcePropType } from 'react-native';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import { VehicleData } from '@convex/types';
 import tw from '@/styles/tw';
 

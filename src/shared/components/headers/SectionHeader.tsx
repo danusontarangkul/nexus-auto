@@ -1,6 +1,5 @@
-import React from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { CustomText } from './CustomText';
+import { CustomText } from '../texts/CustomText';
 import tw from '@/styles/tw';
 
 type SectionHeaderProps = {

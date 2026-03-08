@@ -1,7 +1,6 @@
-import React from 'react';
 import { View } from 'react-native';
-import { CustomText } from './CustomText';
-import tw from '../../styles/tw';
+import { CustomText } from '../texts/CustomText';
+import tw from '@/styles/tw';
 
 export function ScanOverlay({
   mode,
@@ -17,7 +16,7 @@ export function ScanOverlay({
       />
       <CustomText
         style={tw`absolute bottom-24 font-semibold text-ink-50`}
-        color={tw.color('ink-50') as string}
+        color={tw.color('ink-50')}
       >
         {busy ? 'Processing…' : `Mode: ${mode}`}
       </CustomText>

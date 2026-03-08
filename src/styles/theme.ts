@@ -1,4 +1,3 @@
-// Design tokens for dark UI
 export const palette = {
   primary: {
     500: '#3B82F6',

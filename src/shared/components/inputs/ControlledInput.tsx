@@ -1,7 +1,6 @@
-import React from 'react';
 import { View } from 'react-native';
 import tw from '@/styles/tw';
-import { Input } from '../Input';
+import { Input } from './Input';
 import { TextInputProps } from 'react-native';
 import { StaticField } from '../texts/StaticField';
 

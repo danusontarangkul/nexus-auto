@@ -15,7 +15,6 @@ export function usePhotoAttachment() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 0.8,
-      // Fixed: Disabled allowsEditing because allowsMultipleSelection is enabled
       allowsEditing: false,
       allowsMultipleSelection: true,
     });

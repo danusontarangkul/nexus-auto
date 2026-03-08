@@ -29,7 +29,6 @@ export function useInsuranceChanges(
     const originalTime = initial.expiresAt;
     const currentTime = current.expiryDate?.getTime() ?? null;
 
-    // Comparison Logic
     const nameChanged = initial.providerName !== current.providerName;
     const dateChanged = originalTime !== currentTime;
     const documentsRemoved = current.removedReceiptIds.length > 0;

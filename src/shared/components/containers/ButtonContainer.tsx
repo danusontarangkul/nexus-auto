@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, ViewStyle, StyleProp } from 'react-native';
 import tw from '@/styles/tw';
 

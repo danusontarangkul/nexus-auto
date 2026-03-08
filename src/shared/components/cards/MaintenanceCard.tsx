@@ -1,7 +1,6 @@
-import React from 'react';
 import { Pressable } from 'react-native';
-import { Card } from '@/shared/components/Card';
-import { CustomText } from '@/shared/components/CustomText';
+import { Card } from '@/shared/components/cards/Card';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import tw from '@/styles/tw';
 import { formatMaintenanceInterval } from '@/utils/format';
 

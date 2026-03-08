@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
-import { Screen } from '../../../shared/components/Screen';
-import { Input } from '../../../shared/components/Input';
-import { PrimaryButton } from '../../../shared/components/PrimaryButton';
 import { useNavigation } from '@react-navigation/native';
-import tw from '../../../styles/tw';
-import { CustomText } from '../../../shared/components/CustomText';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Screen } from '@/shared/components/screens/Screen';
+import { Input } from '@/shared/components/inputs/Input';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
+import { ONBOARD, OnboardingStackParamList } from '@/navigation/routes';
+import { getVehicleWithFallbacks } from '../utils/vehicle';
+import tw from '@/styles/tw';
+import { CustomText } from '@/shared/components/texts/CustomText';
 
 export function EnterManualScreen() {
-  const nav = useNavigation();
+  const nav =
+    useNavigation<NativeStackNavigationProp<OnboardingStackParamList>>();
   const [license, setLicense] = useState('');
-  const [make, setMake] = useState('');
-  const [model, setModel] = useState('');
-  const [year, setYear] = useState('');
+  const [make, setMake] = useState<string>('');
+  const [model, setModel] = useState<string>('');
+  const [year, setYear] = useState<string>('');
+
+  const handleNext = () => {
+    const { car, plate, vinNumber } = getVehicleWithFallbacks(
+      {
+        make: make || null,
+        model: model || null,
+        year: year ? parseInt(year, 10) : null,
+      },
+      license || undefined,
+      'Manual entry',
+    );
+    nav.navigate(ONBOARD.ConfirmCar, { car, plate, vinNumber });
+  };
 
   return (
     <Screen>
@@ -33,10 +50,7 @@ export function EnterManualScreen() {
           onChangeText={setYear}
           keyboardType="number-pad"
         />
-        <PrimaryButton
-          title="Next"
-          onPress={() => nav.navigate('ConfirmCar' as never)}
-        />
+        <PrimaryButton title="Next" onPress={handleNext} />
       </View>
     </Screen>
   );

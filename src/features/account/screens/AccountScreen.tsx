@@ -1,7 +1,6 @@
-import React from 'react';
 import { Linking, ScrollView } from 'react-native';
-import { Screen } from '@/shared/components/Screen';
-import { SectionHeader } from '@/shared/components/SectionHeader';
+import { Screen } from '@/shared/components/screens/Screen';
+import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import tw from '@/styles/tw';
 import { SettingsRow } from '@/shared/components/rows/SettingsRow';
 import { UserHeader } from '@/shared/components/headers/UserHeader';

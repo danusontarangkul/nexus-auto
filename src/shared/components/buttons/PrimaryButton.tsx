@@ -1,8 +1,7 @@
-import React from 'react';
-import tw from '../../styles/tw';
-import { CustomText } from './CustomText';
-import { AppPressable } from './AppPressable';
+import tw from '@/styles/tw';
+import { CustomText } from '../texts/CustomText';
 import { resolvePressableStyle } from '@/utils/style';
+import { AppPressable } from './AppPressable';
 
 type Props = React.ComponentProps<typeof AppPressable> & {
   title: string;

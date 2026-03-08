@@ -1,7 +1,6 @@
-import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import tw from '@/styles/tw';
-import { CustomText } from '../CustomText';
+import { CustomText } from '../texts/CustomText';
 
 interface CategoryOption {
   label: string;

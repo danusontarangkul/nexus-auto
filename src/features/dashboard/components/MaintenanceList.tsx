@@ -1,8 +1,7 @@
-import React from 'react';
 import { View } from 'react-native';
 import { Doc } from '@convex/_generated/dataModel';
 import tw from '@/styles/tw';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import { MaintenanceCard } from '@/shared/components/cards/MaintenanceCard';
 
 interface MaintenanceListProps {

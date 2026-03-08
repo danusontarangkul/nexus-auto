@@ -1,7 +1,6 @@
-import React from 'react';
 import { View } from 'react-native';
-import tw from '../../styles/tw';
-import { CustomText } from './CustomText';
+import tw from '@/styles/tw';
+import { CustomText } from '../texts/CustomText';
 
 export function DividerWithOr() {
   return (

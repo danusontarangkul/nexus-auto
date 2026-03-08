@@ -1,7 +1,6 @@
-import React from 'react';
 import { View } from 'react-native';
 import tw from '@/styles/tw';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '@/shared/components/texts/CustomText';
 import { Doc } from 'convex/_generated/dataModel';
 import { formatDateFull } from '@/utils/format';
 import { ClickableCard } from './ClickableCard';

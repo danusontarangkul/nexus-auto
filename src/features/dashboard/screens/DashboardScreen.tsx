@@ -1,7 +1,10 @@
-import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Screen } from '@/shared/components/Screen';
+import {
+  useNavigation,
+  CompositeNavigationProp,
+} from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Screen } from '@/shared/components/screens/Screen';
 import { CarSwitcher } from '@/features/dashboard/components/CarSwitcher';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import tw from '@/styles/tw';
@@ -10,14 +13,22 @@ import { DocumentSummary } from '../components/DocumentSummary';
 import { MaintenanceList } from '../components/MaintenanceList';
 import { Id } from '@convex/_generated/dataModel';
 import { useUpdateLastSelectedVehicle } from '@/domain/users';
-import { SectionHeader } from '@/shared/components/SectionHeader';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { DASHBOARD, DashboardStackParamList } from '@/navigation/routes';
-import { Avatar } from '@/shared/components/Avatar';
+import { SectionHeader } from '@/shared/components/headers/SectionHeader';
+import {
+  DASHBOARD,
+  ROOT,
+  DashboardStackParamList,
+  RootStackParamList,
+} from '@/navigation/routes';
+import { Avatar } from '@/shared/components/avatar/Avatar';
+
+type DashboardNav = CompositeNavigationProp<
+  NativeStackNavigationProp<DashboardStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 export default function DashboardScreen() {
-  const nav =
-    useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
+  const nav = useNavigation<DashboardNav>();
   const { dashboard } = useDashboardContext();
   const { updateLastSelectedVehicle, isLoading } =
     useUpdateLastSelectedVehicle();
@@ -34,7 +45,7 @@ export default function DashboardScreen() {
   };
 
   const handleAddCar = () => {
-    nav.navigate('Onboarding' as never);
+    nav.navigate(ROOT.Onboarding);
   };
   const handleNavRegistration = () => {
     nav.navigate(DASHBOARD.Registration, {

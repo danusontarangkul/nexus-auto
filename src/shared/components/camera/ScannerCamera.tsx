@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,9 +6,9 @@ import {
   Platform,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as ImageManipulator from 'expo-image-manipulator'; // Ensure this is @expo/image-manipulator in newer versions
+import * as ImageManipulator from 'expo-image-manipulator';
 import { Ionicons } from '@expo/vector-icons';
-import { CustomText } from '../CustomText';
+import { CustomText } from '../texts/CustomText';
 import tw from '@/styles/tw';
 
 type Props = {
@@ -42,15 +42,13 @@ export function ScannerCamera({
       });
 
       if (photo?.uri) {
-        // If the object-style failed, go back to the 3-argument style
-        // but ensure types are explicitly handled.
         const manip = await ImageManipulator.manipulateAsync(
           photo.uri,
-          [{ resize: { width: 2000 } }], // Argument 2: Actions array
+          [{ resize: { width: 2000 } }],
           {
             compress: 0.8,
             format: ImageManipulator.SaveFormat.JPEG,
-          }, // Argument 3: SaveOptions
+          },
         );
 
         await onCapture(manip.uri);
@@ -60,13 +58,14 @@ export function ScannerCamera({
     }
   };
 
-  if (!permission?.granted) return null;
+  if (!permission?.granted) {
+    return null;
+  }
 
   return (
     <View style={tw`flex-1 bg-black`}>
       <CameraView ref={cameraRef} style={tw`flex-1`} enableTorch={torchOn} />
 
-      {/* Visual Guide Overlay */}
       <View
         pointerEvents="none"
         style={tw`absolute inset-0 items-center justify-center`}

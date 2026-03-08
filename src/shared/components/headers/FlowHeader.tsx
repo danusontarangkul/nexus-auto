@@ -1,8 +1,7 @@
-import React from 'react';
-import { BackHeader } from './BackHeader';
-import { Stepper } from './Stepper';
+import { BackHeader } from '@/navigation/components/BackHeader';
 import { View } from 'react-native';
-import tw from '../../styles/tw';
+import tw from '@/styles/tw';
+import { Stepper } from '../misc/Stepper';
 
 type Props = { title: string; total: number; current: number };
 

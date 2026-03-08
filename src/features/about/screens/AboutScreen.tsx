@@ -1,16 +1,16 @@
-import React, { useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Screen } from '@/shared/components/Screen';
 import { BackHeader } from '@/navigation/components/BackHeader';
+import { Screen } from '@/shared/components/screens/Screen';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { StaticField } from '@/shared/components/texts/StaticField';
 import tw from '@/styles/tw';
-import { ButtonContainer } from '@/shared/components/ButtonContainer';
-import { PrimaryButton } from '@/shared/components/PrimaryButton';
+import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
+import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
 import { useDeleteVehicle } from '@/domain/vehicles';
-import { ActionGroup } from '@/shared/components/ActionGroup';
+import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 import { AppTabsParamList, TABS } from '@/navigation/routes';
 
 export function AboutScreen() {

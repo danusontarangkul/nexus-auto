@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-export function useFormChanges<T extends Record<string, any>>(
+export function useFormChanges<T extends Record<string, unknown>>(
   initial: T | undefined | null,
   current: T,
   extraConditions: boolean[] = [],

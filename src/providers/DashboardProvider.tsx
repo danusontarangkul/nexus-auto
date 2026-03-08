@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { useDashboard } from '@/domain/dashboard';
 import { Dashboard } from '@convex/types';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';

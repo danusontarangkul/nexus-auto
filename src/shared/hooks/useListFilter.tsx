@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useLayoutEffect } from 'react';
+import { useState, useMemo, useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { FilterLogicMap, useFilter } from './useFilter'; // your existing hook
+import { FilterLogicMap, useFilter } from './useFilter';
 import { BackHeader } from '@/navigation/components/BackHeader';
 import tw from '@/styles/tw';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ import { SearchHeader } from '../components/headers/SearchHeader';
 interface UseListFilterOptions<T> {
   data: T[] | undefined;
   filterLogic: FilterLogicMap<T>;
-  searchFields: (item: T) => string[]; // Fields to check for search matches
+  searchFields: (item: T) => string[];
   headerTitle: string;
   onAddPress: () => void;
 }
@@ -27,12 +27,12 @@ export function useListFilter<T>({
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
-  // 1. Apply category filtering (Reuse your existing hook)
   const categoryFiltered = useFilter(data, filter, filterLogic);
 
-  // 2. Apply text search filtering
   const finalData = useMemo(() => {
-    if (!searchQuery) return categoryFiltered;
+    if (!searchQuery) {
+      return categoryFiltered;
+    }
     const query = searchQuery.toLowerCase();
 
     return categoryFiltered.filter((item) => {
@@ -42,7 +42,6 @@ export function useListFilter<T>({
     });
   }, [categoryFiltered, searchQuery, searchFields]);
 
-  // 3. Handle Header Injection
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () =>

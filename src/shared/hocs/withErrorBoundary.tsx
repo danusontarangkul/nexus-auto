@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import { ComponentType } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from '../screens/ErrorFallBack';
 

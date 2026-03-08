@@ -10,7 +10,9 @@ export function useFilter<T>(
   logic: FilterLogicMap<T>,
 ) {
   return useMemo(() => {
-    if (!data) return [];
+    if (!data) {
+      return [];
+    }
 
     if (currentFilter === 'all') {
       return data;

@@ -85,66 +85,6 @@ export const getReceiptByServiceRecordIdInternal = internalQuery({
   },
 });
 
-// export const insertReceipt = action({
-//   args: {
-//     vehicleId: v.id('vehicles'),
-//     file: v.any(),
-//     fileName: v.string(),
-//     type: ReceiptType,
-//   },
-//   handler: async (ctx, args): Promise<InsertReceiptResponse> => {
-//     const { vehicleId, file, fileName, type } = args;
-//     const user = await getCurrentActionUser(ctx);
-//     await enforceReceiptUploadRateLimit(ctx, user._id);
-//     const vehicle = validateVehicle(
-//       await ctx.runQuery(internal.vehicles.getVehicleByIdInternal, {
-//         vehicleId,
-//       }),
-//     );
-//     isIdentityOwnerOfVehicle(user._id, vehicle._id);
-
-//     const { fileId, url } = await uploadFile(ctx, file);
-
-//     const receiptId = await ctx.runMutation(
-//       internal.receipts.insertReceiptInternal,
-//       {
-//         fileId,
-//         url,
-//         fileName,
-//         status: 'ready',
-//         type,
-//         userId: user._id,
-//       },
-//     );
-
-//     await ctx.scheduler.runAfter(0, internal.openAi.scanReceipt, {
-//       receiptId,
-//     });
-
-//     return { receiptId, url, status: 'ready' };
-//   },
-// });
-
-// export const insertReceiptInternal = internalMutation({
-//   args: {
-//     fileId: v.id('_storage'),
-//     url: v.string(),
-//     fileName: v.string(),
-//     type: ReceiptType,
-//     userId: v.id('users'),
-//   },
-//   handler: async (ctx, args) => {
-//     const { fileId, url, fileName, status, type, userId } = args;
-//     return await ctx.db.insert('receipts', {
-//       fileId,
-//       updatedAt: Date.now(),
-//       status,
-//       type,
-//       userId,
-//     });
-//   },
-// });
-
 export const countUserUploadsSince = internalQuery({
   args: {
     userId: v.id('users'),

@@ -1,7 +1,7 @@
 import tw from '@/styles/tw';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { CustomText } from '../CustomText';
+import { CustomText } from '../texts/CustomText';
 import { getDisplayDate } from '@/utils/format';
 import { DatePickerModal } from './DatePickerModal';
 

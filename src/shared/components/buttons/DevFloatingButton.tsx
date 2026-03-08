@@ -1,9 +1,10 @@
-import React from 'react';
 import { Pressable, Text } from 'react-native';
 import { navRef } from '@/navigation/NavRef';
 
 export function DevFloatingButton() {
-  if (!__DEV__) return null;
+  if (!__DEV__) {
+    return null;
+  }
 
   const handlePress = () => {
     if (navRef.isReady()) {

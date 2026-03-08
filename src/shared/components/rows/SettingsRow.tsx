@@ -1,7 +1,6 @@
-import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { CustomText } from '@/shared/components/CustomText';
+import { CustomText } from '../texts/CustomText';
 import tw from '@/styles/tw';
 
 export interface SettingsRowProps {
