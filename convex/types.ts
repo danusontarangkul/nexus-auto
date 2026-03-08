@@ -251,6 +251,7 @@ export interface Dashboard {
     insurance: Doc<'insurance'> | null;
     maintenanceItems: Doc<'maintenanceItems'>[];
   } | null;
+  user: Doc<'users'>;
 }
 
 export interface CategoryOption {

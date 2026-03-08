@@ -1,4 +1,3 @@
-// src/navigation/stacks/AuthStack.tsx
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AUTH, AuthStackParamList } from '../routes';
 import { stackDark } from '../options';

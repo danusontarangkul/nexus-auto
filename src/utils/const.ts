@@ -25,3 +25,5 @@ export const SERVICES_BY_CATEGORY: Record<
   ],
   // Add other categories as needed...
 };
+
+export const SUPPORT_EMAIL = 'davidanuson@gmail.com';

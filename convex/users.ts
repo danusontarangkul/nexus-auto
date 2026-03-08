@@ -102,3 +102,26 @@ export const updateLastSelectedVehicle = mutation({
     return true;
   },
 });
+
+export const deleteUser = mutation({
+  args: {},
+  handler: async (ctx): Promise<boolean> => {
+    const user = await getCurrentUser(ctx);
+    const now = Date.now();
+
+    const vehicles = await ctx.db
+      .query('vehicles')
+      .withIndex('by_user', (q) => q.eq('userId', user._id))
+      .collect();
+
+    for (const vehicle of vehicles) {
+      await ctx.db.patch(vehicle._id, { isActive: false, updatedAt: now });
+    }
+
+    await ctx.db.patch(user._id, {
+      isActive: false,
+      updatedAt: now,
+    });
+    return true;
+  },
+});

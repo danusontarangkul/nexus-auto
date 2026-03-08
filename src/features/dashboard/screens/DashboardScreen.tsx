@@ -13,6 +13,7 @@ import { useUpdateLastSelectedVehicle } from '@/domain/users';
 import { SectionHeader } from '@/shared/components/SectionHeader';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DASHBOARD, DashboardStackParamList } from '@/navigation/routes';
+import { Avatar } from '@/shared/components/Avatar';
 
 export default function DashboardScreen() {
   const nav =
@@ -46,19 +47,29 @@ export default function DashboardScreen() {
     });
   };
 
+  const handleProfilePress = () => {
+    nav.navigate(DASHBOARD.Account);
+  };
+
   return (
     <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={tw`pb-8`}
       >
-        <View style={tw`flex-row items-center justify-between mb-4 mt-4`}>
+        <View style={tw`flex-row items-center justify-between mb-4 mt-4 px-4`}>
           <CarSwitcher
             cars={dashboard.vehicles}
             selectedId={vehicle._id}
             onSelect={handleSelect}
             onAddCar={handleAddCar}
             isLoading={isLoading}
+          />
+
+          <Avatar
+            name={dashboard.user.name}
+            onPress={handleProfilePress}
+            size={40}
           />
         </View>
 

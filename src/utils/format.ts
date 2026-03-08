@@ -76,3 +76,22 @@ export const formatNumberForDisplay = (
 
   return value.toLocaleString();
 };
+
+export const getInitials = (fullName: string | null | undefined) => {
+  if (!fullName) {
+    return '?';
+  }
+  const names = fullName.trim().split(' ');
+  if (names.length === 1) {
+    return names[0].charAt(0).toUpperCase();
+  }
+  return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+};
+
+export const formatUserSecondaryText = (email?: string | null): string => {
+  return email || 'No contact info';
+};
+
+export const formatUserName = (name?: string | null): string => {
+  return name ?? 'Guest User';
+};
