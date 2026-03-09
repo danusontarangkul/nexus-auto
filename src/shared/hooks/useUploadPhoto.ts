@@ -10,9 +10,6 @@ export function useUploadPhoto() {
 
   const generateUploadUrl = useMutation(api.image.generateUploadUrl);
 
-  /**
-   * Internal helper for a single upload
-   */
   const performSingleUpload = async (
     uri: string,
   ): Promise<Id<'_storage'> | null> => {
@@ -44,9 +41,6 @@ export function useUploadPhoto() {
     }
   };
 
-  /**
-   * The Public Batch Helper
-   */
   const uploadImages = async (uris: string[]): Promise<Id<'_storage'>[]> => {
     if (uris.length === 0) {
       return [];

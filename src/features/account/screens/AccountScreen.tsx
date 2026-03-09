@@ -17,8 +17,10 @@ export function AccountScreen() {
   const { signOut } = useAuthActions();
   const { showConfirm } = useConfirmModal();
   const { deleteUser, isLoading } = useDeleteUser();
-  const handleEmailSupport = () => {
-    Linking.openURL(`mailto:${SUPPORT_EMAIL}`);
+  const handleEmailSupport = async () => {
+    const url = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('Support Request')}`;
+
+    await Linking.openURL(url);
   };
   const handleSignOut = async () => {
     await signOut();

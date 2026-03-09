@@ -1,5 +1,6 @@
 import { Pressable, Text } from 'react-native';
 import { navRef } from '@/navigation/NavRef';
+import { ROOT } from '@/navigation/routes';
 
 export function DevFloatingButton() {
   if (!__DEV__) {
@@ -8,7 +9,7 @@ export function DevFloatingButton() {
 
   const handlePress = () => {
     if (navRef.isReady()) {
-      navRef.navigate('__DEV__' as never);
+      navRef.navigate(ROOT.Dev);
     }
   };
 

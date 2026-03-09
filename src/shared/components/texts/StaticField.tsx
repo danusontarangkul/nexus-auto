@@ -10,7 +10,7 @@ interface StaticFieldProps {
 export function StaticField({ label, value }: StaticFieldProps) {
   return (
     <View style={tw`mb-4`}>
-      <CustomText variant="detail" style={tw`text-ink-700 mb-1`}>
+      <CustomText variant="label" style={tw`text-ink-700 mb-1`}>
         {label}
       </CustomText>
       <View style={tw` `}>

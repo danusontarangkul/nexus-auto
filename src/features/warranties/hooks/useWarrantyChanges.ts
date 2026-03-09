@@ -8,10 +8,10 @@ interface WarrantyData {
 
 interface CurrentState {
   expiryDate: Date | null;
-  removedReceiptIds: Id<'receipts'>[];
+  removedReceiptIdsCount?: number;
   manufacturer: string;
   titleOfManufacturer: string;
-  pendingUris: string[];
+  pendingImageCount?: number;
 }
 
 export function useWarrantyChanges(
@@ -22,37 +22,39 @@ export function useWarrantyChanges(
     if (!initial) {
       return (
         current.expiryDate !== null ||
-        current.manufacturer !== '' ||
-        current.titleOfManufacturer !== '' ||
-        current.pendingUris.length > 0
+        current.manufacturer.trim() !== '' ||
+        current.titleOfManufacturer.trim() !== '' ||
+        (current.pendingImageCount ?? 0) > 0
       );
     }
 
-    const manufacturerChanged =
-      initial.warranty.manufacturer !== current.manufacturer;
-    const titleChanged =
-      initial.warranty.titleOfManufacturer !== current.titleOfManufacturer;
+    const war = initial.warranty;
 
-    const originalTime = initial.warranty.expiresAt;
-    const currentTime = current.expiryDate?.getTime() ?? null;
+    const manufacturerChanged =
+      (war.manufacturer || '').trim() !== (current.manufacturer || '').trim();
+
+    const titleChanged =
+      (war.titleOfManufacturer || '').trim() !==
+      (current.titleOfManufacturer || '').trim();
+
+    const originalTime = war.expiresAt || 0;
+    const currentTime = current.expiryDate?.getTime() || 0;
     const dateChanged = originalTime !== currentTime;
 
-    const documentsRemoved = current.removedReceiptIds.length > 0;
-    const newPhotosAdded = current.pendingUris.length > 0;
+    // FIX: Only trigger if there is a REAL addition or a REAL removal
+    const receiptsChanged =
+      (current.removedReceiptIdsCount ?? 0) > 0 ||
+      (current.pendingImageCount ?? 0) > 0;
 
     return (
-      manufacturerChanged ||
-      titleChanged ||
-      dateChanged ||
-      documentsRemoved ||
-      newPhotosAdded
+      manufacturerChanged || titleChanged || dateChanged || receiptsChanged
     );
   }, [
     initial,
     current.expiryDate,
-    current.removedReceiptIds,
     current.manufacturer,
     current.titleOfManufacturer,
-    current.pendingUris,
+    current.removedReceiptIdsCount,
+    current.pendingImageCount,
   ]);
 }

@@ -35,7 +35,7 @@ export function DocumentGallery({
 
   return (
     <View style={tw`mt-6`}>
-      <CustomText variant="label" color={tw.color('ink-500')} style={tw`mb-4`}>
+      <CustomText variant="label" style={tw`mb-2`}>
         {label}
       </CustomText>
 
@@ -69,11 +69,9 @@ export function DocumentGallery({
           )}
         </View>
       ) : (
-        <EmptyState
-          title="No documents attached"
-          description="Edit to add photos of receipts or registrations."
-          style={tw`py-8 bg-surface-900 rounded-xl border border-surface-border border-dashed`}
-        />
+        <CustomText variant="body" style={tw.style('text-ink-400 italic')}>
+          No documents attached
+        </CustomText>
       )}
     </View>
   );

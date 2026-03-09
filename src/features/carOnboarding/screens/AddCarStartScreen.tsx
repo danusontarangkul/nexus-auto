@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Screen } from '@/shared/components/screens/Screen';
 import { Input } from '@/shared/components/inputs/Input';
 import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { CustomText } from '@/shared/components/texts/CustomText';
 import tw from '@/styles/tw';
 import { useAppState } from '@/state/AppState';
-import { ONBOARD } from '@/navigation/routes';
+import { ONBOARD, OnboardingStackParamList } from '@/navigation/routes';
 import {
   getVinHelperMessage,
   validateVinOnSubmit,
@@ -24,7 +25,8 @@ import { sanitizeCapitalizeString } from '@convex/utils/sanatize';
 import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 
 export function AddCarStartScreen() {
-  const nav = useNavigation();
+  const nav =
+    useNavigation<NativeStackNavigationProp<OnboardingStackParamList>>();
   const [plate, setPlate] = useState<string>('');
   const [vin, setVin] = useState<string>('');
   const [vinMessage, setVinMessage] = useState<string>('');

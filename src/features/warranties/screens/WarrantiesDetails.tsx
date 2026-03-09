@@ -1,28 +1,31 @@
 import { useEffect, useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Id } from '@convex/_generated/dataModel';
+
 import { Screen } from '@/shared/components/screens/Screen';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
-import {
-  useUpdateWarranty,
-  useWarranty,
-  useDeleteWarranty,
-} from '@/domain/warranties';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
-import { useWarrantyDetailsParams } from '../hooks/useWarrantyDetailsParams';
-import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
 import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
-import { toDateOrNull } from '@/utils/date';
 import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
-import { Id } from '@convex/_generated/dataModel';
-import { useWarrantyChanges } from '../hooks/useWarrantyChanges';
-import { isEmptyDate, isEmptyString } from '@/utils/format';
-import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { ActionMenu } from '@/shared/components/sheets/ActionMenu';
+
+import {
+  useDeleteWarranty,
+  useUpdateWarranty,
+  useWarranty,
+} from '@/domain/warranties';
+import { useWarrantyDetailsParams } from '../hooks/useWarrantyDetailsParams';
+import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
+import { useWarrantyChanges } from '../hooks/useWarrantyChanges';
+import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
+
+import { toDateOrNull } from '@/utils/date';
+import { isEmptyDate, isEmptyString } from '@/utils/format';
 import tw from '@/styles/tw';
 import { WARRANTIES, WarrantiesStackParamList } from '@/navigation/routes';
 
@@ -35,8 +38,8 @@ export function WarrantiesDetailsScreen() {
   const [removedReceiptIds, setRemovedReceiptIds] = useState<Id<'receipts'>[]>(
     [],
   );
-  const [manufacturer, setManufacturer] = useState<string>('');
-  const [titleOfManufacturer, setTitleOfManufacturer] = useState<string>('');
+  const [manufacturer, setManufacturer] = useState('');
+  const [titleOfManufacturer, setTitleOfManufacturer] = useState('');
 
   const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
   const { showConfirm } = useConfirmModal();
@@ -53,23 +56,26 @@ export function WarrantiesDetailsScreen() {
       !!warranty,
     );
 
+  // Sync state with data - runs on load and when editing is cancelled
   useEffect(() => {
-    if (warranty) {
+    if (warranty && !isEditing) {
       setExpiryDate(toDateOrNull(warranty.warranty.expiresAt));
       setManufacturer(warranty.warranty.manufacturer || '');
       setTitleOfManufacturer(warranty.warranty.titleOfManufacturer || '');
+      setRemovedReceiptIds([]);
     }
-  }, [warranty]);
+  }, [warranty, isEditing]);
 
   const hasChanges = useWarrantyChanges(warranty, {
     expiryDate,
-    removedReceiptIds,
     manufacturer,
     titleOfManufacturer,
-    pendingUris: imageUris,
+    removedReceiptIdsCount: removedReceiptIds.length,
+    pendingImageCount: imageUris.filter((uri) => !!uri && uri.trim() !== '')
+      .length,
   });
 
-  const handleSave = async () => {
+  async function handleSave() {
     const success = await updateWarranty({
       warrantyId,
       updates: {
@@ -80,19 +86,21 @@ export function WarrantiesDetailsScreen() {
         receiptIdsToRemove: removedReceiptIds,
       },
     });
+
     if (success) {
       setIsEditing(false);
+      setRemovedReceiptIds([]);
     }
-  };
+  }
 
-  const onConfirmDelete = async () => {
+  async function onConfirmDelete() {
     const success = await deleteWarranty(warrantyId);
     if (success) {
       navigation.navigate(WARRANTIES.WarrantiesList);
     }
-  };
+  }
 
-  const handleDeletePress = () => {
+  function handleDeletePress() {
     setMenuVisible(false);
     showConfirm({
       title: 'Delete Warranty',
@@ -101,7 +109,7 @@ export function WarrantiesDetailsScreen() {
       confirmText: 'Delete',
       onConfirm: onConfirmDelete,
     });
-  };
+  }
 
   const isValid =
     !isEmptyString(manufacturer) &&
@@ -123,7 +131,11 @@ export function WarrantiesDetailsScreen() {
       <DocumentGallery
         existingReceipts={warranty.receipts}
         removedReceiptIds={removedReceiptIds}
-        onRemoveExisting={(id) => setRemovedReceiptIds((prev) => [...prev, id])}
+        onRemoveExisting={(id) =>
+          setRemovedReceiptIds((prev) =>
+            prev.includes(id) ? prev : [...prev, id],
+          )
+        }
         pendingUris={imageUris}
         isEditing={isEditing}
         onRemovePending={removeImage}
@@ -135,6 +147,7 @@ export function WarrantiesDetailsScreen() {
         value={manufacturer}
         isEditing={isEditing}
         onChangeText={setManufacturer}
+        onClear={() => setManufacturer('')}
       />
 
       <ControlledInput
@@ -142,6 +155,7 @@ export function WarrantiesDetailsScreen() {
         value={titleOfManufacturer}
         isEditing={isEditing}
         onChangeText={setTitleOfManufacturer}
+        onClear={() => setTitleOfManufacturer('')}
       />
 
       <ControlledDatePicker
