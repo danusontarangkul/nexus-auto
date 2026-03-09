@@ -238,6 +238,45 @@ export const getServiceRecordById = query({
   },
 });
 
+export const deleteServiceRecord = mutation({
+  args: {
+    serviceRecordId: v.id('serviceRecords'),
+  },
+  handler: async (ctx, { serviceRecordId }): Promise<boolean> => {
+    const user = await getCurrentUser(ctx);
+    const now = Date.now();
+
+    const serviceRecord = validateServiceRecord(
+      await ctx.db.get(serviceRecordId),
+    );
+    const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
+    isUserOwnerOfVehicle(user._id, vehicle);
+
+    await ctx.db.patch(serviceRecordId, {
+      isActive: false,
+      updatedAt: now,
+    });
+
+    const receipts = await ctx.db
+      .query('receipts')
+      .withIndex('by_serviceRecord', (q) =>
+        q.eq('serviceRecordId', serviceRecordId),
+      )
+      .filter((q) => q.eq(q.field('isActive'), true))
+      .collect();
+
+    await Promise.all(
+      receipts.map((receipt) =>
+        ctx.db.patch(receipt._id, {
+          isActive: false,
+          updatedAt: now,
+        }),
+      ),
+    );
+    return true;
+  },
+});
+
 export const updateServiceRecordInternal = internalMutation({
   args: {
     serviceRecordId: v.id('serviceRecords'),

@@ -154,3 +154,38 @@ export const updateWarranty = mutation({
     return true;
   },
 });
+
+export const deleteWarranty = mutation({
+  args: {
+    warrantyId: v.id('warranties'),
+  },
+  handler: async (ctx, { warrantyId }): Promise<boolean> => {
+    const user = await getCurrentUser(ctx);
+    const now = Date.now();
+
+    const warranty = validateWarranty(await ctx.db.get(warrantyId));
+    const vehicle = validateVehicle(await ctx.db.get(warranty.vehicleId));
+    isUserOwnerOfVehicle(user._id, vehicle);
+
+    await ctx.db.patch(warrantyId, {
+      isActive: false,
+      updatedAt: now,
+    });
+
+    const receipts = await ctx.db
+      .query('receipts')
+      .withIndex('by_warranty', (q) => q.eq('warrantyId', warrantyId))
+      .filter((q) => q.eq(q.field('isActive'), true))
+      .collect();
+
+    await Promise.all(
+      receipts.map((receipt) =>
+        ctx.db.patch(receipt._id, {
+          isActive: false,
+          updatedAt: now,
+        }),
+      ),
+    );
+    return true;
+  },
+});
