@@ -9,6 +9,7 @@ interface ActionHeaderProps {
   hasData: boolean;
   onActionPress: () => void;
   skipTopInset?: boolean;
+  showEllipsis?: boolean;
 }
 
 export function ActionHeader({
@@ -17,11 +18,17 @@ export function ActionHeader({
   hasData,
   onActionPress,
   skipTopInset = true,
+  showEllipsis = false,
 }: ActionHeaderProps) {
   const getIconName = () => {
     if (isEditing) {
       return 'close-outline';
     }
+
+    if (showEllipsis) {
+      return 'ellipsis-horizontal';
+    }
+
     if (hasData) {
       return 'create-outline';
     }
@@ -33,10 +40,14 @@ export function ActionHeader({
       title={title}
       skipTopInset={skipTopInset}
       rightElement={
-        <TouchableOpacity onPress={onActionPress}>
+        <TouchableOpacity
+          onPress={onActionPress}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          style={tw`p-1`}
+        >
           <Ionicons
             name={getIconName()}
-            size={24}
+            size={showEllipsis && !isEditing ? 28 : 24} // Make ellipsis slightly larger for better tap target
             color={tw.color('ink-900')}
           />
         </TouchableOpacity>

@@ -24,6 +24,7 @@ const tw = create({
         'ink-300': palette.ink[300],
         'ink-200': palette.ink[200],
         'ink-50': palette.ink[50],
+        'ink-100': palette.ink[100],
 
         'error-500': palette.error[500],
       },

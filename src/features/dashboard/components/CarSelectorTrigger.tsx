@@ -20,14 +20,14 @@ export function CarSelectorTrigger({
     <Pressable
       onPress={onPress}
       disabled={isLoading}
-      style={tw`flex-row items-center gap-2 py-1`}
+      style={tw`flex-row items-center gap-1 py-1`}
       accessibilityLabel="Choose a car"
       accessibilityRole="button"
     >
-      <Ionicons name="car-outline" size={32} color="white" />
+      <Ionicons name="car-outline" size={28} color="white" />
 
-      <View style={tw`flex-row items-center gap-2`}>
-        <CustomText variant="titleXL" color={tw.color('ink-50') as string}>
+      <View style={tw`flex-row items-center gap-1`}>
+        <CustomText variant="titleXL" color={tw.color('ink-50')}>
           {currentCar
             ? `${currentCar.year} ${currentCar.make} ${currentCar.model}`
             : 'Select car'}

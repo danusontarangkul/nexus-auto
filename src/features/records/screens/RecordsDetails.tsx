@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Id } from '@convex/_generated/dataModel';
 import { Screen } from '@/shared/components/screens/Screen';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
@@ -13,7 +14,11 @@ import { useServiceRecordChanges } from '../hooks/useRecordChanges';
 import {
   useServiceRecord,
   useUpdateServiceRecord,
+  useDeleteServiceRecord,
 } from '@/domain/serviceRecords';
+import { ActionMenu } from '@/shared/components/sheets/ActionMenu';
+import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
+import { RECORDS, RecordsStackParamList } from '@/navigation/routes';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
 import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
 import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
@@ -26,6 +31,7 @@ import { toDateOrNull } from '@/utils/date';
 import { isEmptyString } from '@/utils/format';
 
 export function RecordsDetailsScreen() {
+  const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
   const { recordId } = useRecordsRouteParams();
   const serviceRecord = useServiceRecord(recordId);
   const [serviceDate, setServiceDate] = useState<Date | null>(null);
@@ -41,13 +47,20 @@ export function RecordsDetailsScreen() {
   const [storageIds, setStorageIds] = useState<Id<'_storage'>[]>([]);
   const [pendingUris, setPendingUris] = useState<string[]>([]);
   const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
+  const { showConfirm } = useConfirmModal();
+  const { deleteServiceRecord, isLoading: isDeleting } =
+    useDeleteServiceRecord();
+  const {
+    updateServiceRecord,
+    isLoading: isUpdating,
+    error: updateError,
+  } = useUpdateServiceRecord();
 
-  const { updateServiceRecord, isLoading, error } = useUpdateServiceRecord();
-
-  const { isEditing, setIsEditing } = useEditableHeader(
-    serviceRecord?.serviceRecord.performed[0].name || '',
-    !!serviceRecord,
-  );
+  const { isEditing, setIsEditing, menuVisible, setMenuVisible } =
+    useEditableHeader(
+      serviceRecord?.serviceRecord.performed[0].name || '',
+      !!serviceRecord,
+    );
 
   useEffect(() => {
     setServiceDate(toDateOrNull(serviceRecord?.serviceRecord.serviceDate));
@@ -103,7 +116,25 @@ export function RecordsDetailsScreen() {
     }
   };
 
-  if (!serviceRecord) {
+  const onConfirmDelete = async () => {
+    const success = await deleteServiceRecord(recordId);
+    if (success) {
+      navigation.navigate(RECORDS.RecordsList);
+    }
+  };
+
+  const handleDeletePress = () => {
+    setMenuVisible(false);
+    showConfirm({
+      title: 'Delete Record',
+      message:
+        'Are you sure you want to remove this service record? This action cannot be undone.',
+      confirmText: 'Delete',
+      onConfirm: onConfirmDelete,
+    });
+  };
+
+  if (!serviceRecord || isDeleting) {
     return <FullScreenLoading />;
   }
 
@@ -174,17 +205,25 @@ export function RecordsDetailsScreen() {
 
         {isEditing && (
           <ButtonContainer>
-            <ActionGroup error={error}>
+            <ActionGroup error={updateError}>
               <PrimaryButton
                 title="Save"
                 onPress={handleSave}
-                isLoading={isLoading}
+                isLoading={isUpdating}
                 disabled={!hasChanges || !isValid}
               />
             </ActionGroup>
           </ButtonContainer>
         )}
       </ScrollContainer>
+
+      <ActionMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        onEdit={() => setIsEditing(true)}
+        onDelete={handleDeletePress}
+        label="Record"
+      />
     </Screen>
   );
 }

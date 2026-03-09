@@ -5,6 +5,7 @@ import { ActionHeader } from '@/navigation/components/ActionHeader';
 export function useEditableHeader(title: string, hasData: boolean) {
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -13,11 +14,23 @@ export function useEditableHeader(title: string, hasData: boolean) {
           title={title}
           isEditing={isEditing}
           hasData={hasData}
-          onActionPress={() => setIsEditing((prev) => !prev)}
+          onActionPress={() => {
+            if (isEditing) {
+              setIsEditing(false);
+            } else {
+              setMenuVisible(true);
+            }
+          }}
+          showEllipsis={true}
         />
       ),
     });
   }, [navigation, title, hasData, isEditing]);
 
-  return { isEditing, setIsEditing };
+  return {
+    isEditing,
+    setIsEditing,
+    menuVisible,
+    setMenuVisible,
+  };
 }

@@ -18,6 +18,7 @@ export const palette = {
     400: '#9CA3AF', // disabled text
     300: '#6B7280', // secondary text
     200: '#D1D5DB', // secondary text
+    100: '#F1F5F9', // lightest text
     50: '#F8FAFC', // lightest text
   },
   error: {
