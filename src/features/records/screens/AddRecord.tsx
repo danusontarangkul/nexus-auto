@@ -17,7 +17,6 @@ import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { useUploadPhoto } from '@/shared/hooks/useUploadPhoto';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { useCreateServiceRecord } from '@/domain/serviceRecords';
-import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
 import { CategoryPicker } from '@/shared/components/inputs/CategoryPicker';
 import { ScrollView } from 'react-native';
 import { NumberInput } from '@/shared/components/inputs/NumberInput';
@@ -90,11 +89,11 @@ export function AddRecordScreen() {
             onDateChange={setServiceDate}
             isEditing={true}
           />
-          <ControlledInput
+          <Input
             label="Service Center"
             value={serviceCenter}
             onChangeText={setServiceCenter}
-            isEditing={true}
+            onClear={() => setServiceCenter('')}
           />
           <CategoryPicker
             label="Category"
@@ -109,8 +108,18 @@ export function AddRecordScreen() {
             selectedValue={services}
             onSelect={setServices}
           />
-          <Input label="Name" value={name} onChangeText={setName} />
-          <Input label="Notes" value={notes} onChangeText={setNotes} />
+          <Input
+            label="Name"
+            value={name}
+            onChangeText={setName}
+            onClear={() => setName('')}
+          />
+          <Input
+            label="Notes"
+            value={notes}
+            onChangeText={setNotes}
+            onClear={() => setNotes('')}
+          />
           <NumberInput
             label="Cost"
             value={cost}

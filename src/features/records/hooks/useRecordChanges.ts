@@ -9,6 +9,8 @@ interface CurrentState {
   name: string;
   notes: string;
   cost: number;
+  removedReceiptIdsCount?: number;
+  pendingImageCount?: number;
 }
 
 export function useServiceRecordChanges(
@@ -24,25 +26,32 @@ export function useServiceRecordChanges(
         current.services !== '' ||
         current.name !== '' ||
         current.notes !== '' ||
-        current.cost !== 0
+        current.cost !== 0 ||
+        (current.pendingImageCount ?? 0) > 0
       );
     }
 
     const rec = initial.serviceRecord;
-    const performed = rec.performed[0];
+    const performed = rec.performed[0] || {};
 
-    const originalTime = rec.serviceDate;
-    const currentTime = current.serviceDate?.getTime() ?? null;
+    const originalTime = rec.serviceDate || 0;
+    const currentTime = current.serviceDate?.getTime() || 0;
     const serviceDateChanged = originalTime !== currentTime;
 
     const serviceCenterChanged =
-      (rec.serviceCenter ?? '') !== current.serviceCenter;
-    const categoryChanged = (performed?.category ?? '') !== current.category;
+      (rec.serviceCenter || '') !== (current.serviceCenter || '');
+    const categoryChanged =
+      (performed.category || '') !== (current.category || '');
     const servicesChanged =
-      (performed?.templateItemId ?? '') !== current.services;
-    const nameChanged = (performed?.name ?? '') !== current.name;
-    const notesChanged = (performed?.notes ?? '') !== current.notes;
-    const costChanged = (performed?.cost ?? 0) !== current.cost;
+      (performed.templateItemId || '') !== (current.services || '');
+    const nameChanged = (performed.name || '') !== (current.name || '');
+    const notesChanged = (performed.notes || '') !== (current.notes || '');
+
+    const costChanged = (performed.cost || 0) !== (current.cost || 0);
+
+    const receiptsChanged =
+      (current.removedReceiptIdsCount ?? 0) > 0 ||
+      (current.pendingImageCount ?? 0) > 0;
 
     return (
       serviceDateChanged ||
@@ -51,7 +60,8 @@ export function useServiceRecordChanges(
       servicesChanged ||
       nameChanged ||
       notesChanged ||
-      costChanged
+      costChanged ||
+      receiptsChanged
     );
   }, [
     initial,
@@ -62,5 +72,7 @@ export function useServiceRecordChanges(
     current.name,
     current.notes,
     current.cost,
+    current.removedReceiptIdsCount,
+    current.pendingImageCount,
   ]);
 }

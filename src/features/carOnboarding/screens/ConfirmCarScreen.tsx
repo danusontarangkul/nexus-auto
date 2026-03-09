@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { VehiclePreviewCard } from '../components/car/VehiclePreviewCard';
 import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { useAppState } from '@/state/AppState';
@@ -8,11 +9,11 @@ import { ScreenHeader } from '@/shared/components/headers/ScreenHeader';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { useCreateVehicle } from '@/domain/vehicles';
 import { ActionGroup } from '@/shared/components/containers/ActionGroup';
-import { ROOT } from '@/navigation/routes';
+import { ROOT, RootStackParamList } from '@/navigation/routes';
 
 export function ConfirmCarScreen() {
   const { completeAddCar } = useAppState();
-  const nav = useNavigation();
+  const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const { car, plate, hasData, vinNumber } = useVehicleParams();
 

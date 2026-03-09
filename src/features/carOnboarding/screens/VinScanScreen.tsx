@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Alert,
@@ -147,7 +141,7 @@ export default function VinScanScreen() {
         <View style={tw`flex-1 items-center justify-center p-6`}>
           <CustomText
             variant="title"
-            color={tw.color('ink-50') as string}
+            color={tw.color('ink-50')}
             style={tw`mb-3`}
           >
             Camera permission required
@@ -187,7 +181,7 @@ export default function VinScanScreen() {
             style={tw`w-4/5 h-1/5 rounded-2xl border-2 border-cyan-400 bg-black/10`}
           />
           <CustomText
-            color={tw.color('ink-50') as string}
+            color={tw.color('ink-50')}
             style={tw`absolute bottom-28 font-semibold`}
           >
             {busy ? 'Processing…' : mode === 'ocr' ? 'Photo OCR' : 'Aim at VIN'}
@@ -247,15 +241,12 @@ export default function VinScanScreen() {
               style={tw`w-20 h-14 rounded-lg`}
             />
             <View style={tw`flex-1`}>
-              <CustomText
-                color={tw.color('ink-700') as string}
-                style={tw`text-2xs`}
-              >
+              <CustomText color={tw.color('ink-700')} style={tw`text-2xs`}>
                 Last photo
               </CustomText>
               {vin && (
                 <CustomText
-                  color={tw.color('ink-50') as string}
+                  color={tw.color('ink-50')}
                   style={tw`font-semibold`}
                 >
                   VIN: {vin}
@@ -271,29 +262,23 @@ export default function VinScanScreen() {
             style={tw`absolute top-10 left-4 right-4 bg-ink-900/80 rounded-2xl p-3`}
           >
             <CustomText
-              color={tw.color('ink-300') as string}
+              color={tw.color('ink-300')}
               style={tw`font-semibold mb-1`}
             >
               VIN Detected
             </CustomText>
-            <CustomText
-              color={tw.color('yellow-200') as string}
-              style={tw`font-bold`}
-            >
+            <CustomText color={tw.color('yellow-200')} style={tw`font-bold`}>
               {vin}
             </CustomText>
             {decoded && (
               <View style={tw`mt-2`}>
                 <CustomText
-                  color={tw.color('ink-500') as string}
+                  color={tw.color('ink-500')}
                   style={tw`text-2xs mb-1`}
                 >
                   Decoded (vPIC)
                 </CustomText>
-                <CustomText
-                  color={tw.color('ink-50') as string}
-                  style={tw`text-2xs`}
-                >
+                <CustomText color={tw.color('ink-50')} style={tw`text-2xs`}>
                   {JSON.stringify(decoded, null, 2)}
                 </CustomText>
               </View>

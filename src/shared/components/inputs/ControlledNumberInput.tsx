@@ -3,7 +3,7 @@ import tw from '@/styles/tw';
 import { StaticField } from '../texts/StaticField';
 import { NumberInput } from './NumberInput';
 import { TextInputProps } from 'react-native';
-import { formatNumberForDisplay } from '@/utils/format';
+import { formatCurrency, formatNumberForDisplay } from '@/utils/format';
 
 type Props = Omit<TextInputProps, 'onChangeText' | 'value'> & {
   label: string;
@@ -12,6 +12,7 @@ type Props = Omit<TextInputProps, 'onChangeText' | 'value'> & {
   onChangeNumber: (value: number) => void;
   errorText?: string | null;
   onClear?: () => void;
+  isCurrency?: boolean;
 };
 
 export function ControlledNumberInput({
@@ -21,10 +22,13 @@ export function ControlledNumberInput({
   onChangeNumber,
   errorText,
   onClear,
+  isCurrency,
   ...props
 }: Props) {
   if (!isEditing) {
-    const displayValue = formatNumberForDisplay(value);
+    const displayValue = isCurrency
+      ? formatCurrency(value)
+      : formatNumberForDisplay(value);
     return <StaticField label={label} value={displayValue} />;
   }
 

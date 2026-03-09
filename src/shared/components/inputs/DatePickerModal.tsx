@@ -49,9 +49,7 @@ export function DatePickerModal({
             style={tw`flex-row items-center justify-between p-4 border-b border-surface-border`}
           >
             <TouchableOpacity onPress={onClose} style={tw`flex-1`}>
-              <CustomText color={tw.color('ink-500') as string}>
-                Cancel
-              </CustomText>
+              <CustomText color={tw.color('ink-500')}>Cancel</CustomText>
             </TouchableOpacity>
 
             {label && (

@@ -2,6 +2,7 @@ import { View, Image, ImageSourcePropType } from 'react-native';
 import { CustomText } from '@/shared/components/texts/CustomText';
 import { VehicleData } from '@convex/types';
 import tw from '@/styles/tw';
+import { formatBodyClass, formatVehicleName } from '../../utils/format';
 
 interface Props {
   car: VehicleData;
@@ -21,7 +22,7 @@ export function VehiclePreviewCard({ car, plate, imageSource }: Props) {
       />
 
       <CustomText variant="titleLg" color={tw.color('ink-900')}>
-        {`${car.year ?? ''} ${car.make ?? 'Unknown'} ${car.model ?? ''}`}
+        {formatVehicleName(car)}
       </CustomText>
 
       <View style={tw`mt-2 gap-1`}>
@@ -31,7 +32,7 @@ export function VehiclePreviewCard({ car, plate, imageSource }: Props) {
           </CustomText>
         )}
         <CustomText color={tw.color('ink-700')}>
-          Body: {car.bodyClass || 'N/A'}
+          Body: {formatBodyClass(car.bodyClass)}
         </CustomText>
         <CustomText color={tw.color('ink-700')}>Plate: {plate}</CustomText>
       </View>

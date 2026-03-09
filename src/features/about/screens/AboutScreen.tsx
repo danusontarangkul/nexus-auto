@@ -12,6 +12,7 @@ import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
 import { useDeleteVehicle } from '@/domain/vehicles';
 import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 import { AppTabsParamList, TABS } from '@/navigation/routes';
+import { LinkButton } from '@/shared/components/buttons/LinkButton';
 
 export function AboutScreen() {
   const navigation = useNavigation<NavigationProp<AppTabsParamList>>();
@@ -57,11 +58,11 @@ export function AboutScreen() {
       </View>
       <ButtonContainer>
         <ActionGroup error={error}>
-          <PrimaryButton
+          <LinkButton
             title="Delete Vehicle"
             onPress={handleDeletePress}
-            style={tw`bg-red-600`}
             isLoading={isLoading}
+            color="text-red-600"
           />
         </ActionGroup>
       </ButtonContainer>

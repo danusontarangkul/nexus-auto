@@ -49,7 +49,7 @@ export function BackHeader({
               <Ionicons
                 name="chevron-back"
                 size={24}
-                color={tw.color('ink-900') as string}
+                color={tw.color('ink-900')}
               />
             </TouchableOpacity>
           ) : null}
@@ -57,7 +57,7 @@ export function BackHeader({
 
         <View style={tw`flex-1 items-center`}>
           {!!title && (
-            <CustomText variant="titleLg" color={tw.color('ink-900') as string}>
+            <CustomText variant="titleLg" color={tw.color('ink-900')}>
               {title}
             </CustomText>
           )}

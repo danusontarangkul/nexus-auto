@@ -80,6 +80,8 @@ export function RecordsDetailsScreen() {
     name,
     notes,
     cost,
+    removedReceiptIdsCount: removedReceiptIds.length,
+    pendingImageCount: imageUris.length,
   });
 
   const isValid = !isEmptyString(serviceCenter) && serviceDate;
@@ -189,6 +191,7 @@ export function RecordsDetailsScreen() {
             value={cost}
             onChangeNumber={setCost}
             isEditing={isEditing}
+            isCurrency={true}
           />
         </InputGroup>
         <DocumentGallery

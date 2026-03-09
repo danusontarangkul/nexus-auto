@@ -77,6 +77,17 @@ export const formatNumberForDisplay = (
   return value.toLocaleString();
 };
 
+export const formatCurrency = (value: number | undefined | null): string => {
+  if (value === undefined || value === null || value === 0) {
+    return '';
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(value);
+};
+
 export const getInitials = (fullName: string | null | undefined) => {
   if (!fullName) {
     return '?';
