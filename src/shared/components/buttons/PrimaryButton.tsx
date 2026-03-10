@@ -1,10 +1,12 @@
 import tw from '@/styles/tw';
-import { CustomText } from '../texts/CustomText';
 import { resolvePressableStyle } from '@/utils/style';
+import { CustomText } from '../texts/CustomText';
 import { AppPressable } from './AppPressable';
+import { getButtonTheme, ButtonVariant } from '@/styles/utils';
 
 type Props = React.ComponentProps<typeof AppPressable> & {
   title: string;
+  variant?: ButtonVariant;
 };
 
 export function PrimaryButton({
@@ -12,8 +14,11 @@ export function PrimaryButton({
   style,
   isLoading,
   disabled,
+  variant = 'primary',
   ...rest
 }: Props) {
+  const theme = getButtonTheme(variant);
+
   return (
     <AppPressable
       {...rest}
@@ -21,14 +26,17 @@ export function PrimaryButton({
       disabled={disabled}
       style={(state) => [
         tw.style(
-          'bg-primary rounded-md py-3 items-center justify-center border border-white border-[0.5px]',
+          `${theme.bgClass} rounded-xl py-3 items-center justify-center border ${theme.borderColor} border-[0.5px]`,
+          disabled && 'opacity-50',
         ),
         resolvePressableStyle(state, style),
       ]}
-      android_ripple={{ color: '#1D4ED8' }}
-      spinnerColor={tw.color('ink-700')}
+      android_ripple={{ color: theme.rippleColor }}
+      spinnerColor={theme.spinnerColor}
     >
-      <CustomText style={tw`text-ink-700 font-semibold`}>{title}</CustomText>
+      <CustomText style={tw`${theme.textClass} font-semibold`}>
+        {title}
+      </CustomText>
     </AppPressable>
   );
 }

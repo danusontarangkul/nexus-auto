@@ -28,6 +28,7 @@ import { toDateOrNull } from '@/utils/date';
 import { isEmptyDate, isEmptyString } from '@/utils/format';
 import tw from '@/styles/tw';
 import { WARRANTIES, WarrantiesStackParamList } from '@/navigation/routes';
+import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
 
 export function WarrantiesDetailsScreen() {
   const navigation = useNavigation<NavigationProp<WarrantiesStackParamList>>();
@@ -38,12 +39,16 @@ export function WarrantiesDetailsScreen() {
   const [removedReceiptIds, setRemovedReceiptIds] = useState<Id<'receipts'>[]>(
     [],
   );
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [manufacturer, setManufacturer] = useState('');
   const [titleOfManufacturer, setTitleOfManufacturer] = useState('');
 
   const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
-  const { showConfirm } = useConfirmModal();
-  const { deleteWarranty, isLoading: isDeleting } = useDeleteWarranty();
+  const {
+    deleteWarranty,
+    isLoading: isDeleting,
+    error: deleteError,
+  } = useDeleteWarranty();
   const {
     updateWarranty,
     isLoading: isUpdating,
@@ -56,7 +61,6 @@ export function WarrantiesDetailsScreen() {
       !!warranty,
     );
 
-  // Sync state with data - runs on load and when editing is cancelled
   useEffect(() => {
     if (warranty && !isEditing) {
       setExpiryDate(toDateOrNull(warranty.warranty.expiresAt));
@@ -96,19 +100,14 @@ export function WarrantiesDetailsScreen() {
   async function onConfirmDelete() {
     const success = await deleteWarranty(warrantyId);
     if (success) {
+      setShowDeleteModal(false);
       navigation.navigate(WARRANTIES.WarrantiesList);
     }
   }
 
   function handleDeletePress() {
     setMenuVisible(false);
-    showConfirm({
-      title: 'Delete Warranty',
-      message:
-        'Are you sure you want to remove this warranty? This action cannot be undone.',
-      confirmText: 'Delete',
-      onConfirm: onConfirmDelete,
-    });
+    setShowDeleteModal(true);
   }
 
   const isValid =
@@ -184,6 +183,17 @@ export function WarrantiesDetailsScreen() {
         onEdit={() => setIsEditing(true)}
         onDelete={handleDeletePress}
         label="Warranty"
+      />
+      <ConfirmModal
+        visible={showDeleteModal}
+        title="Delete Warranty"
+        message="Are you sure you want to delete this warranty?"
+        onConfirm={onConfirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={isDeleting}
+        error={deleteError}
       />
     </Screen>
   );

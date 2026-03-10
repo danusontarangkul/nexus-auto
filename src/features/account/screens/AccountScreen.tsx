@@ -7,16 +7,18 @@ import { UserHeader } from '@/shared/components/headers/UserHeader';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { SUPPORT_EMAIL } from '@/utils/const';
 import { useAuthActions } from '@convex-dev/auth/react';
-import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
 import { useDeleteUser } from '@/domain/users/useDeleteUser';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
+import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
+import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
+import { useState } from 'react';
 
 export function AccountScreen() {
   const { dashboard } = useDashboardContext();
   const user = dashboard?.user;
   const { signOut } = useAuthActions();
-  const { showConfirm } = useConfirmModal();
-  const { deleteUser, isLoading } = useDeleteUser();
+  const { deleteUser, isLoading, error } = useDeleteUser();
+  const [visible, setVisible] = useState<boolean>(false);
   const handleEmailSupport = async () => {
     const url = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('Support Request')}`;
 
@@ -26,11 +28,7 @@ export function AccountScreen() {
     await signOut();
   };
   const handleDeleteAccount = () => {
-    showConfirm({
-      title: 'Delete Account',
-      message: 'Are you sure you want to delete your account?',
-      onConfirm: handleConfirmDeleteAccount,
-    });
+    setVisible(true);
   };
 
   const handleConfirmDeleteAccount = async () => {
@@ -70,6 +68,13 @@ export function AccountScreen() {
           onPress={handleEmailSupport}
         />
       </ScrollView>
+      <ConfirmModal
+        visible={visible}
+        title="Delete Account"
+        message="Are you sure you want to delete your account?"
+        onConfirm={handleConfirmDeleteAccount}
+        onCancel={() => setVisible(false)}
+      />
     </Screen>
   );
 }

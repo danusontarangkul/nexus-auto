@@ -68,7 +68,7 @@ export default function DashboardScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={tw`pb-8`}
       >
-        <View style={tw`flex-row items-center justify-between mb-4 mt-4 px-4`}>
+        <View style={tw`flex-row items-center justify-between  mt-4 `}>
           <View style={tw`flex-1 mr-3`}>
             <CarSwitcher
               cars={dashboard.vehicles}

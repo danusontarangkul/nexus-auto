@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@convex/_generated/api';
-import { toastConvexError } from '@/utils/error/errorHelper';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
 
 export const useDeleteUser = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -15,7 +15,7 @@ export const useDeleteUser = () => {
       await mutation();
       return true;
     } catch (err) {
-      toastConvexError(err);
+      setErrorFromConvexError(err, setError);
       return false;
     } finally {
       setIsLoading(false);
