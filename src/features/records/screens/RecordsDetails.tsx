@@ -29,6 +29,7 @@ import { InputGroup } from '@/shared/components/inputs/InputGroup';
 import { ScrollContainer } from '@/shared/components/containers/ScrollContainer';
 import { toDateOrNull } from '@/utils/date';
 import { isEmptyString } from '@/utils/format';
+import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -44,12 +45,16 @@ export function RecordsDetailsScreen() {
   const [removedReceiptIds, setRemovedReceiptIds] = useState<Id<'receipts'>[]>(
     [],
   );
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [storageIds, setStorageIds] = useState<Id<'_storage'>[]>([]);
   const [pendingUris, setPendingUris] = useState<string[]>([]);
   const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
   const { showConfirm } = useConfirmModal();
-  const { deleteServiceRecord, isLoading: isDeleting } =
-    useDeleteServiceRecord();
+  const {
+    deleteServiceRecord,
+    isLoading: isDeleting,
+    error: deleteError,
+  } = useDeleteServiceRecord();
   const {
     updateServiceRecord,
     isLoading: isUpdating,
@@ -121,19 +126,14 @@ export function RecordsDetailsScreen() {
   const onConfirmDelete = async () => {
     const success = await deleteServiceRecord(recordId);
     if (success) {
+      setShowDeleteModal(false);
       navigation.navigate(RECORDS.RecordsList);
     }
   };
 
   const handleDeletePress = () => {
+    setShowDeleteModal(true);
     setMenuVisible(false);
-    showConfirm({
-      title: 'Delete Record',
-      message:
-        'Are you sure you want to remove this service record? This action cannot be undone.',
-      confirmText: 'Delete',
-      onConfirm: onConfirmDelete,
-    });
   };
 
   if (!serviceRecord || isDeleting) {
@@ -226,6 +226,17 @@ export function RecordsDetailsScreen() {
         onEdit={() => setIsEditing(true)}
         onDelete={handleDeletePress}
         label="Record"
+      />
+      <ConfirmModal
+        visible={showDeleteModal}
+        title="Delete Record"
+        message="Are you sure you want to delete this record?"
+        onConfirm={onConfirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={isDeleting}
+        error={deleteError}
       />
     </Screen>
   );

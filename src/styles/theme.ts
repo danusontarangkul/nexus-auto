@@ -9,6 +9,8 @@ export const palette = {
     800: '#242424',
     700: '#2D2C2C',
     600: '#363434', // ← your Figma gray for cards / inputs
+    400: '#6B7280',
+    200: '#4A4848',
     border: '#4A4848',
   },
   ink: {

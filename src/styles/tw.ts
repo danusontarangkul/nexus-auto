@@ -15,6 +15,8 @@ const tw = create({
         'surface-800': palette.surface[800],
         'surface-700': palette.surface[700],
         'surface-600': palette.surface[600],
+        'surface-400': palette.surface[400],
+        'surface-200': palette.surface[200],
         'surface-border': palette.surface.border,
 
         'ink-900': palette.ink[900],

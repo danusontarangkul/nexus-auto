@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@convex/_generated/api';
 import { Id } from '@convex/_generated/dataModel';
-import { toastConvexError } from '@/utils/error/errorHelper';
+import { setErrorFromConvexError } from '@/utils/error/errorHelper';
 
 export const useDeleteServiceRecord = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -23,7 +23,7 @@ export const useDeleteServiceRecord = () => {
     try {
       return await deleteServiceRecordMutation({ serviceRecordId });
     } catch (error) {
-      toastConvexError(error);
+      setErrorFromConvexError(error, setError);
       return false;
     } finally {
       setIsLoading(false);

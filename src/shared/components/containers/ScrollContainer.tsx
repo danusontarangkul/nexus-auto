@@ -18,7 +18,7 @@ export function ScrollContainer({
 }: ScrollContainerProps) {
   return (
     <ScrollView
-      style={[tw`flex-1 p-4`, style]}
+      style={[tw`flex-1 `, style]}
       contentContainerStyle={tw`pb-8`}
       showsVerticalScrollIndicator={false}
       {...props}

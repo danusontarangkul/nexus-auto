@@ -1,11 +1,12 @@
 import { useState, useMemo, useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { FilterLogicMap, useFilter } from './useFilter';
-import { BackHeader } from '@/navigation/components/BackHeader';
-import tw from '@/styles/tw';
-import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { FilterLogicMap, useFilter } from './useFilter';
+import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue';
+import { BackHeader } from '@/navigation/components/BackHeader';
 import { SearchHeader } from '../components/headers/SearchHeader';
+import tw from '@/styles/tw';
 
 interface UseListFilterOptions<T> {
   data: T[] | undefined;
@@ -23,24 +24,31 @@ export function useListFilter<T>({
   onAddPress,
 }: UseListFilterOptions<T>) {
   const navigation = useNavigation();
+
   const [filter, setFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 250);
+
   const categoryFiltered = useFilter(data, filter, filterLogic);
 
+  const handleCloseSearch = () => {
+    setSearchQuery('');
+    setIsSearching(false);
+  };
+
   const finalData = useMemo(() => {
-    if (!searchQuery) {
+    if (!debouncedSearchQuery) {
       return categoryFiltered;
     }
-    const query = searchQuery.toLowerCase();
 
-    return categoryFiltered.filter((item) => {
-      return searchFields(item).some((field) =>
-        field?.toLowerCase().includes(query),
-      );
-    });
-  }, [categoryFiltered, searchQuery, searchFields]);
+    const query = debouncedSearchQuery.toLowerCase();
+
+    return categoryFiltered.filter((item) =>
+      searchFields(item).some((field) => field?.toLowerCase().includes(query)),
+    );
+  }, [categoryFiltered, debouncedSearchQuery, searchFields]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -49,10 +57,7 @@ export function useListFilter<T>({
           <SearchHeader
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onCancel={() => {
-              setIsSearching(false);
-              setSearchQuery('');
-            }}
+            onBack={handleCloseSearch}
           />
         ) : (
           <BackHeader
@@ -76,7 +81,7 @@ export function useListFilter<T>({
           />
         ),
     });
-  }, [navigation, isSearching, searchQuery, headerTitle, onAddPress]);
+  }, [navigation, isSearching, headerTitle, onAddPress]);
 
   return {
     filter,
@@ -85,6 +90,6 @@ export function useListFilter<T>({
     isSearching,
     finalData,
     isEmpty: !data || data.length === 0,
-    isSearchingEmpty: searchQuery && finalData.length === 0,
+    isSearchingEmpty: searchQuery.length > 0 && finalData.length === 0,
   };
 }

@@ -17,7 +17,7 @@ import tw from '@/styles/tw';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
 import { useRegistrationChanges } from '../hooks/useRegistrationChanges';
 import { EmptyState } from '@/shared/components/texts/EmptyState';
-import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
+import { useEditHeader } from '@/navigation/hooks/useEditHeader';
 
 export function RegistrationScreen() {
   const { vehicleId } = useRegistrationRouteParams();
@@ -37,7 +37,7 @@ export function RegistrationScreen() {
     error: saveError,
   } = useUpsertRegistration();
 
-  const { isEditing, setIsEditing } = useEditableHeader(
+  const { isEditing, setIsEditing } = useEditHeader(
     'Registration',
     !!registration,
   );
