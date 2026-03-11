@@ -44,10 +44,12 @@ export function RecordsScreen() {
 
   if (serviceRecords.length === 0) {
     return (
-      <EmptyState
-        title="No service records found"
-        description="Tap the plus icon in the header to add."
-      />
+      <Screen>
+        <EmptyState
+          title="No service records found"
+          description="Tap the plus icon in the header to add."
+        />
+      </Screen>
     );
   }
 

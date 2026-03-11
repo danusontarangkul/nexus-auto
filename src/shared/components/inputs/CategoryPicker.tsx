@@ -24,7 +24,7 @@ export function CategoryPicker({
 }: CategoryPickerProps) {
   return (
     <View style={tw`mb-4`}>
-      <CustomText variant="detail" style={tw`text-ink-700 mb-3`}>
+      <CustomText variant="label" style={tw`mb-1`}>
         {label}
       </CustomText>
 

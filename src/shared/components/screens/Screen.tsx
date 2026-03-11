@@ -1,8 +1,19 @@
 import { View, ViewProps } from 'react-native';
-import tw from '@/styles/tw';
+import { palette } from '@/styles/theme';
 
 export function Screen({ style, ...rest }: ViewProps) {
   return (
-    <View style={[tw.style('flex-1 bg-surface-950 px-5'), style]} {...rest} />
+    <View
+      style={[
+        {
+          flex: 1,
+          backgroundColor: palette.surface[950],
+          paddingHorizontal: 20,
+          paddingBottom: 20,
+        },
+        style,
+      ]}
+      {...rest}
+    />
   );
 }

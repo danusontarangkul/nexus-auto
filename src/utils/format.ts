@@ -88,6 +88,19 @@ export const formatCurrency = (value: number | undefined | null): string => {
   }).format(value);
 };
 
+/** Formats a number for display in a currency input: thousands separators and 2 decimals (no $). */
+export const formatCurrencyForInput = (
+  value: number | undefined | null,
+): string => {
+  if (value === undefined || value === null) {
+    return '';
+  }
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 export const getInitials = (fullName: string | null | undefined) => {
   if (!fullName) {
     return '?';
@@ -105,4 +118,41 @@ export const formatUserSecondaryText = (email?: string | null): string => {
 
 export const formatUserName = (name?: string | null): string => {
   return name ?? 'Guest User';
+};
+
+export const getDisplayValue = (
+  value: string | number | null | undefined,
+  label: string,
+): string => {
+  if (value && String(value).trim() !== '') {
+    return String(value);
+  }
+
+  return `No ${label.toLowerCase()} provided`;
+};
+
+export const parseRawNumberInput = (
+  text: string,
+  isCurrency = false,
+): string => {
+  let cleanText = text.replace(/,/g, '').replace(/[^0-9.]/g, '');
+
+  const parts = cleanText.split('.');
+  if (parts.length > 2) {
+    cleanText = parts[0] + '.' + parts.slice(1).join('');
+  }
+
+  if (isCurrency && parts.length > 1) {
+    cleanText = parts[0] + '.' + parts[1].slice(0, 2);
+  }
+
+  return cleanText;
+};
+
+export const getNumberDisplayText = (
+  value: number,
+  isCurrency: boolean,
+): string => {
+  if (value === 0) return '';
+  return isCurrency ? value.toFixed(2) : value.toString();
 };

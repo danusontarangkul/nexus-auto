@@ -40,10 +40,12 @@ export function WarrantiesScreen() {
 
   if (warranties.length === 0) {
     return (
-      <EmptyState
-        title="No warranties found"
-        description="Tap the plus icon in the header to add."
-      />
+      <Screen>
+        <EmptyState
+          title="No warranties found"
+          description="Tap the plus icon in the header to add."
+        />
+      </Screen>
     );
   }
 

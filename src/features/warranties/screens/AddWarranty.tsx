@@ -70,12 +70,14 @@ export function AddWarrantyScreen() {
           placeholder="Title of Manufacturer"
           value={titleOfManufacturer}
           onChangeText={setTitleOfManufacturer}
+          onClear={() => setTitleOfManufacturer('')}
         />
         <Input
           label="Manufacturer"
           placeholder="Manufacturer"
           value={manufacturer}
           onChangeText={setManufacturer}
+          onClear={() => setManufacturer('')}
         />
         <ControlledDatePicker
           label="Expiration Date"

@@ -7,9 +7,7 @@ import { useDashboardContext } from '@/providers/DashboardProvider';
 import { StaticField } from '@/shared/components/texts/StaticField';
 import tw from '@/styles/tw';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
-import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
 import { useDeleteVehicle } from '@/domain/vehicles';
-import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 import { AppTabsParamList, TABS } from '@/navigation/routes';
 import { LinkButton } from '@/shared/components/buttons/LinkButton';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
@@ -50,9 +48,8 @@ export function AboutScreen() {
 
   return (
     <Screen>
-      <View style={tw`px-4 mt-6`}>
+      <View style={tw` mt-6`}>
         <SectionHeader title="About" variant="titleLg" style={tw`mb-4`} />
-
         <StaticField label="Vin Number" value={vehicle?.vinNumber} />
         <StaticField label="Make" value={vehicle?.vehicleData.make} />
         <StaticField label="Model" value={vehicle?.vehicleData.model} />
