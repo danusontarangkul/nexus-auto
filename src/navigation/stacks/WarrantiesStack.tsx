@@ -26,11 +26,15 @@ export function WarrantiesStack() {
       <Stack.Screen
         name={WARRANTIES.WarrantyDetails}
         component={WarrantiesDetailsScreen}
-        options={{
+        options={({ navigation }) => ({
           header: () => (
-            <BackHeader title="Warranty Details" skipTopInset={true} />
+            <BackHeader
+              title="Warranty Details"
+              skipTopInset={true}
+              onBackPress={() => navigation.navigate(WARRANTIES.WarrantiesList)}
+            />
           ),
-        }}
+        })}
       />
     </Stack.Navigator>
   );

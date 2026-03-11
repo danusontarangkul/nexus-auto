@@ -22,11 +22,15 @@ export function RecordsStack() {
       <Stack.Screen
         name={RECORDS.RecordDetails}
         component={RecordsDetailsScreen}
-        options={{
+        options={({ navigation }) => ({
           header: () => (
-            <BackHeader title="Record Details" skipTopInset={true} />
+            <BackHeader
+              title="Record Details"
+              skipTopInset={true}
+              onBackPress={() => navigation.navigate(RECORDS.RecordsList)}
+            />
           ),
-        }}
+        })}
       />
     </Stack.Navigator>
   );

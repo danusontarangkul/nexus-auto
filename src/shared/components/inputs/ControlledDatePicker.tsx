@@ -37,7 +37,7 @@ export function ControlledDatePicker({
           'border-transparent': !isEditing,
         })}
       >
-        <CustomText variant="value">{displayText}</CustomText>
+        <CustomText variant="body">{displayText}</CustomText>
       </TouchableOpacity>
 
       <DatePickerModal
