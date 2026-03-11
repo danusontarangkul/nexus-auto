@@ -80,8 +80,12 @@ export function AddRecordScreen() {
 
   return (
     <Screen>
-      <ScrollView style={tw`flex-1 p-4`}>
-        <SectionHeader title="Add Service Record" variant="titleLg" />
+      <ScrollView>
+        <SectionHeader
+          title="Add Service Record"
+          variant="titleLg"
+          style={tw`mb-4`}
+        />
         <InputGroup>
           <ControlledDatePicker
             label="Service Date"
@@ -94,6 +98,7 @@ export function AddRecordScreen() {
             value={serviceCenter}
             onChangeText={setServiceCenter}
             onClear={() => setServiceCenter('')}
+            placeholder="Service Center"
           />
           <CategoryPicker
             label="Category"
@@ -113,17 +118,22 @@ export function AddRecordScreen() {
             value={name}
             onChangeText={setName}
             onClear={() => setName('')}
+            placeholder="Name"
           />
           <Input
             label="Notes"
             value={notes}
             onChangeText={setNotes}
             onClear={() => setNotes('')}
+            placeholder="Notes"
           />
           <NumberInput
             label="Cost"
             value={cost}
             onChangeNumber={(value) => setCost(value)}
+            isCurrency
+            placeholder="Cost"
+            onClear={() => setCost(0)}
           />
 
           <DocumentGallery

@@ -2,7 +2,6 @@ import { View } from 'react-native';
 import { Doc, Id } from '@convex/_generated/dataModel';
 import { CustomText } from '../texts/CustomText';
 import { ImageUploadSquare } from './ImageUploadSquare';
-import { EmptyState } from '@/shared/components/texts/EmptyState';
 import tw from '@/styles/tw';
 import { RemoteImageSquare } from './RemoteImageSquare';
 
@@ -34,8 +33,8 @@ export function DocumentGallery({
   const hasDocuments = visibleExisting.length > 0 || pendingUris.length > 0;
 
   return (
-    <View style={tw`mt-6`}>
-      <CustomText variant="label" style={tw`mb-2`}>
+    <View style={tw``}>
+      <CustomText variant="label" style={tw`mb-1`}>
         {label}
       </CustomText>
 
@@ -69,9 +68,7 @@ export function DocumentGallery({
           )}
         </View>
       ) : (
-        <CustomText variant="body" style={tw.style('text-ink-400 italic')}>
-          No documents attached
-        </CustomText>
+        <CustomText variant="value">No documents attached</CustomText>
       )}
     </View>
   );

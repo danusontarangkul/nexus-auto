@@ -124,21 +124,7 @@ export function WarrantiesDetailsScreen() {
       <SectionHeader
         title={warranty.warranty.titleOfManufacturer}
         variant="titleLg"
-        style={tw`px-4`}
-      />
-
-      <DocumentGallery
-        existingReceipts={warranty.receipts}
-        removedReceiptIds={removedReceiptIds}
-        onRemoveExisting={(id) =>
-          setRemovedReceiptIds((prev) =>
-            prev.includes(id) ? prev : [...prev, id],
-          )
-        }
-        pendingUris={imageUris}
-        isEditing={isEditing}
-        onRemovePending={removeImage}
-        onAddPress={openImagePicker}
+        style={tw`mb-4`}
       />
 
       <ControlledInput
@@ -163,12 +149,25 @@ export function WarrantiesDetailsScreen() {
         isEditing={isEditing}
         onDateChange={setExpiryDate}
       />
+      <DocumentGallery
+        existingReceipts={warranty.receipts}
+        removedReceiptIds={removedReceiptIds}
+        onRemoveExisting={(id) =>
+          setRemovedReceiptIds((prev) =>
+            prev.includes(id) ? prev : [...prev, id],
+          )
+        }
+        pendingUris={imageUris}
+        isEditing={isEditing}
+        onRemovePending={removeImage}
+        onAddPress={openImagePicker}
+      />
 
       {isEditing && (
         <ButtonContainer>
           <ActionGroup error={updateError}>
             <PrimaryButton
-              title="Save Changes"
+              title="Save"
               onPress={handleSave}
               isLoading={isUpdating}
               disabled={!hasChanges || !isValid}

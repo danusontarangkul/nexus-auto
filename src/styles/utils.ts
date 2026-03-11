@@ -30,3 +30,22 @@ export const getButtonTheme = (variant: ButtonVariant): ButtonTheme => {
 
   return themes[variant];
 };
+
+import { typography, palette } from '@/styles/theme';
+
+type Variant = keyof typeof typography;
+
+export const getTextDefaultColor = (variant: Variant): string => {
+  switch (variant) {
+    case 'label':
+      return palette.ink[500];
+    case 'value':
+    case 'title':
+    case 'titleXL':
+      return palette.ink[900];
+    case 'detail':
+      return palette.ink[400];
+    default:
+      return palette.ink[900];
+  }
+};

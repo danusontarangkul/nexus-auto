@@ -58,4 +58,9 @@ export const typography = {
     fontSize: 16,
     color: palette.ink[500],
   },
+  value: {
+    fontFamily: 'SourceSansPro_600SemiBold',
+    fontSize: 16,
+    color: palette.ink[900],
+  },
 };

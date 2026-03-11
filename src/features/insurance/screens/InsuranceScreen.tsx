@@ -158,7 +158,7 @@ export function InsuranceScreen() {
         <ButtonContainer>
           <ActionGroup error={saveError || uploadError}>
             <PrimaryButton
-              title="Save Changes"
+              title="Save"
               onPress={handleSave}
               isLoading={isSaving || isUploading}
               disabled={isDisabled}

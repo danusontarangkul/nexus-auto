@@ -136,7 +136,7 @@ export function RegistrationScreen() {
         <ButtonContainer>
           <ActionGroup error={saveError}>
             <PrimaryButton
-              title="Save Changes"
+              title="Save"
               onPress={handleSave}
               isLoading={isSaving || isUploading}
               disabled={!expiryDate || !hasChanges}

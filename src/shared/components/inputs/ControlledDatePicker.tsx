@@ -4,6 +4,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { CustomText } from '../texts/CustomText';
 import { getDisplayDate } from '@/utils/format';
 import { DatePickerModal } from './DatePickerModal';
+import { StaticField } from '../texts/StaticField';
 
 type Props = {
   label: string;
@@ -21,6 +22,10 @@ export function ControlledDatePicker({
   const [showPicker, setShowPicker] = useState(false);
   const displayText = getDisplayDate(value, isEditing);
 
+  if (!isEditing) {
+    return <StaticField label={label} value={displayText} />;
+  }
+
   return (
     <View style={tw`mb-4`}>
       <CustomText variant="label">{label}</CustomText>
@@ -32,14 +37,7 @@ export function ControlledDatePicker({
           'border-transparent': !isEditing,
         })}
       >
-        <CustomText
-          variant="body"
-          color={
-            !value && isEditing ? tw.color('primary-500') : tw.color('ink-900')
-          }
-        >
-          {displayText}
-        </CustomText>
+        <CustomText variant="value">{displayText}</CustomText>
       </TouchableOpacity>
 
       <DatePickerModal

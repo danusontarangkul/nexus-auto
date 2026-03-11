@@ -30,6 +30,7 @@ import { ScrollContainer } from '@/shared/components/containers/ScrollContainer'
 import { toDateOrNull } from '@/utils/date';
 import { isEmptyString } from '@/utils/format';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
+import tw from '@/styles/tw';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -146,6 +147,7 @@ export function RecordsDetailsScreen() {
         <SectionHeader
           title={serviceRecord.serviceRecord.performed[0].name}
           variant="titleLg"
+          style={tw`mb-4`}
         />
         <InputGroup>
           <ControlledDatePicker
@@ -191,7 +193,7 @@ export function RecordsDetailsScreen() {
             value={cost}
             onChangeNumber={setCost}
             isEditing={isEditing}
-            isCurrency={true}
+            isCurrency
           />
         </InputGroup>
         <DocumentGallery

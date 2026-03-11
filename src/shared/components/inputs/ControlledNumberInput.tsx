@@ -40,6 +40,7 @@ export function ControlledNumberInput({
         onChangeNumber={onChangeNumber}
         errorText={errorText}
         onClear={onClear}
+        isCurrency={isCurrency} // Explicitly pass the prop
         {...props}
       />
     </View>
