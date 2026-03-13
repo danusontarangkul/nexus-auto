@@ -1,4 +1,5 @@
 import { Doc, Id } from './_generated/dataModel';
+import { ServiceCategoryType } from './types/literals';
 
 export type CreateWarrantyInput = {
   vehicleId: Id<'vehicles'>;
@@ -95,9 +96,8 @@ export type CreateServiceRecordInput = {
   vehicleId: Id<'vehicles'>;
   serviceRecord: {
     performed: {
-      category: string;
-      cost: number;
-      name: string;
+      category: ServiceCategoryType;
+      serviceName: string;
       notes: string;
       warrantyId?: Id<'warranties'>;
       templateItemId?: Id<'maintenanceItems'>;
@@ -113,9 +113,8 @@ export type UpdateServiceRecordInput = {
   updates: {
     isActive?: boolean;
     performed?: {
-      category: string;
-      cost: number;
-      name: string;
+      category: ServiceCategoryType;
+      serviceName: string;
       notes: string;
       warrantyId?: Id<'warranties'>;
       templateItemId?: Id<'maintenanceItems'>;
@@ -258,3 +257,11 @@ export interface CategoryOption {
   label: string;
   value: string;
 }
+
+export type PerformedService = {
+  category: ServiceCategoryType;
+  serviceName: string;
+  notes?: string;
+  templateItemId?: Id<'maintenanceItems'>;
+  warrantyId?: Id<'warranties'>;
+};

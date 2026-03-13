@@ -15,3 +15,21 @@ export const ReceiptType = v.union(
   v.literal('warranty'),
   v.literal('serviceRecord'),
 );
+
+export const ServiceCategoryValues = [
+  'routine',
+  'fluids_filters',
+  'tires_brakes',
+  'electrical',
+  'engine_drive',
+  'suspension',
+  'body_interior',
+  'inspection',
+  'other',
+] as const;
+
+export const ServiceCategory = v.union(
+  ...ServiceCategoryValues.map((val) => v.literal(val)),
+);
+
+export type ServiceCategoryType = (typeof ServiceCategoryValues)[number];

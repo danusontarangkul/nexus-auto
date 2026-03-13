@@ -1,14 +1,10 @@
 import { useMemo } from 'react';
-import { ServiceRecordWithReceipts } from '@convex/types';
+import { ServiceRecordWithReceipts, PerformedService } from '@convex/types';
 
 interface CurrentState {
   serviceDate: Date | null;
   serviceCenter: string;
-  category: string;
-  services: string;
-  name: string;
-  notes: string;
-  cost: number;
+  performedServices: PerformedService[];
   removedReceiptIdsCount?: number;
   pendingImageCount?: number;
 }
@@ -22,17 +18,16 @@ export function useServiceRecordChanges(
       return (
         current.serviceDate !== null ||
         current.serviceCenter !== '' ||
-        current.category !== '' ||
-        current.services !== '' ||
-        current.name !== '' ||
-        current.notes !== '' ||
-        current.cost !== 0 ||
+        current.performedServices.some(
+          (s) => s.serviceName !== '' || s.notes !== '',
+        ) ||
         (current.pendingImageCount ?? 0) > 0
       );
     }
 
     const rec = initial.serviceRecord;
-    const performed = rec.performed[0] || {};
+    const initialPerformed = rec.performed || [];
+    const currentPerformed = current.performedServices;
 
     const originalTime = rec.serviceDate || 0;
     const currentTime = current.serviceDate?.getTime() || 0;
@@ -40,14 +35,22 @@ export function useServiceRecordChanges(
 
     const serviceCenterChanged =
       (rec.serviceCenter || '') !== (current.serviceCenter || '');
-    const categoryChanged =
-      (performed.category || '') !== (current.category || '');
-    const servicesChanged =
-      (performed.templateItemId || '') !== (current.services || '');
-    const nameChanged = (performed.name || '') !== (current.name || '');
-    const notesChanged = (performed.notes || '') !== (current.notes || '');
 
-    const costChanged = (performed.cost || 0) !== (current.cost || 0);
+    let servicesArrayChanged = false;
+
+    if (initialPerformed.length !== currentPerformed.length) {
+      servicesArrayChanged = true;
+    } else {
+      servicesArrayChanged = initialPerformed.some((initialItem, index) => {
+        const currentItem = currentPerformed[index];
+        return (
+          initialItem.category !== currentItem.category ||
+          initialItem.serviceName !== currentItem.serviceName ||
+          (initialItem.notes ?? '') !== (currentItem.notes ?? '') ||
+          initialItem.templateItemId !== currentItem.templateItemId
+        );
+      });
+    }
 
     const receiptsChanged =
       (current.removedReceiptIdsCount ?? 0) > 0 ||
@@ -56,22 +59,14 @@ export function useServiceRecordChanges(
     return (
       serviceDateChanged ||
       serviceCenterChanged ||
-      categoryChanged ||
-      servicesChanged ||
-      nameChanged ||
-      notesChanged ||
-      costChanged ||
+      servicesArrayChanged ||
       receiptsChanged
     );
   }, [
     initial,
     current.serviceDate,
     current.serviceCenter,
-    current.category,
-    current.services,
-    current.name,
-    current.notes,
-    current.cost,
+    current.performedServices,
     current.removedReceiptIdsCount,
     current.pendingImageCount,
   ]);

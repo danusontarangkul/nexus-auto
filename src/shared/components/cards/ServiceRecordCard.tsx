@@ -5,7 +5,7 @@ import { Doc } from 'convex/_generated/dataModel';
 import { formatDateFull } from '@/utils/format';
 import { ClickableCard } from './ClickableCard';
 import { CategoryBadge } from '../badge/CategoryBadge';
-import { SERVICE_CATEGORIES } from '@/utils/const';
+import { getServiceRecordLabels } from '@/features/records/utils/utils';
 
 interface Props {
   serviceRecord: Doc<'serviceRecords'>;
@@ -13,29 +13,31 @@ interface Props {
 }
 
 export function ServiceRecordCard({ serviceRecord, onPress }: Props) {
-  const performed = serviceRecord.performed[0];
-
-  const categoryLabel =
-    SERVICE_CATEGORIES.find((category) => category.value === performed.category)
-      ?.label || performed.category;
-
-  const badges = [categoryLabel, performed.name].filter(
-    (value): value is string => !!value,
-  );
+  const badges = getServiceRecordLabels(serviceRecord.performed);
 
   return (
-    <ClickableCard onPress={onPress} style={tw`py-2`}>
+    <ClickableCard onPress={onPress} style={tw`py-3`}>
       <View style={tw`flex-1`}>
-        <CustomText variant="detail" color={tw.color('ink-300')}>
-          {formatDateFull(serviceRecord.serviceDate)}
-        </CustomText>
-        <CustomText variant="title" color={tw.color('ink-900')}>
-          {serviceRecord.serviceCenter}
-        </CustomText>
+        <View style={tw`flex-row justify-between items-start`}>
+          <CustomText
+            variant="title"
+            color={tw.color('ink-900')}
+            style={tw`flex-1 mr-2`}
+          >
+            {serviceRecord.serviceCenter || 'Unknown Location'}
+          </CustomText>
+          <CustomText variant="detail" color={tw.color('ink-300')}>
+            {formatDateFull(serviceRecord.serviceDate)}
+          </CustomText>
+        </View>
 
-        <View style={tw`flex-row flex-wrap mt-1`}>
-          {badges.map((badge) => (
-            <CategoryBadge key={badge} label={badge} style={tw`mr-2 mb-2`} />
+        <View style={tw`flex-row flex-wrap mt-2`}>
+          {badges.map((badge, index) => (
+            <CategoryBadge
+              key={`${badge}-${index}`}
+              label={badge}
+              style={tw`mr-1.5 mb-1.5`}
+            />
           ))}
         </View>
       </View>

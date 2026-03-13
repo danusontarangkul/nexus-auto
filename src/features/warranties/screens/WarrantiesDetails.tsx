@@ -22,8 +22,6 @@ import { useWarrantyDetailsParams } from '../hooks/useWarrantyDetailsParams';
 import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
 import { useWarrantyChanges } from '../hooks/useWarrantyChanges';
 import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
-import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
-
 import { toDateOrNull } from '@/utils/date';
 import { isEmptyDate, isEmptyString } from '@/utils/format';
 import tw from '@/styles/tw';
@@ -161,6 +159,7 @@ export function WarrantiesDetailsScreen() {
         isEditing={isEditing}
         onRemovePending={removeImage}
         onAddPress={openImagePicker}
+        style={isEditing ? tw`mt-8` : undefined}
       />
 
       {isEditing && (

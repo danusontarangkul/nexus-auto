@@ -1,7 +1,7 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 import { authTables } from '@convex-dev/auth/server';
-import { ReceiptStatus, ReceiptType } from './types/literals';
+import { ReceiptStatus, ReceiptType, ServiceCategory } from './types/literals';
 
 export default defineSchema({
   ...authTables,
@@ -68,7 +68,6 @@ export default defineSchema({
         intervalMiles: v.optional(v.number()),
         intervalMonths: v.optional(v.number()),
         severity: v.optional(v.union(v.literal('normal'), v.literal('severe'))),
-        estimatedCostUsd: v.optional(v.number()),
         notes: v.optional(v.string()),
       }),
     ),
@@ -81,10 +80,9 @@ export default defineSchema({
     isActive: v.boolean(),
     performed: v.array(
       v.object({
-        category: v.string(),
-        cost: v.union(v.null(), v.number()),
-        name: v.string(),
-        notes: v.union(v.null(), v.string()),
+        category: ServiceCategory,
+        serviceName: v.string(),
+        notes: v.optional(v.string()),
         warrantyId: v.optional(v.id('warranties')),
         templateItemId: v.optional(v.id('maintenanceItems')),
       }),

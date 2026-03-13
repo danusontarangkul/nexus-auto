@@ -17,10 +17,10 @@ import { EmptyState } from '@/shared/components/texts/EmptyState';
 import { useInsurance } from '@/domain/insurance/useInsurance';
 import { useUpsertInsurance } from '@/domain/insurance/useUpsertInsurance';
 import { useInsuranceRouteParams } from '../hooks/useInsuranceRouteParams';
-import { useEditableHeader } from '@/navigation/hooks/useEditableHeader';
 import { useInsuranceChanges } from '../hooks/useInsuranceChanges';
 import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
 import { isEmptyString } from '@/utils/format';
+import { useEditHeader } from '@/navigation/hooks/useEditHeader';
 
 export function InsuranceScreen() {
   const { vehicleId } = useInsuranceRouteParams();
@@ -40,10 +40,7 @@ export function InsuranceScreen() {
     error: saveError,
   } = useUpsertInsurance();
 
-  const { isEditing, setIsEditing } = useEditableHeader(
-    'Insurance',
-    !!insurance,
-  );
+  const { isEditing, setIsEditing } = useEditHeader('Insurance', !!insurance);
   const {
     uploadImages,
     isLoading: isUploading,
@@ -144,6 +141,7 @@ export function InsuranceScreen() {
               }
               onRemovePending={removeImage}
               onAddPress={openImagePicker}
+              style={isEditing ? tw`mt-4` : undefined}
             />
           </View>
         ) : (

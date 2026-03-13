@@ -9,7 +9,6 @@ import { SUPPORT_EMAIL } from '@/utils/const';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useDeleteUser } from '@/domain/users/useDeleteUser';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
-import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
 import { useState } from 'react';
 

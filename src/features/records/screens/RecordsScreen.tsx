@@ -29,12 +29,17 @@ export function RecordsScreen() {
       data: serviceRecords,
       filterLogic: RECORD_FILTER_LOGIC,
       headerTitle: 'Service Records',
-      searchFields: (item) => [
-        item.performed[0]?.name ?? '',
-        item.performed[0]?.notes ?? '',
-        item.serviceCenter ?? '',
-        item.serviceDate.toString(),
-      ],
+      searchFields: (item) => {
+        const serviceDetails = item.performed.flatMap((performed) => [
+          performed.serviceName ?? '',
+          performed.notes ?? '',
+        ]);
+        return [
+          ...serviceDetails,
+          item.serviceCenter ?? '',
+          item.serviceDate.toString(),
+        ];
+      },
       onAddPress: () => navigation.navigate(RECORDS.AddRecord),
     });
 
