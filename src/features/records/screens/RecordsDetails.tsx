@@ -10,20 +10,15 @@ import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { useRecordsRouteParams } from '../hooks/useRecordRouteParams';
-import { useServiceRecordChanges } from '../hooks/useRecordChanges';
 import {
   useServiceRecord,
   useUpdateServiceRecord,
   useDeleteServiceRecord,
 } from '@/domain/serviceRecords';
 import { ActionMenu } from '@/shared/components/sheets/ActionMenu';
-import { useConfirmModal } from '@/shared/hooks/useConfirmModal';
 import { RECORDS, RecordsStackParamList } from '@/navigation/routes';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
 import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
-import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
-import { ControlledCategoryPicker } from '@/shared/components/inputs/ControlledCategoryPicker';
-import { ControlledNumberInput } from '@/shared/components/inputs/ControlledNumberInput';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
 import { InputGroup } from '@/shared/components/inputs/InputGroup';
 import { ScrollContainer } from '@/shared/components/containers/ScrollContainer';
@@ -31,31 +26,41 @@ import { toDateOrNull } from '@/utils/date';
 import { isEmptyString } from '@/utils/format';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
 import tw from '@/styles/tw';
+import { PerformedService } from '@convex/types';
+import { DashedButton } from '@/shared/components/buttons/DashedButton';
+import { ServiceItemCard } from '../components/ServiceItemCard';
+import { View } from 'react-native';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
+
   const { recordId } = useRecordsRouteParams();
+
   const serviceRecord = useServiceRecord(recordId);
+
   const [serviceDate, setServiceDate] = useState<Date | null>(null);
   const [serviceCenter, setServiceCenter] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
-  const [services, setServices] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
-  const [cost, setCost] = useState<number>(0);
+
+  const [performedServices, setPerformedServices] = useState<
+    PerformedService[]
+  >([]);
+
   const [removedReceiptIds, setRemovedReceiptIds] = useState<Id<'receipts'>[]>(
     [],
   );
+
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [storageIds, setStorageIds] = useState<Id<'_storage'>[]>([]);
-  const [pendingUris, setPendingUris] = useState<string[]>([]);
+
+  const [storageIds] = useState<Id<'_storage'>[]>([]);
+
   const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
-  const { showConfirm } = useConfirmModal();
+
   const {
     deleteServiceRecord,
     isLoading: isDeleting,
     error: deleteError,
   } = useDeleteServiceRecord();
+
   const {
     updateServiceRecord,
     isLoading: isUpdating,
@@ -64,91 +69,100 @@ export function RecordsDetailsScreen() {
 
   const { isEditing, setIsEditing, menuVisible, setMenuVisible } =
     useEditableHeader(
-      serviceRecord?.serviceRecord.performed[0].name || '',
+      serviceRecord?.serviceRecord.serviceCenter || 'Service Record',
       !!serviceRecord,
     );
 
   useEffect(() => {
-    setServiceDate(toDateOrNull(serviceRecord?.serviceRecord.serviceDate));
-    setServiceCenter(serviceRecord?.serviceRecord.serviceCenter || '');
-    setCategory(serviceRecord?.serviceRecord.performed[0].category || '');
-    setName(serviceRecord?.serviceRecord.performed[0].name || '');
-    setNotes(serviceRecord?.serviceRecord.performed[0].notes || '');
-    setCost(serviceRecord?.serviceRecord.performed[0].cost || 0);
-    setServices(serviceRecord?.serviceRecord.performed[0].templateItemId || '');
+    if (serviceRecord) {
+      setServiceDate(toDateOrNull(serviceRecord.serviceRecord.serviceDate));
+
+      setServiceCenter(serviceRecord.serviceRecord.serviceCenter || '');
+
+      setPerformedServices(
+        serviceRecord.serviceRecord.performed.map((performed) => ({
+          category: performed.category,
+          serviceName: performed.serviceName,
+          notes: performed.notes || '',
+          templateItemId: performed.templateItemId || undefined,
+          warrantyId: performed.warrantyId || undefined,
+        })),
+      );
+    }
   }, [serviceRecord]);
 
-  const hasChanges = useServiceRecordChanges(serviceRecord, {
-    serviceDate,
-    serviceCenter,
-    category,
-    services,
-    name,
-    notes,
-    cost,
-    removedReceiptIdsCount: removedReceiptIds.length,
-    pendingImageCount: imageUris.length,
-  });
+  const handleUpdateService = (
+    index: number,
+    updates: Partial<PerformedService>,
+  ) => {
+    setPerformedServices((prev) =>
+      prev.map((service, i) =>
+        i === index ? { ...service, ...updates } : service,
+      ),
+    );
+  };
 
-  const isValid = !isEmptyString(serviceCenter) && serviceDate;
+  const addServiceItem = () => {
+    setPerformedServices((prev) => [
+      ...prev,
+      { category: 'routine', serviceName: '', notes: '' },
+    ]);
+  };
+
+  const removeServiceItem = (index: number) => {
+    setPerformedServices((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSave = async () => {
-    if (!serviceRecord) {
-      return;
-    }
-    const existing = serviceRecord.serviceRecord.performed[0];
+    if (!serviceRecord) return;
+
     const success = await updateServiceRecord({
       serviceRecordId: recordId,
       updates: {
-        performed: [
-          {
-            ...existing,
-            category,
-            name,
-            notes,
-            cost,
-            templateItemId: services
-              ? (services as Id<'maintenanceItems'>)
-              : undefined,
-            warrantyId: existing.warrantyId ?? undefined,
-          },
-        ],
+        performed: performedServices.map((service) => ({
+          ...service,
+          notes: service.notes || '',
+          templateItemId: service.templateItemId || undefined,
+          warrantyId: service.warrantyId || undefined,
+        })),
         serviceDate: serviceDate?.getTime() || 0,
-        storageIds: storageIds,
+        storageIds,
         receiptIdsToRemove: removedReceiptIds,
-        serviceCenter: serviceCenter,
+        serviceCenter,
       },
     });
+
     if (success) {
       setIsEditing(false);
     }
   };
 
-  const onConfirmDelete = async () => {
+  const handleConfirmDelete = async () => {
     const success = await deleteServiceRecord(recordId);
+
     if (success) {
-      setShowDeleteModal(false);
       navigation.navigate(RECORDS.RecordsList);
     }
   };
 
-  const handleDeletePress = () => {
-    setShowDeleteModal(true);
-    setMenuVisible(false);
-  };
-
-  if (!serviceRecord || isDeleting) {
+  if (!serviceRecord) {
     return <FullScreenLoading />;
   }
+
+  const isValid =
+    !isEmptyString(serviceCenter) &&
+    serviceDate &&
+    performedServices.length > 0;
 
   return (
     <Screen>
       <ScrollContainer>
         <SectionHeader
-          title={serviceRecord.serviceRecord.performed[0].name}
+          title="Record Details"
           variant="titleLg"
           style={tw`mb-4`}
         />
+
         <InputGroup>
           <ControlledDatePicker
             label="Service Date"
@@ -156,66 +170,60 @@ export function RecordsDetailsScreen() {
             onDateChange={setServiceDate}
             isEditing={isEditing}
           />
+
           <ControlledInput
             label="Service Center"
             value={serviceCenter}
             onChangeText={setServiceCenter}
             isEditing={isEditing}
           />
-          <ControlledCategoryPicker
-            label="Category"
-            value={category}
-            options={SERVICE_CATEGORIES}
-            onSelect={setCategory}
+
+          <DocumentGallery
+            existingReceipts={serviceRecord.receipts}
+            removedReceiptIds={removedReceiptIds}
+            onRemoveExisting={(id) =>
+              setRemovedReceiptIds((prev) => [...prev, id])
+            }
+            pendingUris={imageUris}
             isEditing={isEditing}
+            onRemovePending={removeImage}
+            onAddPress={openImagePicker}
           />
-          <ControlledCategoryPicker
-            label="Services"
-            value={services}
-            options={SERVICES_BY_CATEGORY['oil_fluids']}
-            onSelect={setServices}
-            isEditing={isEditing}
-          />
-          <ControlledInput
-            label="Name"
-            value={name}
-            onChangeText={setName}
-            isEditing={isEditing}
-          />
-          <ControlledInput
-            label="Notes"
-            value={notes}
-            onChangeText={setNotes}
-            isEditing={isEditing}
-          />
-          <ControlledNumberInput
-            label="Cost"
-            value={cost}
-            onChangeNumber={setCost}
-            isEditing={isEditing}
-            isCurrency
-          />
+
+          <View style={tw`mt-4`}>
+            {performedServices.map((service, index) => (
+              <ServiceItemCard
+                key={index}
+                index={index}
+                service={service}
+                isEditing={isEditing}
+                onUpdate={(updates) => handleUpdateService(index, updates)}
+                onRemove={
+                  isEditing && performedServices.length > 1
+                    ? () => removeServiceItem(index)
+                    : undefined
+                }
+              />
+            ))}
+
+            {isEditing && (
+              <DashedButton
+                title="+ Add Another Service"
+                onPress={addServiceItem}
+                style={tw`mt-2`}
+              />
+            )}
+          </View>
         </InputGroup>
-        <DocumentGallery
-          existingReceipts={serviceRecord.receipts}
-          removedReceiptIds={removedReceiptIds}
-          onRemoveExisting={(id) =>
-            setRemovedReceiptIds((prev: Id<'receipts'>[]) => [...prev, id])
-          }
-          pendingUris={imageUris}
-          isEditing={isEditing}
-          onRemovePending={removeImage}
-          onAddPress={openImagePicker}
-        />
 
         {isEditing && (
           <ButtonContainer>
             <ActionGroup error={updateError}>
               <PrimaryButton
-                title="Save"
+                title="Save Changes"
                 onPress={handleSave}
                 isLoading={isUpdating}
-                disabled={!hasChanges || !isValid}
+                disabled={!isValid}
               />
             </ActionGroup>
           </ButtonContainer>
@@ -226,14 +234,18 @@ export function RecordsDetailsScreen() {
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
         onEdit={() => setIsEditing(true)}
-        onDelete={handleDeletePress}
+        onDelete={() => {
+          setShowDeleteModal(true);
+          setMenuVisible(false);
+        }}
         label="Record"
       />
+
       <ConfirmModal
         visible={showDeleteModal}
         title="Delete Record"
-        message="Are you sure you want to delete this record?"
-        onConfirm={onConfirmDelete}
+        message="Are you sure? This will also remove associated receipts."
+        onConfirm={handleConfirmDelete}
         onCancel={() => setShowDeleteModal(false)}
         confirmText="Delete"
         cancelText="Cancel"

@@ -1,9 +1,9 @@
-import { View } from 'react-native';
+import { View, StyleProp, ViewStyle } from 'react-native';
 import { Doc, Id } from '@convex/_generated/dataModel';
 import { CustomText } from '../texts/CustomText';
 import { ImageUploadSquare } from './ImageUploadSquare';
-import tw from '@/styles/tw';
 import { RemoteImageSquare } from './RemoteImageSquare';
+import tw from '@/styles/tw';
 
 interface DocumentGalleryProps {
   label?: string;
@@ -14,6 +14,7 @@ interface DocumentGalleryProps {
   onRemoveExisting: (id: Id<'receipts'>) => void;
   onRemovePending: (index: number) => void;
   onAddPress: () => void;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function DocumentGallery({
@@ -25,6 +26,7 @@ export function DocumentGallery({
   onRemoveExisting,
   onRemovePending,
   onAddPress,
+  style,
 }: DocumentGalleryProps) {
   const visibleExisting = existingReceipts.filter(
     (r) => !removedReceiptIds.includes(r._id),
@@ -33,11 +35,10 @@ export function DocumentGallery({
   const hasDocuments = visibleExisting.length > 0 || pendingUris.length > 0;
 
   return (
-    <View style={tw``}>
+    <View style={style}>
       <CustomText variant="label" style={tw`mb-1`}>
         {label}
       </CustomText>
-
       {hasDocuments || isEditing ? (
         <View style={tw`flex-row flex-wrap gap-4`}>
           {visibleExisting.map((receipt) => (
@@ -60,11 +61,7 @@ export function DocumentGallery({
           ))}
 
           {isEditing && (
-            <ImageUploadSquare
-              imageUri={null}
-              isEditing={true}
-              onPress={onAddPress}
-            />
+            <ImageUploadSquare imageUri={null} isEditing onPress={onAddPress} />
           )}
         </View>
       ) : (

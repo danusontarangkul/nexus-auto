@@ -9,6 +9,7 @@ import {
 import { internal } from './_generated/api';
 import { getCurrentUser } from './utils/auth';
 import { ServiceRecordWithReceipts } from './types';
+import { ServiceCategory, ServiceCategoryType } from './types/literals';
 
 export const getServiceRecordsByVehicleId = query({
   args: {
@@ -35,15 +36,14 @@ export const insertServiceRecord = mutation({
     serviceRecord: v.object({
       performed: v.array(
         v.object({
-          category: v.string(),
-          cost: v.optional(v.number()),
-          name: v.string(),
+          category: ServiceCategory,
+          serviceName: v.string(),
           notes: v.optional(v.string()),
           warrantyId: v.optional(v.id('warranties')),
           templateItemId: v.optional(v.id('maintenanceItems')),
         }),
       ),
-      serviceCenter: v.optional(v.string()),
+      serviceCenter: v.string(),
       serviceDate: v.number(),
       storageIds: v.array(v.id('_storage')),
     }),
@@ -61,8 +61,7 @@ export const insertServiceRecord = mutation({
     const serviceRecordId = await ctx.db.insert('serviceRecords', {
       performed: serviceRecord.performed.map((performed) => ({
         ...performed,
-        notes: performed.notes ?? null,
-        cost: performed.cost ?? null,
+        notes: performed.notes ?? undefined,
       })),
       serviceCenter: serviceRecord.serviceCenter ?? null,
       serviceDate: serviceRecord.serviceDate,
@@ -86,14 +85,15 @@ export const insertServiceRecord = mutation({
       );
     }
 
-    await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
-      vehicleId,
-      serviceRecordId,
-      serviceDate: serviceRecord.serviceDate,
-      performedItems: serviceRecord.performed.map((p) => ({
-        templateItemId: p.templateItemId,
-      })),
-    });
+    // To Do: Update maintenance items
+    // await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
+    //   vehicleId,
+    //   serviceRecordId,
+    //   serviceDate: serviceRecord.serviceDate,
+    //   performedItems: serviceRecord.performed.map((performed) => ({
+    //     templateItemId: performed.templateItemId,
+    //   })),
+    // });
     return serviceRecordId;
   },
 });
@@ -105,9 +105,8 @@ export const updateServiceRecord = mutation({
       performed: v.optional(
         v.array(
           v.object({
-            category: v.string(),
-            cost: v.optional(v.number()),
-            name: v.string(),
+            category: ServiceCategory,
+            serviceName: v.string(),
             notes: v.optional(v.string()),
             warrantyId: v.optional(v.id('warranties')),
             templateItemId: v.optional(v.id('maintenanceItems')),
@@ -132,10 +131,9 @@ export const updateServiceRecord = mutation({
 
     const patchPayload: {
       performed?: {
-        category: string;
-        name: string;
-        notes: string | null;
-        cost: number | null;
+        category: ServiceCategoryType;
+        serviceName: string;
+        notes?: string;
         warrantyId?: Id<'warranties'>;
         templateItemId?: Id<'maintenanceItems'>;
       }[];
@@ -148,9 +146,8 @@ export const updateServiceRecord = mutation({
     if (updates.performed !== undefined) {
       patchPayload.performed = updates.performed.map((performed) => ({
         category: performed.category,
-        name: performed.name,
-        notes: performed.notes ?? null,
-        cost: performed.cost ?? null,
+        serviceName: performed.serviceName,
+        notes: performed.notes ?? undefined,
         ...(performed.warrantyId !== undefined && {
           warrantyId: performed.warrantyId,
         }),
@@ -238,6 +235,40 @@ export const getServiceRecordById = query({
   },
 });
 
+export const updateServiceRecordInternal = internalMutation({
+  args: {
+    serviceRecordId: v.id('serviceRecords'),
+    updates: v.object({
+      isActive: v.optional(v.boolean()),
+      performed: v.optional(
+        v.array(
+          v.object({
+            category: ServiceCategory,
+            serviceName: v.string(),
+            notes: v.optional(v.string()),
+            warrantyId: v.optional(v.id('warranties')),
+            templateItemId: v.optional(v.id('maintenanceItems')),
+          }),
+        ),
+      ),
+      serviceCenter: v.optional(v.string()),
+      serviceDate: v.optional(v.number()),
+      receiptIds: v.optional(v.array(v.id('receipts'))),
+      receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
+    }),
+  },
+  handler: async (ctx, { serviceRecordId, updates }): Promise<void> => {
+    return await ctx.db.patch(serviceRecordId, {
+      ...updates,
+      performed: updates.performed?.map((performed) => ({
+        ...performed,
+        notes: performed.notes ?? undefined,
+      })),
+      updatedAt: Date.now(),
+    });
+  },
+});
+
 export const deleteServiceRecord = mutation({
   args: {
     serviceRecordId: v.id('serviceRecords'),
@@ -256,7 +287,6 @@ export const deleteServiceRecord = mutation({
       isActive: false,
       updatedAt: now,
     });
-
     const receipts = await ctx.db
       .query('receipts')
       .withIndex('by_serviceRecord', (q) =>
@@ -273,42 +303,7 @@ export const deleteServiceRecord = mutation({
         }),
       ),
     );
-    return true;
-  },
-});
 
-export const updateServiceRecordInternal = internalMutation({
-  args: {
-    serviceRecordId: v.id('serviceRecords'),
-    updates: v.object({
-      isActive: v.optional(v.boolean()),
-      performed: v.optional(
-        v.array(
-          v.object({
-            category: v.string(),
-            cost: v.optional(v.number()),
-            name: v.string(),
-            notes: v.optional(v.string()),
-            warrantyId: v.optional(v.id('warranties')),
-            templateItemId: v.optional(v.id('maintenanceItems')),
-          }),
-        ),
-      ),
-      serviceCenter: v.optional(v.string()),
-      serviceDate: v.optional(v.number()),
-      receiptIds: v.optional(v.array(v.id('receipts'))),
-      receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
-    }),
-  },
-  handler: async (ctx, { serviceRecordId, updates }): Promise<void> => {
-    return await ctx.db.patch(serviceRecordId, {
-      ...updates,
-      performed: updates.performed?.map((performed) => ({
-        ...performed,
-        notes: performed.notes ?? null,
-        cost: performed.cost ?? null,
-      })),
-      updatedAt: Date.now(),
-    });
+    return true;
   },
 });

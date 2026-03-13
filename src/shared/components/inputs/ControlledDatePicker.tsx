@@ -20,6 +20,7 @@ export function ControlledDatePicker({
   onDateChange,
 }: Props) {
   const [showPicker, setShowPicker] = useState(false);
+
   const displayText = getDisplayDate(value, isEditing);
 
   if (!isEditing) {
@@ -27,17 +28,24 @@ export function ControlledDatePicker({
   }
 
   return (
-    <View style={tw`mb-4`}>
-      <CustomText variant="label">{label}</CustomText>
+    <View style={tw`w-full`}>
+      <CustomText variant="label" style={tw`mb-1`}>
+        {label}
+      </CustomText>
+
       <TouchableOpacity
-        disabled={!isEditing}
         onPress={() => setShowPicker(true)}
-        style={tw.style('py-2 border-b', {
-          'border-surface-border': isEditing,
-          'border-transparent': !isEditing,
-        })}
+        style={tw`w-full px-4 py-2 rounded-md bg-surface-800 border border-surface-border`}
+        activeOpacity={0.7}
       >
-        <CustomText variant="body">{displayText}</CustomText>
+        <CustomText
+          style={tw.style(
+            'text-base',
+            displayText === 'Select Date' ? 'text-ink-400' : 'text-ink-900',
+          )}
+        >
+          {displayText}
+        </CustomText>
       </TouchableOpacity>
 
       <DatePickerModal

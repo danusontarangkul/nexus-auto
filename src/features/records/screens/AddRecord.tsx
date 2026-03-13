@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { View, ScrollView } from 'react-native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Id } from '@convex/_generated/dataModel';
 import { Screen } from '@/shared/components/screens/Screen';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import { Input } from '@/shared/components/inputs/Input';
@@ -6,34 +9,29 @@ import { InputGroup } from '@/shared/components/inputs/InputGroup';
 import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { ActionGroup } from '@/shared/components/containers/ActionGroup';
-import tw from '@/styles/tw';
-import { RECORDS, RecordsStackParamList } from '@/navigation/routes';
-import { isEmptyString } from '@/utils/format';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
-import { Id } from '@convex/_generated/dataModel';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
+import { DashedButton } from '@/shared/components/buttons/DashedButton';
 import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { useUploadPhoto } from '@/shared/hooks/useUploadPhoto';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { useCreateServiceRecord } from '@/domain/serviceRecords';
-import { CategoryPicker } from '@/shared/components/inputs/CategoryPicker';
-import { ScrollView } from 'react-native';
-import { NumberInput } from '@/shared/components/inputs/NumberInput';
-import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
+import { RECORDS, RecordsStackParamList } from '@/navigation/routes';
+import { isEmptyString } from '@/utils/format';
+import { ServiceCategoryType } from '@convex/types/literals';
+import { PerformedService } from '@convex/types';
+import tw from '@/styles/tw';
+import { ServiceItemCard } from '../components/ServiceItemCard';
 
 export function AddRecordScreen() {
-  const { dashboard } = useDashboardContext();
-  const vehicleId = dashboard?.active?.vehicle._id;
-  const { createServiceRecord, isLoading, error } = useCreateServiceRecord();
-  const [serviceDate, setServiceDate] = useState<Date | null>(null);
-  const [serviceCenter, setServiceCenter] = useState<string>('');
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
-  const [category, setCategory] = useState<string>('');
-  const [services, setServices] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
-  const [cost, setCost] = useState<number>(0);
+
+  const { dashboard } = useDashboardContext();
+
+  const vehicleId = dashboard?.active?.vehicle._id;
+
+  const { createServiceRecord, isLoading, error } = useCreateServiceRecord();
+
   const {
     uploadImages,
     isLoading: isUploading,
@@ -42,11 +40,41 @@ export function AddRecordScreen() {
 
   const { imageUris, removeImage, openImagePicker } = usePhotoAttachment();
 
+  const [serviceDate, setServiceDate] = useState<Date | null>(new Date());
+
+  const [serviceCenter, setServiceCenter] = useState('');
+
+  const [performedServices, setPerformedServices] = useState<
+    PerformedService[]
+  >([{ category: 'routine', serviceName: '', notes: '' }]);
+
+  const handleUpdateService = (
+    index: number,
+    updates: Partial<PerformedService>,
+  ) => {
+    setPerformedServices((prev) =>
+      prev.map((service, i) =>
+        i === index ? { ...service, ...updates } : service,
+      ),
+    );
+  };
+
+  const addServiceItem = () => {
+    setPerformedServices((prev) => [
+      ...prev,
+      { category: 'routine', serviceName: '', notes: '' },
+    ]);
+  };
+
+  const removeServiceItem = (index: number) => {
+    setPerformedServices((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async () => {
-    if (!vehicleId) {
-      return;
-    }
+    if (!vehicleId) return;
+
     let finalStorageIds: Id<'_storage'>[] = [];
+
     if (imageUris.length > 0) {
       finalStorageIds = await uploadImages(imageUris);
     }
@@ -56,19 +84,16 @@ export function AddRecordScreen() {
       serviceRecord: {
         serviceCenter,
         serviceDate: serviceDate?.getTime() || 0,
-        performed: [
-          {
-            category,
-            name,
-            cost,
-            notes,
-            warrantyId: undefined,
-            templateItemId: undefined,
-          },
-        ],
+        performed: performedServices.map((service) => ({
+          category: service.category as ServiceCategoryType,
+          serviceName: service.serviceName,
+          notes: service.notes || '',
+          warrantyId: undefined,
+        })),
         storageIds: finalStorageIds,
       },
     });
+
     if (serviceRecordId) {
       navigation.navigate(RECORDS.RecordDetails, {
         recordId: serviceRecordId,
@@ -76,64 +101,34 @@ export function AddRecordScreen() {
     }
   };
 
-  const isSubmitReady = !isEmptyString(serviceCenter) && serviceDate;
+  const isSubmitReady =
+    !isEmptyString(serviceCenter) &&
+    serviceDate &&
+    performedServices.every((service) => !isEmptyString(service.serviceName));
 
   return (
     <Screen>
-      <ScrollView>
+      <ScrollView contentContainerStyle={tw`pb-8`}>
         <SectionHeader
           title="Add Service Record"
           variant="titleLg"
           style={tw`mb-4`}
         />
-        <InputGroup>
+
+        <InputGroup gap={4}>
           <ControlledDatePicker
             label="Service Date"
             value={serviceDate}
             onDateChange={setServiceDate}
-            isEditing={true}
+            isEditing
           />
+
           <Input
             label="Service Center"
             value={serviceCenter}
             onChangeText={setServiceCenter}
+            placeholder="Where was it serviced?"
             onClear={() => setServiceCenter('')}
-            placeholder="Service Center"
-          />
-          <CategoryPicker
-            label="Category"
-            options={SERVICE_CATEGORIES}
-            selectedValue={category}
-            onSelect={setCategory}
-          />
-          {/* TODO: Add services by category */}
-          <CategoryPicker
-            label="Services"
-            options={SERVICES_BY_CATEGORY['oil_fluids']}
-            selectedValue={services}
-            onSelect={setServices}
-          />
-          <Input
-            label="Name"
-            value={name}
-            onChangeText={setName}
-            onClear={() => setName('')}
-            placeholder="Name"
-          />
-          <Input
-            label="Notes"
-            value={notes}
-            onChangeText={setNotes}
-            onClear={() => setNotes('')}
-            placeholder="Notes"
-          />
-          <NumberInput
-            label="Cost"
-            value={cost}
-            onChangeNumber={(value) => setCost(value)}
-            isCurrency
-            placeholder="Cost"
-            onClear={() => setCost(0)}
           />
 
           <DocumentGallery
@@ -141,16 +136,35 @@ export function AddRecordScreen() {
             removedReceiptIds={[]}
             onRemoveExisting={() => {}}
             pendingUris={imageUris}
-            isEditing={true}
+            isEditing
             onRemovePending={removeImage}
             onAddPress={openImagePicker}
           />
         </InputGroup>
+
+        <View style={tw`mt-4`}>
+          {performedServices.map((service, index) => (
+            <ServiceItemCard
+              key={index}
+              index={index}
+              service={service}
+              onUpdate={(updates) => handleUpdateService(index, updates)}
+              onRemove={
+                performedServices.length > 1
+                  ? () => removeServiceItem(index)
+                  : undefined
+              }
+              isEditing={true}
+            />
+          ))}
+
+          <DashedButton title="Add Another Service" onPress={addServiceItem} />
+        </View>
+
         <ButtonContainer>
           <ActionGroup error={error || uploadError}>
             <PrimaryButton
-              title="Submit"
-              style={tw`rounded-xl py-4`}
+              title="Submit Record"
               onPress={handleSubmit}
               disabled={!isSubmitReady}
               isLoading={isLoading || isUploading}

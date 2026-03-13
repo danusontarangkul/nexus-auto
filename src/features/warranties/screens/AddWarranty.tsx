@@ -85,6 +85,7 @@ export function AddWarrantyScreen() {
           onDateChange={setExpirationDate}
           isEditing={true}
         />
+
         <DocumentGallery
           existingReceipts={[]}
           removedReceiptIds={[]}
@@ -93,6 +94,7 @@ export function AddWarrantyScreen() {
           isEditing={true}
           onRemovePending={removeImage}
           onAddPress={openImagePicker}
+          style={tw`mt-4`}
         />
       </InputGroup>
       <ButtonContainer>

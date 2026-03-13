@@ -1,4 +1,4 @@
-import { View, Image, ImageSourcePropType } from 'react-native';
+import { View } from 'react-native';
 import { CustomText } from '@/shared/components/texts/CustomText';
 import { VehicleData } from '@convex/types';
 import tw from '@/styles/tw';
@@ -7,20 +7,13 @@ import { formatBodyClass, formatVehicleName } from '../../utils/format';
 interface Props {
   car: VehicleData;
   plate: string;
-  imageSource?: ImageSourcePropType;
 }
 
-export function VehiclePreviewCard({ car, plate, imageSource }: Props) {
+export function VehiclePreviewCard({ car, plate }: Props) {
   return (
     <View
       style={tw`bg-surface-600 rounded-xl p-4 border border-surface-border`}
     >
-      <Image
-        source={imageSource || require('@assets/tesla-model-3.avif')}
-        style={tw`w-full h-40 rounded-lg mb-4`}
-        resizeMode="cover"
-      />
-
       <CustomText variant="titleLg" color={tw.color('ink-900')}>
         {formatVehicleName(car)}
       </CustomText>
