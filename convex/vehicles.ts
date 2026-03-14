@@ -10,6 +10,7 @@ import { getCurrentUser } from './utils/auth';
 import { internal } from './_generated/api';
 import { vehicleDataValidator } from './utils/schemaUtils';
 import { sanitizeCapitalizeString } from './utils/sanatize';
+import { generateUniversalSchedule } from './utils/maintenanceLogic';
 
 export const getVehicleById = query({
   args: {
@@ -70,27 +71,26 @@ export const insertVehicle = mutation({
       vinNumber: sanitizeCapitalizeString(vinNumber),
     });
 
-    const template = await ctx.runQuery(
-      internal.maintenanceTemplates.getMaintenanceTemplatesByMakeModelYear,
-      {
-        make: vehicleData.make ?? '',
-        model: vehicleData.model ?? '',
-        year: vehicleData.year ?? 0,
-      },
-    );
+    const schedule = generateUniversalSchedule({
+      year: vehicleData.year,
+      make: vehicleData.make,
+      model: vehicleData.model,
+      driveType: vehicleData.driveType,
+      transmission: vehicleData.transmission,
+      cylinders: vehicleData.engine.cylinders,
+    });
 
-    if (template && template.length > 0) {
-      for (const item of template[0].defaultItems) {
-        await ctx.db.insert('maintenanceItems', {
-          vehicleId,
-          name: item.name,
-          category: item.category,
-          intervalMiles: item.intervalMiles ?? undefined,
-          intervalMonths: item.intervalMonths ?? undefined,
-          updatedAt: now,
-        });
-      }
+    for (const item of schedule) {
+      await ctx.db.insert('maintenanceItems', {
+        vehicleId,
+        serviceName: item.serviceName,
+        category: item.category,
+        intervalMiles: item.intervalMiles,
+        intervalMonths: item.intervalMonths,
+        updatedAt: now,
+      });
     }
+
     await ctx.db.patch(user._id, {
       lastSelectedVehicleId: vehicleId,
       updatedAt: now,

@@ -1,57 +1,57 @@
-import { v } from "convex/values";
-import { internalMutation, internalQuery } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
+import { v } from 'convex/values';
+import { internalMutation, internalQuery } from './_generated/server';
+import { Doc, Id } from './_generated/dataModel';
 
 export const getMaintenanceItemsByVehicleId = internalQuery({
   args: {
-    vehicleId: v.id("vehicles"),
+    vehicleId: v.id('vehicles'),
   },
-  handler: async (ctx, { vehicleId }): Promise<Doc<"maintenanceItems">[]> => {
+  handler: async (ctx, { vehicleId }): Promise<Doc<'maintenanceItems'>[]> => {
     return await ctx.db
-      .query("maintenanceItems")
-      .withIndex("by_vehicle", (q) => q.eq("vehicleId", vehicleId))
+      .query('maintenanceItems')
+      .withIndex('by_vehicle', (q) => q.eq('vehicleId', vehicleId))
       .collect();
   },
 });
 
-export const insertMaintenanceItem = internalMutation({
-  args: {
-    vehicleId: v.id("vehicles"),
-    name: v.string(),
-    category: v.string(),
-    intervalMiles: v.optional(v.number()),
-    intervalMonths: v.optional(v.number()),
-  },
-  handler: async (
-    ctx,
-    { vehicleId, name, category, intervalMiles, intervalMonths }
-  ): Promise<Id<"maintenanceItems">> => {
-    const maintenanceItemId = await ctx.db.insert("maintenanceItems", {
-      vehicleId,
-      name,
-      category,
-      intervalMiles,
-      intervalMonths,
-      updatedAt: Date.now(),
-    });
-    return maintenanceItemId;
-  },
-});
+// export const insertMaintenanceItem = internalMutation({
+//   args: {
+//     vehicleId: v.id('vehicles'),
+//     name: v.string(),
+//     category: v.string(),
+//     intervalMiles: v.optional(v.number()),
+//     intervalMonths: v.optional(v.number()),
+//   },
+//   handler: async (
+//     ctx,
+//     { vehicleId, name, category, intervalMiles, intervalMonths },
+//   ): Promise<Id<'maintenanceItems'>> => {
+//     const maintenanceItemId = await ctx.db.insert('maintenanceItems', {
+//       vehicleId,
+//       name,
+//       category,
+//       intervalMiles,
+//       intervalMonths,
+//       updatedAt: Date.now(),
+//     });
+//     return maintenanceItemId;
+//   },
+// });
 
 export const updateFromServiceRecord = internalMutation({
   args: {
-    vehicleId: v.id("vehicles"),
-    serviceRecordId: v.id("serviceRecords"),
+    vehicleId: v.id('vehicles'),
+    serviceRecordId: v.id('serviceRecords'),
     serviceDate: v.number(),
     performedItems: v.array(
       v.object({
-        templateItemId: v.optional(v.id("maintenanceItems")),
-      })
+        templateItemId: v.optional(v.id('maintenanceItems')),
+      }),
     ),
   },
   handler: async (
     ctx,
-    { vehicleId, serviceRecordId, serviceDate, performedItems }
+    { vehicleId, serviceRecordId, serviceDate, performedItems },
   ) => {
     const updates: Promise<void>[] = [];
 
@@ -71,7 +71,7 @@ export const updateFromServiceRecord = internalMutation({
           lastDoneRecordId: serviceRecordId,
           nextDueDate,
           updatedAt: Date.now(),
-        })
+        }),
       );
     }
 

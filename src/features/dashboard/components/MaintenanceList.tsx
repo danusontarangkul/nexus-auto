@@ -23,9 +23,10 @@ export function MaintenanceList({ items, onItemPress }: MaintenanceListProps) {
       {items.map((item) => (
         <MaintenanceCard
           key={item._id}
-          name={item.name}
+          name={item.serviceName}
           intervalMiles={item.intervalMiles}
           onPress={onItemPress ? () => onItemPress(item) : undefined}
+          category={item.category}
         />
       ))}
     </View>
