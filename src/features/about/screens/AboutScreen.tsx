@@ -12,6 +12,7 @@ import { AppTabsParamList, TABS } from '@/navigation/routes';
 import { LinkButton } from '@/shared/components/buttons/LinkButton';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
+import { InputGroup } from '@/shared/components/inputs/InputGroup';
 
 export function AboutScreen() {
   const navigation = useNavigation<NavigationProp<AppTabsParamList>>();
@@ -50,10 +51,12 @@ export function AboutScreen() {
     <Screen>
       <View style={tw` mt-6`}>
         <SectionHeader title="About" variant="titleLg" style={tw`mb-4`} />
-        <StaticField label="Vin Number" value={vehicle?.vinNumber} />
-        <StaticField label="Make" value={vehicle?.vehicleData.make} />
-        <StaticField label="Model" value={vehicle?.vehicleData.model} />
-        <StaticField label="Year" value={vehicle?.vehicleData.year} />
+        <InputGroup gap={4}>
+          <StaticField label="Vin Number" value={vehicle?.vinNumber} />
+          <StaticField label="Make" value={vehicle?.vehicleData.make} />
+          <StaticField label="Model" value={vehicle?.vehicleData.model} />
+          <StaticField label="Year" value={vehicle?.vehicleData.year} />
+        </InputGroup>
       </View>
       <ButtonContainer>
         <LinkButton

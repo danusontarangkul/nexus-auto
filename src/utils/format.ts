@@ -36,6 +36,10 @@ export const isEmptyString = (value: string | null | undefined): boolean => {
   return !value || value.trim() === '';
 };
 
+export const isEmptyNumber = (value: number | null | undefined): boolean => {
+  return !value || value === 0;
+};
+
 export const isEmptyDate = (value: Date | null | undefined): boolean => {
   if (!value) {
     return true;
@@ -154,5 +158,10 @@ export const getNumberDisplayText = (
   isCurrency: boolean,
 ): string => {
   if (value === 0) return '';
-  return isCurrency ? value.toFixed(2) : value.toString();
+  return isCurrency
+    ? value.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    : value.toLocaleString('en-US');
 };

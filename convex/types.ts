@@ -94,6 +94,7 @@ export type ServiceRecordWithReceipts = {
 
 export type CreateServiceRecordInput = {
   vehicleId: Id<'vehicles'>;
+  mileage: number;
   serviceRecord: {
     performed: {
       category: ServiceCategoryType;
@@ -112,6 +113,7 @@ export type UpdateServiceRecordInput = {
   serviceRecordId: Id<'serviceRecords'>;
   updates: {
     isActive?: boolean;
+    mileage?: number;
     performed?: {
       category: ServiceCategoryType;
       serviceName: string;

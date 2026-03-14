@@ -17,11 +17,12 @@ import { useUploadPhoto } from '@/shared/hooks/useUploadPhoto';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { useCreateServiceRecord } from '@/domain/serviceRecords';
 import { RECORDS, RecordsStackParamList } from '@/navigation/routes';
-import { isEmptyString } from '@/utils/format';
+import { isEmptyNumber, isEmptyString } from '@/utils/format';
 import { ServiceCategoryType } from '@convex/types/literals';
 import { PerformedService } from '@convex/types';
 import tw from '@/styles/tw';
 import { ServiceItemCard } from '../components/ServiceItemCard';
+import { NumberInput } from '@/shared/components/inputs/NumberInput';
 
 export function AddRecordScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -42,7 +43,9 @@ export function AddRecordScreen() {
 
   const [serviceDate, setServiceDate] = useState<Date | null>(new Date());
 
-  const [serviceCenter, setServiceCenter] = useState('');
+  const [mileage, setMileage] = useState<number>(0);
+
+  const [serviceCenter, setServiceCenter] = useState<string>('');
 
   const [performedServices, setPerformedServices] = useState<
     PerformedService[]
@@ -81,6 +84,7 @@ export function AddRecordScreen() {
 
     const serviceRecordId = await createServiceRecord({
       vehicleId,
+      mileage: Number(mileage) || 0,
       serviceRecord: {
         serviceCenter,
         serviceDate: serviceDate?.getTime() || 0,
@@ -103,6 +107,7 @@ export function AddRecordScreen() {
 
   const isSubmitReady =
     !isEmptyString(serviceCenter) &&
+    !isEmptyNumber(mileage) &&
     serviceDate &&
     performedServices.every((service) => !isEmptyString(service.serviceName));
 
@@ -121,6 +126,15 @@ export function AddRecordScreen() {
             value={serviceDate}
             onDateChange={setServiceDate}
             isEditing
+          />
+
+          <NumberInput
+            label="Mileage"
+            value={mileage}
+            onChangeNumber={setMileage}
+            placeholder="e.g. 45,000"
+            keyboardType="numeric"
+            onClear={() => setMileage(0)}
           />
 
           <Input

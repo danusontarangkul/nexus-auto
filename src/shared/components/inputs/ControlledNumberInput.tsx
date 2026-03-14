@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import tw from '@/styles/tw';
 import { StaticField } from '../texts/StaticField';
 import { NumberInput } from './NumberInput';
 import { TextInputProps } from 'react-native';
@@ -33,14 +32,14 @@ export function ControlledNumberInput({
   }
 
   return (
-    <View style={tw`mb-4`}>
+    <View>
       <NumberInput
         label={label}
         value={value}
         onChangeNumber={onChangeNumber}
         errorText={errorText}
         onClear={onClear}
-        isCurrency={isCurrency} // Explicitly pass the prop
+        isCurrency={isCurrency}
         {...props}
       />
     </View>

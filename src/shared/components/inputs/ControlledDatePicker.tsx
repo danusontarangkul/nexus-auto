@@ -28,7 +28,7 @@ export function ControlledDatePicker({
   }
 
   return (
-    <View style={tw`w-full`}>
+    <View>
       <CustomText variant="label" style={tw`mb-1`}>
         {label}
       </CustomText>
@@ -47,6 +47,8 @@ export function ControlledDatePicker({
           {displayText}
         </CustomText>
       </TouchableOpacity>
+
+      <View style={tw`h-5 mt-1`} />
 
       <DatePickerModal
         isVisible={showPicker}

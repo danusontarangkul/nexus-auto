@@ -7,7 +7,6 @@ import {
   validateVehicle,
 } from './utils/validation';
 import { getCurrentUser } from './utils/auth';
-import { internal } from './_generated/api';
 import { vehicleDataValidator } from './utils/schemaUtils';
 import { sanitizeCapitalizeString } from './utils/sanatize';
 import { generateUniversalSchedule } from './utils/maintenanceLogic';

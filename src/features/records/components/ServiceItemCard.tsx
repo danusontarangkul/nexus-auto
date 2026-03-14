@@ -1,4 +1,3 @@
-import { View } from 'react-native';
 import { Id } from '@convex/_generated/dataModel';
 import { PerformedService } from '@convex/types';
 import { ServiceCategoryType } from '@convex/types/literals';
@@ -28,7 +27,7 @@ export function ServiceItemCard({
 }: ServiceItemCardProps) {
   return (
     <FormCard title={`Service #${index + 1}`} onRemove={onRemove}>
-      <InputGroup>
+      <InputGroup gap={4}>
         {isEditing ? (
           <>
             <ControlledCategoryPicker

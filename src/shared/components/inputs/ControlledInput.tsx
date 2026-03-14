@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import tw from '@/styles/tw';
 import { Input } from './Input';
 import { TextInputProps } from 'react-native';
 import { StaticField } from '../texts/StaticField';
@@ -25,7 +24,7 @@ export function ControlledInput({
   }
 
   return (
-    <View style={tw`mb-4`}>
+    <View>
       <Input
         label={label}
         value={value}

@@ -19,21 +19,29 @@ export function NumberInput({
   isCurrency,
   ...props
 }: NumberInputProps) {
-  const [textValue, setTextValue] = useState<string>('');
+  const [textValue, setTextValue] = useState<string>(
+    getNumberDisplayText(value, !!isCurrency),
+  );
 
   useEffect(() => {
-    const display = getNumberDisplayText(value, !!isCurrency);
-    if (parseFloat(textValue) !== value) {
-      setTextValue(display);
+    const formatted = getNumberDisplayText(value, !!isCurrency);
+    if (parseRawNumberInput(textValue, isCurrency) !== value.toString()) {
+      setTextValue(formatted);
     }
   }, [value, isCurrency]);
 
   const handleChangeText = (text: string) => {
-    const cleanText = parseRawNumberInput(text, isCurrency);
-    setTextValue(cleanText);
+    const rawValue = parseRawNumberInput(text, isCurrency);
 
-    const numericValue = parseFloat(cleanText);
-    onChangeNumber(isNaN(numericValue) ? 0 : numericValue);
+    const numericValue = parseFloat(rawValue);
+    const finalNumericValue = isNaN(numericValue) ? 0 : numericValue;
+    if (text.endsWith('.') || text.endsWith(',')) {
+      setTextValue(text);
+    } else {
+      setTextValue(getNumberDisplayText(finalNumericValue, !!isCurrency));
+    }
+
+    onChangeNumber(finalNumericValue);
   };
 
   return (
@@ -42,6 +50,7 @@ export function NumberInput({
       isCurrency={isCurrency}
       onClear={() => {
         setTextValue('');
+        onChangeNumber(0);
         onClear?.();
       }}
       keyboardType="decimal-pad"
