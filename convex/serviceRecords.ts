@@ -33,6 +33,7 @@ export const getServiceRecordsByVehicleId = query({
 export const insertServiceRecord = mutation({
   args: {
     vehicleId: v.id('vehicles'),
+    mileage: v.number(),
     serviceRecord: v.object({
       performed: v.array(
         v.object({
@@ -40,7 +41,7 @@ export const insertServiceRecord = mutation({
           serviceName: v.string(),
           notes: v.optional(v.string()),
           warrantyId: v.optional(v.id('warranties')),
-          templateItemId: v.optional(v.id('maintenanceItems')),
+          maintenanceItemsId: v.optional(v.id('maintenanceItems')),
         }),
       ),
       serviceCenter: v.string(),
@@ -50,7 +51,7 @@ export const insertServiceRecord = mutation({
   },
   handler: async (
     ctx,
-    { vehicleId, serviceRecord },
+    { vehicleId, mileage, serviceRecord },
   ): Promise<Id<'serviceRecords'>> => {
     const user = await getCurrentUser(ctx);
     const now = Date.now();
@@ -65,6 +66,7 @@ export const insertServiceRecord = mutation({
       })),
       serviceCenter: serviceRecord.serviceCenter ?? null,
       serviceDate: serviceRecord.serviceDate,
+      mileage,
       vehicleId,
       updatedAt: now,
       isActive: true,

@@ -30,6 +30,7 @@ import { PerformedService } from '@convex/types';
 import { DashedButton } from '@/shared/components/buttons/DashedButton';
 import { ServiceItemCard } from '../components/ServiceItemCard';
 import { View } from 'react-native';
+import { ControlledNumberInput } from '@/shared/components/inputs/ControlledNumberInput';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -50,6 +51,7 @@ export function RecordsDetailsScreen() {
   );
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [mileage, setMileage] = useState<number>(0);
 
   const [storageIds] = useState<Id<'_storage'>[]>([]);
 
@@ -78,6 +80,7 @@ export function RecordsDetailsScreen() {
       setServiceDate(toDateOrNull(serviceRecord.serviceRecord.serviceDate));
 
       setServiceCenter(serviceRecord.serviceRecord.serviceCenter || '');
+      setMileage(serviceRecord.serviceRecord.mileage);
 
       setPerformedServices(
         serviceRecord.serviceRecord.performed.map((performed) => ({
@@ -125,6 +128,7 @@ export function RecordsDetailsScreen() {
           templateItemId: service.templateItemId || undefined,
           warrantyId: service.warrantyId || undefined,
         })),
+        mileage,
         serviceDate: serviceDate?.getTime() || 0,
         storageIds,
         receiptIdsToRemove: removedReceiptIds,
@@ -163,7 +167,7 @@ export function RecordsDetailsScreen() {
           style={tw`mb-4`}
         />
 
-        <InputGroup>
+        <InputGroup gap={4}>
           <ControlledDatePicker
             label="Service Date"
             value={serviceDate}
@@ -175,6 +179,12 @@ export function RecordsDetailsScreen() {
             label="Service Center"
             value={serviceCenter}
             onChangeText={setServiceCenter}
+            isEditing={isEditing}
+          />
+          <ControlledNumberInput
+            label="Mileage"
+            value={mileage}
+            onChangeNumber={setMileage}
             isEditing={isEditing}
           />
 

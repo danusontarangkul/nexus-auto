@@ -13,7 +13,9 @@ export function FormCard({ title, onRemove, children, style }: FormCardProps) {
   return (
     <View style={[tw`mb-4 p-4 rounded-2xl bg-surface-900`, style]}>
       <View style={tw`flex-row justify-between items-center mb-4`}>
-        <Text style={tw`font-bold text-gray-500 uppercase tracking-wider`}>
+        <Text
+          style={tw`text-xs font-bold text-gray-500 uppercase tracking-wider`}
+        >
           {title}
         </Text>
 

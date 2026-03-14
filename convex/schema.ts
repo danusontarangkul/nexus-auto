@@ -54,6 +54,7 @@ export default defineSchema({
 
   serviceRecords: defineTable({
     isActive: v.boolean(),
+    mileage: v.number(),
     performed: v.array(
       v.object({
         category: ServiceCategory,
