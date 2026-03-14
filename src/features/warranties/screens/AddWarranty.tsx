@@ -24,7 +24,7 @@ export function AddWarrantyScreen() {
   const { createWarranty, isLoading, error } = useCreateWarranty();
   const [manufacturer, setManufacturer] = useState<string>('');
   const [expirationDate, setExpirationDate] = useState<Date | null>(null);
-  const [titleOfManufacturer, setTitleOfManufacturer] = useState<string>('');
+  const [component, setComponent] = useState<string>('');
   const navigation = useNavigation<NavigationProp<WarrantiesStackParamList>>();
 
   const {
@@ -48,7 +48,7 @@ export function AddWarrantyScreen() {
       vehicleId,
       expiresAt: expirationDate?.getTime() || 0,
       manufacturer,
-      titleOfManufacturer,
+      component,
       storageIds: finalStorageIds,
     });
     if (warrantyId) {
@@ -57,24 +57,22 @@ export function AddWarrantyScreen() {
   };
 
   const isSubmitReady =
-    !isEmptyString(titleOfManufacturer) &&
-    !isEmptyString(manufacturer) &&
-    expirationDate;
+    !isEmptyString(component) && !isEmptyString(manufacturer) && expirationDate;
 
   return (
     <Screen>
       <SectionHeader title="Add Warranty" variant="titleLg" />
       <InputGroup>
         <Input
-          label="Title of Manufacturer"
-          placeholder="Title of Manufacturer"
-          value={titleOfManufacturer}
-          onChangeText={setTitleOfManufacturer}
-          onClear={() => setTitleOfManufacturer('')}
+          label="Component"
+          placeholder="e.g. Engine, Brake Pads, etc."
+          value={component}
+          onChangeText={setComponent}
+          onClear={() => setComponent('')}
         />
         <Input
           label="Manufacturer"
-          placeholder="Manufacturer"
+          placeholder="e.g. Goodyear, Honda, etc."
           value={manufacturer}
           onChangeText={setManufacturer}
           onClear={() => setManufacturer('')}

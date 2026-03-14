@@ -10,7 +10,7 @@ interface CurrentState {
   expiryDate: Date | null;
   removedReceiptIdsCount?: number;
   manufacturer: string;
-  titleOfManufacturer: string;
+  component: string;
   pendingImageCount?: number;
 }
 
@@ -23,7 +23,7 @@ export function useWarrantyChanges(
       return (
         current.expiryDate !== null ||
         current.manufacturer.trim() !== '' ||
-        current.titleOfManufacturer.trim() !== '' ||
+        current.component.trim() !== '' ||
         (current.pendingImageCount ?? 0) > 0
       );
     }
@@ -34,14 +34,12 @@ export function useWarrantyChanges(
       (war.manufacturer || '').trim() !== (current.manufacturer || '').trim();
 
     const titleChanged =
-      (war.titleOfManufacturer || '').trim() !==
-      (current.titleOfManufacturer || '').trim();
+      (war.component || '').trim() !== (current.component || '').trim();
 
     const originalTime = war.expiresAt || 0;
     const currentTime = current.expiryDate?.getTime() || 0;
     const dateChanged = originalTime !== currentTime;
 
-    // FIX: Only trigger if there is a REAL addition or a REAL removal
     const receiptsChanged =
       (current.removedReceiptIdsCount ?? 0) > 0 ||
       (current.pendingImageCount ?? 0) > 0;
@@ -53,7 +51,7 @@ export function useWarrantyChanges(
     initial,
     current.expiryDate,
     current.manufacturer,
-    current.titleOfManufacturer,
+    current.component,
     current.removedReceiptIdsCount,
     current.pendingImageCount,
   ]);
