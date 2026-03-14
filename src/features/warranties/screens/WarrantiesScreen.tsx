@@ -11,7 +11,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import tw from '@/styles/tw';
 import { FILTER_OPTIONS, FilterType } from '@/utils/const';
 import { SegmentedFilter } from '@/shared/components/filters/SegmentedFilter';
-import { useListFilter } from '@/shared/hooks/useListFilter'; // Reusable hook
+import { useListFilter } from '@/shared/hooks/useListFilter';
 import { getEmptyMessage, WARRANTY_FILTER_LOGIC } from '../utils/utils';
 
 export function WarrantiesScreen() {
@@ -28,7 +28,7 @@ export function WarrantiesScreen() {
       headerTitle: 'Warranties',
       searchFields: (item) => [
         item.manufacturer ?? '',
-        item.titleOfManufacturer ?? '',
+        item.component ?? '',
         item.expiresAt.toString(),
       ],
       onAddPress: () => navigation.navigate(WARRANTIES.AddWarranty),

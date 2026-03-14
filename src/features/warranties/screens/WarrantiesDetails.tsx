@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Id } from '@convex/_generated/dataModel';
-
 import { Screen } from '@/shared/components/screens/Screen';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import { FullScreenLoading } from '@/shared/screens/FullScreenLoading';
@@ -12,7 +11,6 @@ import { ActionGroup } from '@/shared/components/containers/ActionGroup';
 import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { ActionMenu } from '@/shared/components/sheets/ActionMenu';
-
 import {
   useDeleteWarranty,
   useUpdateWarranty,
@@ -38,8 +36,8 @@ export function WarrantiesDetailsScreen() {
     [],
   );
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [manufacturer, setManufacturer] = useState('');
-  const [titleOfManufacturer, setTitleOfManufacturer] = useState('');
+  const [manufacturer, setManufacturer] = useState<string>('');
+  const [component, setComponent] = useState<string>('');
 
   const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
   const {
@@ -54,16 +52,13 @@ export function WarrantiesDetailsScreen() {
   } = useUpdateWarranty();
 
   const { isEditing, setIsEditing, menuVisible, setMenuVisible } =
-    useEditableHeader(
-      warranty?.warranty.titleOfManufacturer || 'Warranty',
-      !!warranty,
-    );
+    useEditableHeader(warranty?.warranty.component || 'Warranty', !!warranty);
 
   useEffect(() => {
     if (warranty && !isEditing) {
       setExpiryDate(toDateOrNull(warranty.warranty.expiresAt));
       setManufacturer(warranty.warranty.manufacturer || '');
-      setTitleOfManufacturer(warranty.warranty.titleOfManufacturer || '');
+      setComponent(warranty.warranty.component || '');
       setRemovedReceiptIds([]);
     }
   }, [warranty, isEditing]);
@@ -71,7 +66,7 @@ export function WarrantiesDetailsScreen() {
   const hasChanges = useWarrantyChanges(warranty, {
     expiryDate,
     manufacturer,
-    titleOfManufacturer,
+    component,
     removedReceiptIdsCount: removedReceiptIds.length,
     pendingImageCount: imageUris.filter((uri) => !!uri && uri.trim() !== '')
       .length,
@@ -83,7 +78,7 @@ export function WarrantiesDetailsScreen() {
       updates: {
         expiresAt: expiryDate?.getTime() || 0,
         manufacturer,
-        titleOfManufacturer,
+        component,
         storageIds: [],
         receiptIdsToRemove: removedReceiptIds,
       },
@@ -110,7 +105,7 @@ export function WarrantiesDetailsScreen() {
 
   const isValid =
     !isEmptyString(manufacturer) &&
-    !isEmptyString(titleOfManufacturer) &&
+    !isEmptyString(component) &&
     !isEmptyDate(expiryDate);
 
   if (!warranty || isDeleting) {
@@ -120,7 +115,7 @@ export function WarrantiesDetailsScreen() {
   return (
     <Screen>
       <SectionHeader
-        title={warranty.warranty.titleOfManufacturer}
+        title={warranty.warranty.component}
         variant="titleLg"
         style={tw`mb-4`}
       />
@@ -134,11 +129,11 @@ export function WarrantiesDetailsScreen() {
       />
 
       <ControlledInput
-        label="Title"
-        value={titleOfManufacturer}
+        label="Component"
+        value={component}
         isEditing={isEditing}
-        onChangeText={setTitleOfManufacturer}
-        onClear={() => setTitleOfManufacturer('')}
+        onChangeText={setComponent}
+        onClear={() => setComponent('')}
       />
 
       <ControlledDatePicker

@@ -19,7 +19,7 @@ export function WarrantyCard({ warranty, onPress }: Props) {
     <ClickableCard onPress={onPress}>
       <View style={tw`flex-1`}>
         <CustomText variant="title" color={tw.color('ink-900')}>
-          {warranty.titleOfManufacturer}
+          {warranty.component}
         </CustomText>
         <CustomText variant="detail" color={tw.color('ink-300')}>
           Ends on {formatDateFull(warranty.expiresAt)}

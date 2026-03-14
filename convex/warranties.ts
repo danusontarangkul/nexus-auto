@@ -1,11 +1,8 @@
 import { v } from 'convex/values';
 import { Doc, Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
-import { internal } from './_generated/api';
 import {
-  isIdentityOwnerOfVehicle,
   isUserOwnerOfVehicle,
-  validateReceipt,
   validateVehicle,
   validateWarranty,
 } from './utils/validation';
@@ -59,12 +56,12 @@ export const insertWarranty = mutation({
     vehicleId: v.id('vehicles'),
     expiresAt: v.number(),
     manufacturer: v.string(),
-    titleOfManufacturer: v.string(),
+    component: v.string(),
     storageIds: v.array(v.id('_storage')),
   },
   handler: async (
     ctx,
-    { vehicleId, expiresAt, manufacturer, titleOfManufacturer, storageIds },
+    { vehicleId, expiresAt, manufacturer, component, storageIds },
   ): Promise<Id<'warranties'>> => {
     const user = await getCurrentUser(ctx);
     const now = Date.now();
@@ -74,7 +71,7 @@ export const insertWarranty = mutation({
 
     const warrantyId = await ctx.db.insert('warranties', {
       vehicleId,
-      titleOfManufacturer,
+      component,
       expiresAt,
       manufacturer,
       updatedAt: now,
@@ -106,7 +103,7 @@ export const updateWarranty = mutation({
     warrantyId: v.id('warranties'),
     updates: v.object({
       expiresAt: v.optional(v.number()),
-      titleOfManufacturer: v.optional(v.string()),
+      component: v.optional(v.string()),
       manufacturer: v.optional(v.string()),
       storageIds: v.optional(v.array(v.id('_storage'))),
       receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
