@@ -56,49 +56,49 @@ export const scanReceipt = internalAction({
   },
 });
 
-export const generateMaintenanceTemplate = internalAction({
-  args: {
-    make: v.string(),
-    model: v.string(),
-    year: v.number(),
-  },
-  handler: async (ctx, { make, model, year }) => {
-    const prompt = `Generate a complete factory maintenance schedule for a ${year} ${make} ${model} as valid JSON only.
-Include every recommended service with these exact fields:
-- name: string
-- category: string
-- intervalMiles: number | null
-- intervalMonths: number | null
+// export const generateMaintenanceTemplate = internalAction({
+//   args: {
+//     make: v.string(),
+//     model: v.string(),
+//     year: v.number(),
+//   },
+//   handler: async (ctx, { make, model, year }) => {
+//     const prompt = `Generate a complete factory maintenance schedule for a ${year} ${make} ${model} as valid JSON only.
+// Include every recommended service with these exact fields:
+// - name: string
+// - category: string
+// - intervalMiles: number | null
+// - intervalMonths: number | null
 
-Return ONLY the JSON array, no markdown, no text.`;
+// Return ONLY the JSON array, no markdown, no text.`;
 
-    // One line — clean, safe, reusable
-    const content = await callOpenAI({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'gpt-4o',
-      maxTokens: 2000,
-      temperature: 0,
-    });
+//     // One line — clean, safe, reusable
+//     const content = await callOpenAI({
+//       messages: [{ role: 'user', content: prompt }],
+//       model: 'gpt-4o',
+//       maxTokens: 2000,
+//       temperature: 0,
+//     });
 
-    const items = parseMaintenanceItems(content);
+//     const items = parseMaintenanceItems(content);
 
-    await ctx.runMutation(
-      internal.maintenanceTemplates.insertMaintenanceTemplate,
-      {
-        make,
-        model,
-        yearStart: year,
-        yearEnd: year,
-        defaultItems: items.map((item) => ({
-          name: item.name,
-          category: item.category,
-          intervalMiles: item.intervalMiles ?? undefined,
-          intervalMonths: item.intervalMonths ?? undefined,
-        })),
-        source: 'ai-generated',
-      },
-    );
+//     await ctx.runMutation(
+//       internal.maintenanceTemplates.insertMaintenanceTemplate,
+//       {
+//         make,
+//         model,
+//         yearStart: year,
+//         yearEnd: year,
+//         defaultItems: items.map((item) => ({
+//           name: item.name,
+//           category: item.category,
+//           intervalMiles: item.intervalMiles ?? undefined,
+//           intervalMonths: item.intervalMonths ?? undefined,
+//         })),
+//         source: 'ai-generated',
+//       },
+//     );
 
-    return items;
-  },
-});
+//     return items;
+//   },
+// });

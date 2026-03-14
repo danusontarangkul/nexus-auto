@@ -1,3 +1,6 @@
+import { ServiceCategory } from '@convex/types/literals';
+import { Ionicons } from '@expo/vector-icons';
+
 export const SERVICE_CATEGORIES = [
   { label: 'Routine Maintenance', value: 'routine' },
   { label: 'Fluids & Filters', value: 'fluids_filters' },
@@ -77,3 +80,18 @@ export const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
 export type FilterType = 'all' | 'active' | 'expired';
 
 export const SUPPORT_EMAIL = 'davidanuson@gmail.com';
+
+export const CATEGORY_ICONS: Record<
+  typeof ServiceCategory.type,
+  keyof typeof Ionicons.glyphMap
+> = {
+  routine: 'calendar-outline',
+  fluids_filters: 'layers-outline',
+  tires_brakes: 'disc-outline',
+  electrical: 'flash-outline',
+  engine_drive: 'construct-outline',
+  suspension: 'git-network-outline',
+  body_interior: 'car-outline',
+  inspection: 'shield-checkmark-outline',
+  other: 'ellipsis-horizontal-circle-outline',
+};

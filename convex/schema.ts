@@ -37,8 +37,8 @@ export default defineSchema({
 
   maintenanceItems: defineTable({
     vehicleId: v.id('vehicles'),
-    name: v.string(),
-    category: v.string(),
+    serviceName: v.string(),
+    category: ServiceCategory,
     intervalMiles: v.optional(v.number()),
     intervalMonths: v.optional(v.number()),
     lastDoneAtMileage: v.optional(v.number()),
@@ -51,30 +51,6 @@ export default defineSchema({
     .index('by_vehicle', ['vehicleId'])
     .index('by_next_due_miles', ['vehicleId', 'nextDueMileage'])
     .index('by_next_due_date', ['vehicleId', 'nextDueDate']),
-
-  maintenanceTemplates: defineTable({
-    make: v.string(),
-    model: v.string(),
-    yearStart: v.number(),
-    yearEnd: v.number(),
-    trim: v.optional(v.string()),
-    engine: v.optional(v.string()),
-    source: v.union(v.literal('seeded'), v.literal('ai-generated')),
-    generatedAt: v.optional(v.number()),
-    defaultItems: v.array(
-      v.object({
-        name: v.string(),
-        category: v.string(),
-        intervalMiles: v.optional(v.number()),
-        intervalMonths: v.optional(v.number()),
-        severity: v.optional(v.union(v.literal('normal'), v.literal('severe'))),
-        notes: v.optional(v.string()),
-      }),
-    ),
-  })
-    .index('by_make_model_year', ['make', 'model', 'yearStart'])
-    .index('by_make', ['make'])
-    .index('by_model', ['model']),
 
   serviceRecords: defineTable({
     isActive: v.boolean(),

@@ -1,13 +1,7 @@
 import { v } from 'convex/values';
 import { internalQuery, mutation, query } from './_generated/server';
 import { Doc, Id } from './_generated/dataModel';
-import { internal } from './_generated/api';
-import {
-  isIdentityOwnerOfVehicle,
-  isUserOwnerOfVehicle,
-  validateInsurance,
-  validateVehicle,
-} from './utils/validation';
+import { isUserOwnerOfVehicle, validateVehicle } from './utils/validation';
 import { getCurrentUser } from './utils/auth';
 import { InsuranceWithReceipts } from './types';
 
