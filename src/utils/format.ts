@@ -12,6 +12,129 @@ export const formatMaintenanceInterval = (
   return `Every ${formattedMiles} mi.`;
 };
 
+export const formatMaintenanceIntervalDisplay = (
+  intervalMiles: number | undefined | null,
+  intervalMonths: number | undefined | null,
+): string => {
+  const milesStr =
+    intervalMiles != null ? `Every ${intervalMiles.toLocaleString()} mi` : '';
+  const monthsStr = intervalMonths != null ? `Every ${intervalMonths} mo` : '';
+  if (milesStr && monthsStr) {
+    return `${milesStr} / ${monthsStr}`;
+  }
+  if (milesStr) {
+    return milesStr;
+  }
+  if (monthsStr) {
+    return monthsStr;
+  }
+  return 'No interval set';
+};
+
+export interface MaintenanceItemForDisplay {
+  serviceName: string;
+  lastDoneAtDate?: number | null;
+  lastDoneAtMileage?: number | null;
+  nextDueDate?: number | null;
+  nextDueMileage?: number | null;
+  intervalMiles?: number | null;
+  intervalMonths?: number | null;
+}
+
+export function getMostRecentCompletedMaintenanceItem<
+  T extends MaintenanceItemForDisplay,
+>(items: T[]): T | null {
+  const completed = items.filter((item) => item.lastDoneAtDate != null);
+  if (completed.length === 0) return null;
+  return completed.sort(
+    (a, b) => (b.lastDoneAtDate ?? 0) - (a.lastDoneAtDate ?? 0),
+  )[0];
+}
+
+export function getNextDueMaintenanceItem<T extends MaintenanceItemForDisplay>(
+  items: T[],
+): T | null {
+  const withNextDue = items.filter(
+    (item) =>
+      item.lastDoneAtDate != null &&
+      (item.nextDueDate != null || item.nextDueMileage != null),
+  );
+  const neverDone = items.filter((item) => item.lastDoneAtDate == null);
+
+  if (withNextDue.length > 0) {
+    const sorted = [...withNextDue].sort((a, b) => {
+      const aDate = a.nextDueDate ?? Number.POSITIVE_INFINITY;
+      const bDate = b.nextDueDate ?? Number.POSITIVE_INFINITY;
+      if (aDate !== bDate) {
+        return aDate - bDate;
+      }
+      const aMiles = a.nextDueMileage ?? Number.POSITIVE_INFINITY;
+      const bMiles = b.nextDueMileage ?? Number.POSITIVE_INFINITY;
+      return aMiles - bMiles;
+    });
+    return sorted[0];
+  }
+  return neverDone.length > 0 ? neverDone[0] : null;
+}
+
+export function formatRecentActivitySubtitle(
+  item: MaintenanceItemForDisplay | null,
+): string {
+  if (!item) return 'No recent activity';
+  const parts = [
+    item.lastDoneAtMileage != null
+      ? `${item.lastDoneAtMileage.toLocaleString()} mi`
+      : '',
+    formatDateFull(item.lastDoneAtDate),
+  ].filter(Boolean);
+  return parts.join('\n');
+}
+
+export function formatNextActivitySubtitle(
+  item: MaintenanceItemForDisplay | null,
+): string {
+  if (!item) return 'No upcoming maintenance';
+  const hasBeenDone = item.lastDoneAtDate != null;
+  if (!hasBeenDone) {
+    return formatMaintenanceIntervalDisplay(
+      item.intervalMiles ?? undefined,
+      item.intervalMonths ?? undefined,
+    );
+  }
+  if (item.nextDueMileage != null) {
+    return `${item.nextDueMileage.toLocaleString()} mi`;
+  }
+  return 'No interval set';
+}
+
+export function formatRecentActivityDescription(
+  item: MaintenanceItemForDisplay | null,
+): string | undefined {
+  if (!item?.lastDoneAtMileage) return undefined;
+  return `${item.lastDoneAtMileage.toLocaleString()} mi`;
+}
+
+export function formatRecentActivityFooter(
+  item: MaintenanceItemForDisplay | null,
+): string | undefined {
+  if (!item?.lastDoneAtDate) return undefined;
+  return formatDateFull(item.lastDoneAtDate, 'MMM d, yyyy', '');
+}
+
+export function formatNextActivityDescription(
+  item: MaintenanceItemForDisplay | null,
+): string | undefined {
+  if (!item?.nextDueMileage) return undefined;
+  return `Due at ${item.nextDueMileage.toLocaleString()} mi`;
+}
+
+export function formatNextActivityFooter(
+  item: MaintenanceItemForDisplay | null,
+): string | undefined {
+  if (!item) return undefined;
+  return formatMaintenanceInterval(item.intervalMiles);
+}
+
 export const getDisplayDate = (
   value: Date | null | string,
   isEditing = false,

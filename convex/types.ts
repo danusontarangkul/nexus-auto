@@ -101,7 +101,7 @@ export type CreateServiceRecordInput = {
       serviceName: string;
       notes: string;
       warrantyId?: Id<'warranties'>;
-      templateItemId?: Id<'maintenanceItems'>;
+      maintenanceItemId?: Id<'maintenanceItems'>;
     }[];
     serviceCenter: string;
     serviceDate: number;
@@ -119,7 +119,7 @@ export type UpdateServiceRecordInput = {
       serviceName: string;
       notes: string;
       warrantyId?: Id<'warranties'>;
-      templateItemId?: Id<'maintenanceItems'>;
+      maintenanceItemId?: Id<'maintenanceItems'>;
     }[];
     serviceCenter?: string;
     serviceDate?: number;
@@ -264,6 +264,6 @@ export type PerformedService = {
   category: ServiceCategoryType;
   serviceName: string;
   notes?: string;
-  templateItemId?: Id<'maintenanceItems'>;
+  maintenanceItemId?: Id<'maintenanceItems'>;
   warrantyId?: Id<'warranties'>;
 };

@@ -87,7 +87,7 @@ export function RecordsDetailsScreen() {
           category: performed.category,
           serviceName: performed.serviceName,
           notes: performed.notes || '',
-          templateItemId: performed.templateItemId || undefined,
+          maintenanceItemId: performed.maintenanceItemId || undefined,
           warrantyId: performed.warrantyId || undefined,
         })),
       );
@@ -125,7 +125,7 @@ export function RecordsDetailsScreen() {
         performed: performedServices.map((service) => ({
           ...service,
           notes: service.notes || '',
-          templateItemId: service.templateItemId || undefined,
+          maintenanceItemId: service.maintenanceItemId || undefined,
           warrantyId: service.warrantyId || undefined,
         })),
         mileage,

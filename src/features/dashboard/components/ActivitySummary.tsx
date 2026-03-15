@@ -1,20 +1,41 @@
+import { useMemo } from 'react';
 import { View } from 'react-native';
 import tw from '@/styles/tw';
 import { ActivityCard } from '@/shared/components/cards/ActivityCard';
+import { useDashboardContext } from '@/providers/DashboardProvider';
+import {
+  getMostRecentCompletedMaintenanceItem,
+  getNextDueMaintenanceItem,
+  formatRecentActivityDescription,
+  formatRecentActivityFooter,
+  formatNextActivityDescription,
+  formatNextActivityFooter,
+} from '@/utils/format';
 
 export function ActivitySummary() {
+  const { dashboard } = useDashboardContext();
+  const items = dashboard?.active?.maintenanceItems ?? [];
+
+  const mostRecent = useMemo(
+    () => getMostRecentCompletedMaintenanceItem(items),
+    [items],
+  );
+  const nextDue = useMemo(() => getNextDueMaintenanceItem(items), [items]);
+
   return (
     <View style={tw`flex-row gap-3`}>
       <ActivityCard
         label="Recent Activity"
-        title="Oil Change"
-        subtitle={`30,124 mi\nMarch 5, 2024`}
+        title={mostRecent?.serviceName ?? '—'}
+        description={formatRecentActivityDescription(mostRecent)}
+        footer={formatRecentActivityFooter(mostRecent)}
       />
 
       <ActivityCard
         label="Next Activity"
-        title="Oil Change"
-        subtitle={`40,124 mi\nJune 5, 2024`}
+        title={nextDue?.serviceName ?? '—'}
+        description={formatNextActivityDescription(nextDue)}
+        footer={formatNextActivityFooter(nextDue)}
       />
     </View>
   );

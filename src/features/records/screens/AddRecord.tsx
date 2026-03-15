@@ -30,6 +30,7 @@ export function AddRecordScreen() {
   const { dashboard } = useDashboardContext();
 
   const vehicleId = dashboard?.active?.vehicle._id;
+  const maintenanceItems = dashboard?.active?.maintenanceItems;
 
   const { createServiceRecord, isLoading, error } = useCreateServiceRecord();
 
@@ -50,6 +51,15 @@ export function AddRecordScreen() {
   const [performedServices, setPerformedServices] = useState<
     PerformedService[]
   >([{ category: 'routine', serviceName: '', notes: '' }]);
+
+  const getOptionsForCategory = (category: ServiceCategoryType) => {
+    if (!maintenanceItems) {
+      return [];
+    }
+    return maintenanceItems
+      .filter((item) => item.category === category)
+      .map((item) => ({ label: item.serviceName, value: item._id }));
+  };
 
   const handleUpdateService = (
     index: number,
@@ -93,6 +103,7 @@ export function AddRecordScreen() {
           serviceName: service.serviceName,
           notes: service.notes || '',
           warrantyId: undefined,
+          maintenanceItemId: service.maintenanceItemId,
         })),
         storageIds: finalStorageIds,
       },
@@ -169,6 +180,7 @@ export function AddRecordScreen() {
                   : undefined
               }
               isEditing={true}
+              specificServiceOptions={getOptionsForCategory(service.category)}
             />
           ))}
 

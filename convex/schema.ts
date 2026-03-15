@@ -61,7 +61,7 @@ export default defineSchema({
         serviceName: v.string(),
         notes: v.optional(v.string()),
         warrantyId: v.optional(v.id('warranties')),
-        templateItemId: v.optional(v.id('maintenanceItems')),
+        maintenanceItemId: v.optional(v.id('maintenanceItems')),
       }),
     ),
     serviceCenter: v.union(v.null(), v.string()),

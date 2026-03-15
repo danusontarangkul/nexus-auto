@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 import { Doc, Id } from './_generated/dataModel';
-import { internalMutation, mutation, query } from './_generated/server';
+import { mutation, query } from './_generated/server';
 import {
   isUserOwnerOfVehicle,
   validateServiceRecord,
@@ -9,7 +9,8 @@ import {
 import { internal } from './_generated/api';
 import { getCurrentUser } from './utils/auth';
 import { ServiceRecordWithReceipts } from './types';
-import { ServiceCategory, ServiceCategoryType } from './types/literals';
+import { ServiceCategory } from './types/literals';
+import { formatPerformedItems } from './utils/helpers/serviceRecord';
 
 export const getServiceRecordsByVehicleId = query({
   args: {
@@ -41,7 +42,7 @@ export const insertServiceRecord = mutation({
           serviceName: v.string(),
           notes: v.optional(v.string()),
           warrantyId: v.optional(v.id('warranties')),
-          maintenanceItemsId: v.optional(v.id('maintenanceItems')),
+          maintenanceItemId: v.optional(v.id('maintenanceItems')),
         }),
       ),
       serviceCenter: v.string(),
@@ -53,6 +54,7 @@ export const insertServiceRecord = mutation({
     ctx,
     { vehicleId, mileage, serviceRecord },
   ): Promise<Id<'serviceRecords'>> => {
+    console.log('insertServiceRecord', vehicleId, mileage, serviceRecord);
     const user = await getCurrentUser(ctx);
     const now = Date.now();
 
@@ -60,11 +62,8 @@ export const insertServiceRecord = mutation({
     isUserOwnerOfVehicle(user._id, vehicle);
 
     const serviceRecordId = await ctx.db.insert('serviceRecords', {
-      performed: serviceRecord.performed.map((performed) => ({
-        ...performed,
-        notes: performed.notes ?? undefined,
-      })),
-      serviceCenter: serviceRecord.serviceCenter ?? null,
+      performed: formatPerformedItems(serviceRecord.performed),
+      serviceCenter: serviceRecord.serviceCenter || null,
       serviceDate: serviceRecord.serviceDate,
       mileage,
       vehicleId,
@@ -72,7 +71,7 @@ export const insertServiceRecord = mutation({
       isActive: true,
     });
 
-    if (serviceRecord.storageIds) {
+    if (serviceRecord.storageIds.length > 0) {
       await Promise.all(
         serviceRecord.storageIds.map((storageId) =>
           ctx.db.insert('receipts', {
@@ -87,15 +86,15 @@ export const insertServiceRecord = mutation({
       );
     }
 
-    // To Do: Update maintenance items
-    // await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
-    //   vehicleId,
-    //   serviceRecordId,
-    //   serviceDate: serviceRecord.serviceDate,
-    //   performedItems: serviceRecord.performed.map((performed) => ({
-    //     templateItemId: performed.templateItemId,
-    //   })),
-    // });
+    await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
+      serviceRecordId,
+      mileage,
+      serviceDate: serviceRecord.serviceDate,
+      performedItems: serviceRecord.performed.map((p) => ({
+        maintenanceItemId: p.maintenanceItemId,
+      })),
+    });
+
     return serviceRecordId;
   },
 });
@@ -111,7 +110,7 @@ export const updateServiceRecord = mutation({
             serviceName: v.string(),
             notes: v.optional(v.string()),
             warrantyId: v.optional(v.id('warranties')),
-            templateItemId: v.optional(v.id('maintenanceItems')),
+            maintenanceItemId: v.optional(v.id('maintenanceItems')),
           }),
         ),
       ),
@@ -131,32 +130,11 @@ export const updateServiceRecord = mutation({
     const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
     isUserOwnerOfVehicle(user._id, vehicle);
 
-    const patchPayload: {
-      performed?: {
-        category: ServiceCategoryType;
-        serviceName: string;
-        notes?: string;
-        warrantyId?: Id<'warranties'>;
-        templateItemId?: Id<'maintenanceItems'>;
-      }[];
-      serviceCenter?: string | null;
-      serviceDate?: number;
-      updatedAt: number;
-    } = {
+    const patchPayload: Partial<Doc<'serviceRecords'>> = {
       updatedAt: now,
     };
     if (updates.performed !== undefined) {
-      patchPayload.performed = updates.performed.map((performed) => ({
-        category: performed.category,
-        serviceName: performed.serviceName,
-        notes: performed.notes ?? undefined,
-        ...(performed.warrantyId !== undefined && {
-          warrantyId: performed.warrantyId,
-        }),
-        ...(performed.templateItemId !== undefined && {
-          templateItemId: performed.templateItemId,
-        }),
-      }));
+      patchPayload.performed = formatPerformedItems(updates.performed);
     }
     if (updates.serviceCenter !== undefined) {
       patchPayload.serviceCenter = updates.serviceCenter ?? null;
@@ -164,6 +142,7 @@ export const updateServiceRecord = mutation({
     if (updates.serviceDate !== undefined) {
       patchPayload.serviceDate = updates.serviceDate;
     }
+
     await ctx.db.patch(serviceRecordId, patchPayload);
 
     if (updates.storageIds) {
@@ -184,10 +163,7 @@ export const updateServiceRecord = mutation({
     if (updates.receiptIdsToRemove) {
       await Promise.all(
         updates.receiptIdsToRemove.map((receiptId) =>
-          ctx.db.patch(receiptId, {
-            isActive: false,
-            updatedAt: now,
-          }),
+          ctx.db.patch(receiptId, { isActive: false, updatedAt: now }),
         ),
       );
     }
@@ -197,13 +173,12 @@ export const updateServiceRecord = mutation({
       if (!finalRecord) {
         return true;
       }
-      const performed = updates.performed ?? finalRecord.performed;
       await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
-        vehicleId: finalRecord.vehicleId,
         serviceRecordId,
-        serviceDate: updates.serviceDate ?? finalRecord.serviceDate,
-        performedItems: performed.map((p) => ({
-          templateItemId: p.templateItemId,
+        mileage: finalRecord.mileage,
+        serviceDate: finalRecord.serviceDate,
+        performedItems: finalRecord.performed.map((p) => ({
+          maintenanceItemId: p.maintenanceItemId,
         })),
       });
     }
@@ -221,7 +196,6 @@ export const getServiceRecordById = query({
     { serviceRecordId },
   ): Promise<ServiceRecordWithReceipts> => {
     const user = await getCurrentUser(ctx);
-
     const serviceRecord = validateServiceRecord(
       await ctx.db.get(serviceRecordId),
     );
@@ -234,40 +208,6 @@ export const getServiceRecordById = query({
     );
 
     return { serviceRecord, receipts };
-  },
-});
-
-export const updateServiceRecordInternal = internalMutation({
-  args: {
-    serviceRecordId: v.id('serviceRecords'),
-    updates: v.object({
-      isActive: v.optional(v.boolean()),
-      performed: v.optional(
-        v.array(
-          v.object({
-            category: ServiceCategory,
-            serviceName: v.string(),
-            notes: v.optional(v.string()),
-            warrantyId: v.optional(v.id('warranties')),
-            templateItemId: v.optional(v.id('maintenanceItems')),
-          }),
-        ),
-      ),
-      serviceCenter: v.optional(v.string()),
-      serviceDate: v.optional(v.number()),
-      receiptIds: v.optional(v.array(v.id('receipts'))),
-      receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
-    }),
-  },
-  handler: async (ctx, { serviceRecordId, updates }): Promise<void> => {
-    return await ctx.db.patch(serviceRecordId, {
-      ...updates,
-      performed: updates.performed?.map((performed) => ({
-        ...performed,
-        notes: performed.notes ?? undefined,
-      })),
-      updatedAt: Date.now(),
-    });
   },
 });
 
@@ -285,10 +225,8 @@ export const deleteServiceRecord = mutation({
     const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
     isUserOwnerOfVehicle(user._id, vehicle);
 
-    await ctx.db.patch(serviceRecordId, {
-      isActive: false,
-      updatedAt: now,
-    });
+    await ctx.db.patch(serviceRecordId, { isActive: false, updatedAt: now });
+
     const receipts = await ctx.db
       .query('receipts')
       .withIndex('by_serviceRecord', (q) =>
@@ -299,10 +237,7 @@ export const deleteServiceRecord = mutation({
 
     await Promise.all(
       receipts.map((receipt) =>
-        ctx.db.patch(receipt._id, {
-          isActive: false,
-          updatedAt: now,
-        }),
+        ctx.db.patch(receipt._id, { isActive: false, updatedAt: now }),
       ),
     );
 
