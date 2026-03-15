@@ -47,7 +47,7 @@ export function useServiceRecordChanges(
           initialItem.category !== currentItem.category ||
           initialItem.serviceName !== currentItem.serviceName ||
           (initialItem.notes ?? '') !== (currentItem.notes ?? '') ||
-          initialItem.templateItemId !== currentItem.templateItemId
+          initialItem.maintenanceItemId !== currentItem.maintenanceItemId
         );
       });
     }

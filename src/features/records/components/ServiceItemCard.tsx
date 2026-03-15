@@ -10,12 +10,16 @@ import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
 import { getCategoryDisplayName } from '../utils/utils';
 import { isEmptyString } from '@/utils/format';
 
+export type SpecificServiceOption = { label: string; value: string };
+
 interface ServiceItemCardProps {
   index: number;
   service: PerformedService;
   isEditing: boolean;
   onUpdate: (updates: Partial<PerformedService>) => void;
   onRemove?: () => void;
+  /** When provided, "Specific Service" uses these (e.g. vehicle maintenance items); value is Id<'maintenanceItems'> */
+  specificServiceOptions?: SpecificServiceOption[];
 }
 
 export function ServiceItemCard({
@@ -24,7 +28,11 @@ export function ServiceItemCard({
   isEditing,
   onUpdate,
   onRemove,
+  specificServiceOptions,
 }: ServiceItemCardProps) {
+  const specificOptions =
+    specificServiceOptions ?? SERVICES_BY_CATEGORY[service.category] ?? [];
+
   return (
     <FormCard title={`Service #${index + 1}`} onRemove={onRemove}>
       <InputGroup gap={4}>
@@ -44,11 +52,11 @@ export function ServiceItemCard({
 
             <ControlledCategoryPicker
               label="Specific Service"
-              value={service.templateItemId || ''}
-              options={SERVICES_BY_CATEGORY[service.category] || []}
+              value={service.maintenanceItemId || ''}
+              options={specificOptions}
               onSelect={(val) =>
                 onUpdate({
-                  templateItemId: val as Id<'maintenanceItems'>,
+                  maintenanceItemId: val as Id<'maintenanceItems'>,
                 })
               }
               isEditing
