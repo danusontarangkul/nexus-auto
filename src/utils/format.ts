@@ -51,7 +51,6 @@ export function getMostRecentCompletedMaintenanceItem<
   )[0];
 }
 
-/** Match Oil & Filter item by name (e.g. "Oil & Filter Change"). */
 function isOilAndFilterItem(item: MaintenanceItemForDisplay): boolean {
   const name = item.serviceName.toLowerCase();
   return name.includes('oil') && name.includes('filter');
