@@ -78,6 +78,24 @@ export function getNextDueMaintenanceItem<T extends MaintenanceItemForDisplay>(
   return neverDone.length > 0 ? neverDone[0] : null;
 }
 
+export function formatRecentActivityTitle(
+  item: MaintenanceItemForDisplay | null,
+): string {
+  if (!item) {
+    return 'None';
+  }
+  return item.serviceName;
+}
+
+export function formatNextActivityTitle(
+  item: MaintenanceItemForDisplay | null,
+): string {
+  if (!item) {
+    return '—';
+  }
+  return item.serviceName;
+}
+
 export function formatRecentActivitySubtitle(
   item: MaintenanceItemForDisplay | null,
 ): string {

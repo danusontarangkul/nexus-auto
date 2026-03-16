@@ -1,5 +1,6 @@
 import { Id } from '@convex/_generated/dataModel';
 import { VehicleData } from '@convex/types';
+import type { NavigatorScreenParams } from '@react-navigation/native';
 
 export const ROOT = {
   Gate: 'Gate',
@@ -54,7 +55,7 @@ export const TABS = {
 
 export type AppTabsParamList = {
   [TABS.Dashboard]: undefined;
-  [TABS.Records]: undefined;
+  [TABS.Records]: NavigatorScreenParams<RecordsStackParamList>;
   [TABS.Warranties]: undefined;
   [TABS.About]: undefined;
 };
@@ -64,6 +65,7 @@ export const DASHBOARD = {
   Account: 'Account',
   Registration: 'Registration',
   Insurance: 'Insurance',
+  ServiceRecordDetails: 'ServiceRecordDetails',
 } as const;
 
 export type DashboardStackParamList = {
@@ -71,6 +73,7 @@ export type DashboardStackParamList = {
   [DASHBOARD.Registration]: { vehicleId: Id<'vehicles'> };
   [DASHBOARD.Insurance]: { vehicleId: Id<'vehicles'> };
   [DASHBOARD.Account]: undefined;
+  [DASHBOARD.ServiceRecordDetails]: { recordId: Id<'serviceRecords'> };
 };
 
 export const RECORDS = {
