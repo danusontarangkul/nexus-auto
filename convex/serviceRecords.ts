@@ -10,7 +10,10 @@ import { internal } from './_generated/api';
 import { getCurrentUser } from './utils/auth';
 import { ServiceRecordWithReceipts } from './types';
 import { ServiceCategory } from './types/literals';
-import { formatPerformedItems } from './utils/helpers/serviceRecord';
+import {
+  buildServiceRecordPatchPayload,
+  formatPerformedItems,
+} from './utils/helpers/serviceRecord';
 
 export const getServiceRecordsByVehicleId = query({
   args: {
@@ -54,7 +57,6 @@ export const insertServiceRecord = mutation({
     ctx,
     { vehicleId, mileage, serviceRecord },
   ): Promise<Id<'serviceRecords'>> => {
-    console.log('insertServiceRecord', vehicleId, mileage, serviceRecord);
     const user = await getCurrentUser(ctx);
     const now = Date.now();
 
@@ -86,15 +88,6 @@ export const insertServiceRecord = mutation({
       );
     }
 
-    await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
-      serviceRecordId,
-      mileage,
-      serviceDate: serviceRecord.serviceDate,
-      performedItems: serviceRecord.performed.map((p) => ({
-        maintenanceItemId: p.maintenanceItemId,
-      })),
-    });
-
     return serviceRecordId;
   },
 });
@@ -116,6 +109,7 @@ export const updateServiceRecord = mutation({
       ),
       serviceCenter: v.optional(v.string()),
       serviceDate: v.optional(v.number()),
+      mileage: v.optional(v.number()),
       storageIds: v.optional(v.array(v.id('_storage'))),
       receiptIdsToRemove: v.optional(v.array(v.id('receipts'))),
     }),
@@ -130,18 +124,7 @@ export const updateServiceRecord = mutation({
     const vehicle = validateVehicle(await ctx.db.get(serviceRecord.vehicleId));
     isUserOwnerOfVehicle(user._id, vehicle);
 
-    const patchPayload: Partial<Doc<'serviceRecords'>> = {
-      updatedAt: now,
-    };
-    if (updates.performed !== undefined) {
-      patchPayload.performed = formatPerformedItems(updates.performed);
-    }
-    if (updates.serviceCenter !== undefined) {
-      patchPayload.serviceCenter = updates.serviceCenter ?? null;
-    }
-    if (updates.serviceDate !== undefined) {
-      patchPayload.serviceDate = updates.serviceDate;
-    }
+    const patchPayload = buildServiceRecordPatchPayload(updates, now);
 
     await ctx.db.patch(serviceRecordId, patchPayload);
 
@@ -166,21 +149,6 @@ export const updateServiceRecord = mutation({
           ctx.db.patch(receiptId, { isActive: false, updatedAt: now }),
         ),
       );
-    }
-
-    if (updates.performed || updates.serviceDate !== undefined) {
-      const finalRecord = await ctx.db.get(serviceRecordId);
-      if (!finalRecord) {
-        return true;
-      }
-      await ctx.runMutation(internal.maintenanceItems.updateFromServiceRecord, {
-        serviceRecordId,
-        mileage: finalRecord.mileage,
-        serviceDate: finalRecord.serviceDate,
-        performedItems: finalRecord.performed.map((p) => ({
-          maintenanceItemId: p.maintenanceItemId,
-        })),
-      });
     }
 
     return true;

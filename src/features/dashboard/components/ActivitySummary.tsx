@@ -26,7 +26,7 @@ export function ActivitySummary() {
     <View style={tw`flex-row gap-3`}>
       <ActivityCard
         label="Recent Activity"
-        title={mostRecent?.serviceName ?? '—'}
+        title={mostRecent?.serviceName ?? 'None'}
         description={formatRecentActivityDescription(mostRecent)}
         footer={formatRecentActivityFooter(mostRecent)}
       />

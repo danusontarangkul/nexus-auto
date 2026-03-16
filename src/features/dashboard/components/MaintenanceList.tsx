@@ -1,12 +1,12 @@
 import { View } from 'react-native';
-import { Doc } from '@convex/_generated/dataModel';
 import tw from '@/styles/tw';
 import { CustomText } from '@/shared/components/texts/CustomText';
 import { MaintenanceCard } from '@/shared/components/cards/MaintenanceCard';
+import type { MaintenanceItemWithDue } from '@convex/types';
 
 interface MaintenanceListProps {
-  items: Doc<'maintenanceItems'>[];
-  onItemPress?: (item: Doc<'maintenanceItems'>) => void;
+  items: MaintenanceItemWithDue[];
+  onItemPress?: (item: MaintenanceItemWithDue) => void;
 }
 
 export function MaintenanceList({ items, onItemPress }: MaintenanceListProps) {

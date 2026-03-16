@@ -41,16 +41,8 @@ export default defineSchema({
     category: ServiceCategory,
     intervalMiles: v.optional(v.number()),
     intervalMonths: v.optional(v.number()),
-    lastDoneAtMileage: v.optional(v.number()),
-    lastDoneAtDate: v.optional(v.number()),
-    lastDoneRecordId: v.optional(v.id('serviceRecords')),
-    nextDueMileage: v.optional(v.number()),
-    nextDueDate: v.optional(v.number()),
     updatedAt: v.number(),
-  })
-    .index('by_vehicle', ['vehicleId'])
-    .index('by_next_due_miles', ['vehicleId', 'nextDueMileage'])
-    .index('by_next_due_date', ['vehicleId', 'nextDueDate']),
+  }).index('by_vehicle', ['vehicleId']),
 
   serviceRecords: defineTable({
     isActive: v.boolean(),

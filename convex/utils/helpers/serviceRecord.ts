@@ -1,4 +1,5 @@
-import { PerformedService } from '../../types';
+import { Doc } from '../../_generated/dataModel';
+import { PerformedService, ServiceRecordUpdateFields } from '../../types';
 
 export const formatPerformedItems = (items: PerformedService[]) => {
   return items.map((item) => ({
@@ -8,4 +9,26 @@ export const formatPerformedItems = (items: PerformedService[]) => {
     warrantyId: item.warrantyId ?? undefined,
     maintenanceItemId: item.maintenanceItemId ?? undefined,
   }));
+};
+
+export const buildServiceRecordPatchPayload = (
+  updates: ServiceRecordUpdateFields,
+  now: number,
+): Partial<Doc<'serviceRecords'>> => {
+  const payload: Partial<Doc<'serviceRecords'>> = {
+    updatedAt: now,
+  };
+  if (updates.performed !== undefined) {
+    payload.performed = formatPerformedItems(updates.performed);
+  }
+  if (updates.serviceCenter !== undefined) {
+    payload.serviceCenter = updates.serviceCenter ?? null;
+  }
+  if (updates.serviceDate !== undefined) {
+    payload.serviceDate = updates.serviceDate;
+  }
+  if (updates.mileage !== undefined) {
+    payload.mileage = updates.mileage;
+  }
+  return payload;
 };

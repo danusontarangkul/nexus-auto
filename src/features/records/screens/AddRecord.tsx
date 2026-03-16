@@ -23,6 +23,7 @@ import { PerformedService } from '@convex/types';
 import tw from '@/styles/tw';
 import { ServiceItemCard } from '../components/ServiceItemCard';
 import { NumberInput } from '@/shared/components/inputs/NumberInput';
+import { getServiceOptionsForCategory } from '../utils/utils';
 
 export function AddRecordScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -53,12 +54,7 @@ export function AddRecordScreen() {
   >([{ category: 'routine', serviceName: '', notes: '' }]);
 
   const getOptionsForCategory = (category: ServiceCategoryType) => {
-    if (!maintenanceItems) {
-      return [];
-    }
-    return maintenanceItems
-      .filter((item) => item.category === category)
-      .map((item) => ({ label: item.serviceName, value: item._id }));
+    return getServiceOptionsForCategory(maintenanceItems, category);
   };
 
   const handleUpdateService = (

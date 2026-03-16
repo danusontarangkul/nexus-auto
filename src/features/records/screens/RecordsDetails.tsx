@@ -31,13 +31,22 @@ import { DashedButton } from '@/shared/components/buttons/DashedButton';
 import { ServiceItemCard } from '../components/ServiceItemCard';
 import { View } from 'react-native';
 import { ControlledNumberInput } from '@/shared/components/inputs/ControlledNumberInput';
+import { useDashboardContext } from '@/providers/DashboardProvider';
+import { ServiceCategoryType } from '@convex/types/literals';
+import { getServiceOptionsForCategory } from '../utils/utils';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
 
   const { recordId } = useRecordsRouteParams();
+  const { dashboard } = useDashboardContext();
+  const maintenanceItems = dashboard?.active?.maintenanceItems;
 
   const serviceRecord = useServiceRecord(recordId);
+
+  const getOptionsForCategory = (category: ServiceCategoryType) => {
+    return getServiceOptionsForCategory(maintenanceItems, category);
+  };
 
   const [serviceDate, setServiceDate] = useState<Date | null>(null);
   const [serviceCenter, setServiceCenter] = useState<string>('');
@@ -117,7 +126,9 @@ export function RecordsDetailsScreen() {
   };
 
   const handleSave = async () => {
-    if (!serviceRecord) return;
+    if (!serviceRecord) {
+      return;
+    }
 
     const success = await updateServiceRecord({
       serviceRecordId: recordId,
@@ -145,6 +156,7 @@ export function RecordsDetailsScreen() {
     const success = await deleteServiceRecord(recordId);
 
     if (success) {
+      setShowDeleteModal(false);
       navigation.navigate(RECORDS.RecordsList);
     }
   };
@@ -213,6 +225,7 @@ export function RecordsDetailsScreen() {
                     ? () => removeServiceItem(index)
                     : undefined
                 }
+                specificServiceOptions={getOptionsForCategory(service.category)}
               />
             ))}
 

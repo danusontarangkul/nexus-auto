@@ -1,21 +1,21 @@
 import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Doc } from '@convex/_generated/dataModel';
 import { Card } from '@/shared/components/cards/Card';
 import { CustomText } from '@/shared/components/texts/CustomText';
 import tw from '@/styles/tw';
 import { formatMaintenanceInterval } from '@/utils/format';
-import { CATEGORY_ICONS } from '@/utils/const';
+import { getMaintenanceItemIcon } from '@/utils/const';
+import type { MaintenanceItemWithDue } from '@convex/types';
 
 interface MaintenanceCardProps {
-  item: Doc<'maintenanceItems'>;
+  item: MaintenanceItemWithDue;
   onPress?: () => void;
 }
 
 export function MaintenanceCard({ item, onPress }: MaintenanceCardProps) {
-  const iconName = CATEGORY_ICONS[item.category] || 'build-outline';
+  const iconName = getMaintenanceItemIcon(item.category, item.serviceName);
 
-  const intervalText = `Every ${formatMaintenanceInterval(item.intervalMiles)}`;
+  const intervalText = formatMaintenanceInterval(item.intervalMiles);
 
   return (
     <Pressable onPress={onPress} disabled={!onPress}>
