@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { View, ScrollView } from 'react-native';
 import {
   useNavigation,
@@ -37,8 +38,14 @@ export default function DashboardScreen() {
   const { updateLastSelectedVehicle, isLoading } =
     useUpdateLastSelectedVehicle();
 
+  useEffect(() => {
+    if (!dashboard || !dashboard.active) {
+      nav.navigate(ROOT.Onboarding);
+    }
+  }, [dashboard, nav]);
+
   if (!dashboard || !dashboard.active) {
-    return <Screen></Screen>;
+    return <Screen />;
   }
 
   const { vehicle, registration, insurance, maintenanceItems } =

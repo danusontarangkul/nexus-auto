@@ -6,21 +6,15 @@ import { Screen } from '@/shared/components/screens/Screen';
 import { CircleImage } from '@/shared/components/image/CircleImage';
 import { GoogleButton } from '@/shared/components/buttons/GoogleButton';
 import { ROOT, RootStackParamList } from '@/navigation/routes';
-import { useAppState } from '@/state/AppState';
 import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth';
 import tw from '@/styles/tw';
 
 export function LoginScreen() {
-  const { subscribe } = useAppState();
   const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleAuthSuccess = useCallback(async () => {
-    const { hasCar } = await subscribe();
-    nav.reset({
-      index: 0,
-      routes: [{ name: hasCar ? ROOT.App : ROOT.Onboarding }],
-    });
-  }, [nav, subscribe]);
+    nav.reset({ index: 0, routes: [{ name: ROOT.App }] });
+  }, [nav]);
 
   const { loginWithGoogle, isLoading } = useGoogleAuth(handleAuthSuccess);
 

@@ -1,11 +1,10 @@
-import { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 
-// state/AppState.tsx
 type AppState = {
   isAuthenticated: boolean;
   hasCar: boolean;
-  subscribe: () => Promise<{ hasCar: boolean }>; // ← return value
-  register: () => Promise<{ hasCar: boolean }>;
+  isLoading: boolean;
+  login: () => Promise<void>;
   completeAddCar: () => void;
   logout: () => void;
 };
@@ -15,39 +14,36 @@ const AppStateContext = createContext<AppState | null>(null);
 export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [hasCar, setHasCar] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [hasCar, setHasCar] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const subscribe = async (): Promise<{ hasCar: boolean }> => {
-    // TODO: real auth + fetch profile
-    setIsAuthenticated(true);
-    const userHasCar = false; // from API later
-    setHasCar(userHasCar);
-    return { hasCar: userHasCar };
-  };
-
-  const register = async (): Promise<{ hasCar: boolean }> => {
-    setIsAuthenticated(true);
-    const userHasCar = false;
-    setHasCar(userHasCar);
-    return { hasCar: userHasCar };
+  const login = async () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsAuthenticated(true);
+      setHasCar(false);
+      setIsLoading(false);
+    }, 1000);
   };
 
   const completeAddCar = () => setHasCar(true);
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setHasCar(false);
+  };
 
   const value = useMemo(
     () => ({
       isAuthenticated,
       hasCar,
-      subscribe,
-      register,
+      isLoading,
+      login,
       completeAddCar,
-      logout: () => {
-        setIsAuthenticated(false);
-        setHasCar(false);
-      },
+      logout,
     }),
-    [isAuthenticated, hasCar],
+    [isAuthenticated, hasCar, isLoading],
   );
 
   return (
@@ -57,10 +53,10 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useAppState = (): AppState => {
+export const useAppState = () => {
   const ctx = useContext(AppStateContext);
   if (!ctx) {
-    throw new Error('useAppState must be used within an AppStateProvider');
+    throw new Error('useAppState must be used within AppStateProvider');
   }
   return ctx;
 };
