@@ -7,6 +7,7 @@ import { withErrorBoundary } from '@/shared/hocs/withErrorBoundary';
 import { InsuranceScreen } from '@/features/insurance/screens/InsuranceScreen';
 import { AccountScreen } from '@/features/account/screens/AccountScreen';
 import { BackHeader } from '../components/BackHeader';
+import { RecordsDetailsScreen } from '@/features/records/screens/RecordsDetails';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
 
@@ -31,6 +32,15 @@ export function DashboardStack() {
         component={withErrorBoundary(AccountScreen, 'Account Access')}
         options={{
           header: () => <BackHeader title="Account" skipTopInset={true} />,
+        }}
+      />
+      <Stack.Screen
+        name={DASHBOARD.ServiceRecordDetails}
+        component={RecordsDetailsScreen}
+        options={{
+          header: () => (
+            <BackHeader title="Service Record Details" skipTopInset={true} />
+          ),
         }}
       />
     </Stack.Navigator>

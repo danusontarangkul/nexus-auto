@@ -4,6 +4,7 @@ import {
   CompositeNavigationProp,
 } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Screen } from '@/shared/components/screens/Screen';
 import { CarSwitcher } from '@/features/dashboard/components/CarSwitcher';
 import { useDashboardContext } from '@/providers/DashboardProvider';
@@ -17,8 +18,11 @@ import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import {
   DASHBOARD,
   ROOT,
+  TABS,
+  RECORDS,
   DashboardStackParamList,
   RootStackParamList,
+  AppTabsParamList,
 } from '@/navigation/routes';
 import { Avatar } from '@/shared/components/avatar/Avatar';
 
@@ -62,6 +66,23 @@ export default function DashboardScreen() {
     nav.navigate(DASHBOARD.Account);
   };
 
+  const handleMaintenanceItemPress = (
+    item: (typeof maintenanceItems)[number],
+  ) => {
+    if (!item.lastDoneRecordId) {
+      return;
+    }
+    const parentNavigator =
+      nav.getParent<BottomTabNavigationProp<AppTabsParamList>>();
+    if (!parentNavigator) {
+      return;
+    }
+    parentNavigator.navigate(TABS.Records, {
+      screen: RECORDS.RecordDetails,
+      params: { recordId: item.lastDoneRecordId },
+    });
+  };
+
   return (
     <Screen>
       <ScrollView
@@ -90,7 +111,10 @@ export default function DashboardScreen() {
         <SectionHeader title="Dashboard" variant="titleLg" />
         <ActivitySummary />
         <SectionHeader title="Recommended Services" />
-        <MaintenanceList items={maintenanceItems} />
+        <MaintenanceList
+          items={maintenanceItems}
+          onItemPress={handleMaintenanceItemPress}
+        />
         <SectionHeader title="Vehicle Documents" />
         <DocumentSummary
           registration={registration}

@@ -1,4 +1,4 @@
-import type { Doc } from '../../_generated/dataModel';
+import type { Doc, Id } from '../../_generated/dataModel';
 
 export function calculateNextDueMileage(
   currentMileage: number,
@@ -26,6 +26,7 @@ export function calculateNextDueDate(
 export type MaintenanceItemWithDue = Doc<'maintenanceItems'> & {
   lastDoneAtMileage?: number;
   lastDoneAtDate?: number;
+  lastDoneRecordId?: Id<'serviceRecords'>;
   nextDueMileage?: number;
   nextDueDate?: number;
 };
@@ -47,13 +48,16 @@ export function computeMaintenanceItemsWithDue(
   records: Doc<'serviceRecords'>[],
 ): MaintenanceItemWithDue[] {
   const activeRecords = records
-    .filter((r) => r.isActive)
+    .filter((record) => record.isActive)
     .sort((a, b) => b.serviceDate - a.serviceDate);
 
   return items.map((item) => {
-    const lastRecord = activeRecords.find((r) => recordMatchesItem(r, item));
+    const lastRecord = activeRecords.find((record) =>
+      recordMatchesItem(record, item),
+    );
     const lastDoneAtMileage = lastRecord?.mileage;
     const lastDoneAtDate = lastRecord?.serviceDate;
+    const lastDoneRecordId = lastRecord?._id;
 
     const nextDueMileage =
       lastDoneAtMileage != null
@@ -68,6 +72,7 @@ export function computeMaintenanceItemsWithDue(
       ...item,
       lastDoneAtMileage,
       lastDoneAtDate,
+      lastDoneRecordId,
       nextDueMileage,
       nextDueDate,
     };
