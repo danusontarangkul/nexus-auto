@@ -10,6 +10,13 @@ import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
 import { getCategoryDisplayName } from '../utils/utils';
 import { isEmptyString } from '@/utils/format';
 
+/** Values from static category options (not maintenance item ids). Used to avoid setting maintenanceItemId for static choices. */
+const STATIC_SPECIFIC_VALUES = new Set(
+  Object.values(SERVICES_BY_CATEGORY)
+    .flat()
+    .map((o) => o.value),
+);
+
 export type SpecificServiceOption = { label: string; value: string };
 
 interface ServiceItemCardProps {
@@ -18,9 +25,10 @@ interface ServiceItemCardProps {
   isEditing: boolean;
   onUpdate: (updates: Partial<PerformedService>) => void;
   onRemove?: () => void;
-  /** When provided, "Specific Service" uses these (e.g. vehicle maintenance items); value is Id<'maintenanceItems'> */
   specificServiceOptions?: SpecificServiceOption[];
 }
+
+const CUSTOM_OPTION = { label: 'Custom', value: 'other' } as const;
 
 export function ServiceItemCard({
   index,
@@ -30,8 +38,19 @@ export function ServiceItemCard({
   onRemove,
   specificServiceOptions,
 }: ServiceItemCardProps) {
-  const specificOptions =
+  const baseOptions =
     specificServiceOptions ?? SERVICES_BY_CATEGORY[service.category] ?? [];
+  const hasOther = baseOptions.some((o) => o.value === 'other');
+  const specificOptions =
+    specificServiceOptions && !hasOther
+      ? [...baseOptions, CUSTOM_OPTION]
+      : baseOptions;
+
+  const specificValue =
+    service.maintenanceItemId ??
+    specificOptions.find((o) => o.label === service.serviceName)?.value ??
+    'other';
+  const isOtherSelected = specificValue === 'other';
 
   return (
     <FormCard title={`Service #${index + 1}`} onRemove={onRemove}>
@@ -52,23 +71,36 @@ export function ServiceItemCard({
 
             <ControlledCategoryPicker
               label="Specific Service"
-              value={service.maintenanceItemId || ''}
+              value={specificValue}
               options={specificOptions}
-              onSelect={(val) =>
+              onSelect={(val) => {
+                if (val === 'other') {
+                  onUpdate({ maintenanceItemId: undefined, serviceName: '' });
+                  return;
+                }
+                const option = specificOptions.find((o) => o.value === val);
+                const serviceName = option?.label ?? service.serviceName;
+                if (STATIC_SPECIFIC_VALUES.has(val)) {
+                  onUpdate({ maintenanceItemId: undefined, serviceName });
+                  return;
+                }
                 onUpdate({
                   maintenanceItemId: val as Id<'maintenanceItems'>,
-                })
-              }
+                  serviceName,
+                });
+              }}
               isEditing
             />
 
-            <ControlledInput
-              label="Service Name"
-              value={service.serviceName}
-              onChangeText={(val) => onUpdate({ serviceName: val })}
-              isEditing
-              placeholder="What was serviced?"
-            />
+            {isOtherSelected && (
+              <ControlledInput
+                label="Service Name"
+                value={service.serviceName}
+                onChangeText={(val) => onUpdate({ serviceName: val })}
+                isEditing
+                placeholder="What was serviced?"
+              />
+            )}
 
             <ControlledInput
               label="Notes"

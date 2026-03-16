@@ -13,7 +13,6 @@ import type * as dashboards from "../dashboards.js";
 import type * as http from "../http.js";
 import type * as image from "../image.js";
 import type * as insurance from "../insurance.js";
-import type * as maintenanceItems from "../maintenanceItems.js";
 import type * as openAi from "../openAi.js";
 import type * as receipts from "../receipts.js";
 import type * as registrations from "../registrations.js";
@@ -60,7 +59,6 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   image: typeof image;
   insurance: typeof insurance;
-  maintenanceItems: typeof maintenanceItems;
   openAi: typeof openAi;
   receipts: typeof receipts;
   registrations: typeof registrations;

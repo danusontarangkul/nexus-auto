@@ -51,29 +51,30 @@ export function getMostRecentCompletedMaintenanceItem<
   )[0];
 }
 
+/** Match Oil & Filter item by name (e.g. "Oil & Filter Change"). */
+function isOilAndFilterItem(item: MaintenanceItemForDisplay): boolean {
+  const name = item.serviceName.toLowerCase();
+  return name.includes('oil') && name.includes('filter');
+}
+
 export function getNextDueMaintenanceItem<T extends MaintenanceItemForDisplay>(
   items: T[],
 ): T | null {
-  const withNextDue = items.filter(
-    (item) =>
-      item.lastDoneAtDate != null &&
-      (item.nextDueDate != null || item.nextDueMileage != null),
+  const withNextDueMileage = items.filter(
+    (item) => item.nextDueMileage != null,
   );
-  const neverDone = items.filter((item) => item.lastDoneAtDate == null);
 
-  if (withNextDue.length > 0) {
-    const sorted = [...withNextDue].sort((a, b) => {
-      const aDate = a.nextDueDate ?? Number.POSITIVE_INFINITY;
-      const bDate = b.nextDueDate ?? Number.POSITIVE_INFINITY;
-      if (aDate !== bDate) {
-        return aDate - bDate;
-      }
-      const aMiles = a.nextDueMileage ?? Number.POSITIVE_INFINITY;
-      const bMiles = b.nextDueMileage ?? Number.POSITIVE_INFINITY;
-      return aMiles - bMiles;
-    });
+  if (withNextDueMileage.length > 0) {
+    const sorted = [...withNextDueMileage].sort(
+      (a, b) => (a.nextDueMileage ?? 0) - (b.nextDueMileage ?? 0),
+    );
     return sorted[0];
   }
+
+  const oilAndFilter = items.find((item) => isOilAndFilterItem(item));
+  if (oilAndFilter) return oilAndFilter;
+
+  const neverDone = items.filter((item) => item.lastDoneAtDate == null);
   return neverDone.length > 0 ? neverDone[0] : null;
 }
 

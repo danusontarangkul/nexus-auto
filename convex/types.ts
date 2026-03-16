@@ -1,5 +1,8 @@
 import { Doc, Id } from './_generated/dataModel';
 import { ServiceCategoryType } from './types/literals';
+import type { MaintenanceItemWithDue } from './utils/helpers/maintenance';
+
+export type { MaintenanceItemWithDue };
 
 export type CreateWarrantyInput = {
   vehicleId: Id<'vehicles'>;
@@ -250,7 +253,7 @@ export interface Dashboard {
     vehicle: Doc<'vehicles'>;
     registration: Doc<'registrations'> | null;
     insurance: Doc<'insurance'> | null;
-    maintenanceItems: Doc<'maintenanceItems'>[];
+    maintenanceItems: MaintenanceItemWithDue[];
   } | null;
   user: Doc<'users'>;
 }
@@ -267,3 +270,10 @@ export type PerformedService = {
   maintenanceItemId?: Id<'maintenanceItems'>;
   warrantyId?: Id<'warranties'>;
 };
+
+export interface ServiceRecordUpdateFields {
+  performed?: PerformedService[];
+  serviceCenter?: string;
+  serviceDate?: number;
+  mileage?: number;
+}

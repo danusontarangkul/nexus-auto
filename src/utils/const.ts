@@ -81,6 +81,24 @@ export type FilterType = 'all' | 'active' | 'expired';
 
 export const SUPPORT_EMAIL = 'davidanuson@gmail.com';
 
+export const FLUID_SERVICE_ICON =
+  'water-outline' as keyof typeof Ionicons.glyphMap;
+
+const FLUID_SERVICE_NAMES = ['Oil', 'Brake Fluid', 'Transmission Fluid'];
+
+export function getMaintenanceItemIcon(
+  category: typeof ServiceCategory.type,
+  serviceName: string,
+): keyof typeof Ionicons.glyphMap {
+  const isFluidService = FLUID_SERVICE_NAMES.some((name) =>
+    serviceName.includes(name),
+  );
+  if (isFluidService) {
+    return FLUID_SERVICE_ICON;
+  }
+  return CATEGORY_ICONS[category] ?? 'build-outline';
+}
+
 export const CATEGORY_ICONS: Record<
   typeof ServiceCategory.type,
   keyof typeof Ionicons.glyphMap

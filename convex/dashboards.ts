@@ -3,6 +3,7 @@ import { getCurrentUser } from './utils/auth';
 import { Dashboard } from './types';
 import { formatVehicleListItem } from './utils/mappings';
 import { resolveActiveVehicle } from './utils/helpers/vehicles';
+import { computeMaintenanceItemsWithDue } from './utils/helpers/maintenance';
 
 export const getDashboard = query({
   args: {},
@@ -28,22 +29,42 @@ export const getDashboard = query({
 
     const selectedVehicle = resolveActiveVehicle(user, vehicles);
 
-    const [registration, insurance, maintenanceItems] = await Promise.all([
-      ctx.db
-        .query('registrations')
-        .withIndex('by_vehicle', (q) => q.eq('vehicleId', selectedVehicle._id))
-        .unique(),
+    const [registration, insurance, maintenanceItems, serviceRecords] =
+      await Promise.all([
+        ctx.db
+          .query('registrations')
+          .withIndex('by_vehicle', (q) =>
+            q.eq('vehicleId', selectedVehicle._id),
+          )
+          .unique(),
 
-      ctx.db
-        .query('insurance')
-        .withIndex('by_vehicle', (q) => q.eq('vehicleId', selectedVehicle._id))
-        .unique(),
+        ctx.db
+          .query('insurance')
+          .withIndex('by_vehicle', (q) =>
+            q.eq('vehicleId', selectedVehicle._id),
+          )
+          .unique(),
 
-      ctx.db
-        .query('maintenanceItems')
-        .withIndex('by_vehicle', (q) => q.eq('vehicleId', selectedVehicle._id))
-        .collect(),
-    ]);
+        ctx.db
+          .query('maintenanceItems')
+          .withIndex('by_vehicle', (q) =>
+            q.eq('vehicleId', selectedVehicle._id),
+          )
+          .collect(),
+
+        ctx.db
+          .query('serviceRecords')
+          .withIndex('by_vehicle', (q) =>
+            q.eq('vehicleId', selectedVehicle._id),
+          )
+          .filter((q) => q.eq(q.field('isActive'), true))
+          .collect(),
+      ]);
+
+    const maintenanceItemsWithDue = computeMaintenanceItemsWithDue(
+      maintenanceItems,
+      serviceRecords,
+    );
 
     return {
       vehicles: vehicleListItems,
@@ -51,7 +72,7 @@ export const getDashboard = query({
         vehicle: selectedVehicle,
         registration,
         insurance,
-        maintenanceItems,
+        maintenanceItems: maintenanceItemsWithDue,
       },
       user,
     };

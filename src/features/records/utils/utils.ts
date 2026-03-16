@@ -1,7 +1,8 @@
 import { FilterLogicMap } from '@/shared/hooks/useFilter';
 import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
-import { Doc } from '@convex/_generated/dataModel';
-import { PerformedService } from '@convex/types';
+import { Doc, Id } from '@convex/_generated/dataModel';
+import { PerformedService, MaintenanceItemWithDue } from '@convex/types';
+import { ServiceCategoryType } from '@convex/types/literals';
 
 export type RecordFilterType =
   | 'all'
@@ -52,14 +53,15 @@ export const getServiceRecordLabels = (
   if (!performed || performed.length === 0) return [];
 
   const uniqueCategoryLabels = Array.from(
-    new Set(performed.map((p) => p.category)),
-  ).map((catValue) => {
-    return (
-      SERVICE_CATEGORIES.find((c) => c.value === catValue)?.label || catValue
+    new Set(performed.map((service) => service.category)),
+  ).map((categoryValue) => {
+    const matchingCategory = SERVICE_CATEGORIES.find(
+      (categoryOption) => categoryOption.value === categoryValue,
     );
+    return matchingCategory?.label || categoryValue;
   });
 
-  const serviceNames = performed.map((p) => p.serviceName);
+  const serviceNames = performed.map((service) => service.serviceName);
 
   return [...uniqueCategoryLabels, ...serviceNames].filter(Boolean);
 };
@@ -68,4 +70,51 @@ export const getCategoryDisplayName = (category: string): string => {
   return (
     SERVICE_CATEGORIES.find((c) => c.value === category)?.label || category
   );
+};
+
+export type ServiceOption = {
+  label: string;
+  value: string | Id<'maintenanceItems'>;
+};
+
+export const getServiceOptionsForCategory = (
+  maintenanceItems: MaintenanceItemWithDue[] | undefined,
+  category: ServiceCategoryType,
+): ServiceOption[] => {
+  let maintenanceItemOptions: ServiceOption[] = [];
+
+  if (maintenanceItems && maintenanceItems.length > 0) {
+    // For Routine Maintenance, surface key scheduled tasks (oil change, tire rotation, etc.)
+    // even if their underlying maintenance items live in more specific categories
+    if (category === 'routine') {
+      const routineStaticOptions = SERVICES_BY_CATEGORY['routine'] ?? [];
+      const routineLabels = new Set(
+        routineStaticOptions.map((option) => option.label),
+      );
+
+      maintenanceItemOptions = maintenanceItems
+        .filter((item) => routineLabels.has(item.serviceName))
+        .map((item) => ({ label: item.serviceName, value: item._id }));
+    } else {
+      maintenanceItemOptions = maintenanceItems
+        .filter((item) => item.category === category)
+        .map((item) => ({ label: item.serviceName, value: item._id }));
+    }
+  }
+
+  const staticOptions: ServiceOption[] = SERVICES_BY_CATEGORY[category] ?? [];
+
+  const optionsByLabel = new Map<string, ServiceOption>();
+
+  for (const maintenanceItemOption of maintenanceItemOptions) {
+    optionsByLabel.set(maintenanceItemOption.label, maintenanceItemOption);
+  }
+
+  for (const staticOption of staticOptions) {
+    if (!optionsByLabel.has(staticOption.label)) {
+      optionsByLabel.set(staticOption.label, staticOption);
+    }
+  }
+
+  return Array.from(optionsByLabel.values());
 };
