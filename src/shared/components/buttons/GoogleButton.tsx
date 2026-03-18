@@ -9,7 +9,7 @@ type Props = React.ComponentProps<typeof AppPressable> & {
 };
 
 export function GoogleButton({
-  title = 'Log in with Google',
+  title = 'Sign in with Google',
   isLoading,
   style,
   ...rest
@@ -20,7 +20,7 @@ export function GoogleButton({
       isLoading={isLoading}
       accessibilityRole="button"
       style={(state) => [
-        tw`rounded-md py-3 px-4 border border-surface-border flex-row items-center justify-center`,
+        tw`rounded-sm py-3 px-4 border border-surface-border flex-row items-center justify-center`,
         resolvePressableStyle(state, style),
       ]}
     >
@@ -29,13 +29,13 @@ export function GoogleButton({
           <Image
             source={require('@assets/google-icon.png')}
             style={[
-              { width: 18, height: 18, marginRight: 10 },
+              { width: 14, height: 14, marginRight: 6 },
               state.pressed && tw`opacity-70`,
             ]}
           />
           <CustomText
             style={[
-              tw`text-ink-700 font-medium`,
+              tw`text-ink-700 font-semibold text-xl`,
               state.pressed && tw`text-ink-500`,
             ]}
           >

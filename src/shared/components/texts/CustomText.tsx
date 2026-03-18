@@ -1,4 +1,4 @@
-import { Text, TextProps } from 'react-native';
+import { StyleProp, Text, TextProps, TextStyle } from 'react-native';
 import { typography } from '@/styles/theme';
 import { getTextDefaultColor } from '@/styles/utils';
 
@@ -14,7 +14,11 @@ export function CustomText({ variant = 'body', color, style, ...rest }: Props) {
 
   return (
     <Text
-      style={[{ color: color ?? defaultColor }, typography[variant], style]}
+      style={[
+        { color: color ?? defaultColor },
+        typography[variant],
+        style as StyleProp<TextStyle>,
+      ]}
       {...rest}
     />
   );
