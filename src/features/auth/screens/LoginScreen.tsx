@@ -8,6 +8,8 @@ import { GoogleButton } from '@/shared/components/buttons/GoogleButton';
 import { ROOT, RootStackParamList } from '@/navigation/routes';
 import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth';
 import tw from '@/styles/tw';
+import { useAppleAuth } from '../hooks/useAppleAuth';
+import { AppleButton } from '@/shared/components/buttons/AppleButton';
 
 export function LoginScreen() {
   const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -16,7 +18,10 @@ export function LoginScreen() {
     nav.reset({ index: 0, routes: [{ name: ROOT.App }] });
   }, [nav]);
 
-  const { loginWithGoogle, isLoading } = useGoogleAuth(handleAuthSuccess);
+  const { loginWithGoogle, isLoading: isLoadingGoogle } =
+    useGoogleAuth(handleAuthSuccess);
+  const { loginWithApple, isLoading: isLoadingApple } =
+    useAppleAuth(handleAuthSuccess);
 
   return (
     <Screen>
@@ -24,8 +29,9 @@ export function LoginScreen() {
         <CircleImage source={require('@assets/login-hero.jpg')} size={180} />
       </View>
 
-      <View style={tw`mt-12 px-4`}>
-        <GoogleButton onPress={loginWithGoogle} isLoading={isLoading} />
+      <View style={tw`mt-12 gap-2`}>
+        <GoogleButton onPress={loginWithGoogle} isLoading={isLoadingGoogle} />
+        <AppleButton onPress={loginWithApple} isLoading={isLoadingApple} />
       </View>
     </Screen>
   );
