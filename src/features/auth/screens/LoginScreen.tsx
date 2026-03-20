@@ -26,7 +26,7 @@ export function LoginScreen() {
   return (
     <Screen>
       <View style={tw`items-center mt-10`}>
-        <CircleImage source={require('@assets/login-hero.jpg')} size={180} />
+        <CircleImage source={require('@assets/icon.jpg')} size={180} />
       </View>
 
       <View style={tw`mt-12 gap-2`}>

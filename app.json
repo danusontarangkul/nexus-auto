@@ -5,18 +5,19 @@
     "scheme": "nexus-auto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.jpg",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.jpg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#022c7a"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.davidanusontarangkul.nexusauto",
       "usesAppleSignIn": true,
+      "icon": "./assets/icon.jpg",
       "infoPlist": {
         "NSCameraUsageDescription": "We use the camera to scan VINs and receipts.",
         "NSPhotoLibraryUsageDescription": "We access photos you select to read VINs and receipts.",
@@ -25,8 +26,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icon.jpg",
+        "backgroundColor": "#022c7a"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -36,7 +37,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/SpaceMono-Regular.ttf"]
+        }
+      ],
       "expo-web-browser",
       "expo-secure-store",
       "expo-apple-authentication"
