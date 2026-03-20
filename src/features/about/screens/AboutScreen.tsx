@@ -25,13 +25,6 @@ export function AboutScreen() {
   } = useDeleteVehicle();
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      header: () => <BackHeader hideBack title="About" skipTopInset={true} />,
-    });
-  }, [navigation]);
-
   const handleDeletePress = () => {
     setShowDeleteModal(true);
   };
@@ -50,7 +43,11 @@ export function AboutScreen() {
   return (
     <Screen>
       <View style={tw` mt-6`}>
-        <SectionHeader title="About" variant="titleLg" style={tw`mb-4`} />
+        <SectionHeader
+          title="About"
+          variant="titleLg"
+          style={tw`mb-4 text-center w-full`}
+        />
         <InputGroup gap={4}>
           <StaticField label="Vin Number" value={vehicle?.vinNumber} />
           <StaticField label="Make" value={vehicle?.vehicleData.make} />

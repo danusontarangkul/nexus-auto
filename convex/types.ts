@@ -277,3 +277,9 @@ export interface ServiceRecordUpdateFields {
   serviceDate?: number;
   mileage?: number;
 }
+
+export interface CarForDisplay {
+  year?: number | string | null;
+  make?: string | null;
+  model?: string | null;
+}
