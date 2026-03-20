@@ -38,11 +38,9 @@ export function ActivityCard({
           </CustomText>
         )}
 
-        {footer && (
-          <CustomText color={tw.color('ink-700')} style={tw`mt-0.5`}>
-            {footer}
-          </CustomText>
-        )}
+        <CustomText color={tw.color('ink-700')} style={tw`mt-0.5`}>
+          {footer ?? ''}
+        </CustomText>
       </Card>
     </Pressable>
   );
