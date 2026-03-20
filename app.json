@@ -2,14 +2,15 @@
   "expo": {
     "name": "Nexus Auto",
     "slug": "nexus-auto",
+    "owner": "anusontarangkul.d",
     "scheme": "nexus-auto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.jpg",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icon.jpg",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#022c7a"
     },
@@ -17,16 +18,16 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.davidanusontarangkul.nexusauto",
       "usesAppleSignIn": true,
-      "icon": "./assets/icon.jpg",
+      "icon": "./assets/icon.png",
       "infoPlist": {
-        "NSCameraUsageDescription": "We use the camera to scan VINs and receipts.",
-        "NSPhotoLibraryUsageDescription": "We access photos you select to read VINs and receipts.",
-        "NSPhotoLibraryAddUsageDescription": "We can save processed images if you choose to."
+        "NSCameraUsageDescription": "Nexus Auto uses the camera to scan VINs and maintenance receipts for your vehicle records.",
+        "NSPhotoLibraryUsageDescription": "Nexus Auto accesses your photos to import existing images of VINs and service receipts.",
+        "NSPhotoLibraryAddUsageDescription": "Nexus Auto saves processed images of your vehicle documents to your library."
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.jpg",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#022c7a"
       },
       "edgeToEdgeEnabled": true,
@@ -40,12 +41,19 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/SpaceMono-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/SpaceMono-Regular.ttf"
+          ]
         }
       ],
       "expo-web-browser",
       "expo-secure-store",
       "expo-apple-authentication"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "da996db7-c90c-43b2-810a-72f0a83bbd31"
+      }
+    }
   }
 }
