@@ -1,6 +1,9 @@
 import 'react-native-gesture-handler';
+import { useEffect, useMemo } from 'react';
+import { View, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as SplashScreen from 'expo-splash-screen';
 
 // Convex & Auth
 import { ConvexReactClient } from 'convex/react';
@@ -17,7 +20,7 @@ import { validateEnv, ENV } from './src/utils/env';
 import Toast from 'react-native-toast-message';
 import { DevFloatingButton } from '@/shared/components/buttons/DevFloatingButton';
 
-validateEnv();
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 const secureStorage = {
   getItem: SecureStore.getItemAsync,
@@ -25,9 +28,42 @@ const secureStorage = {
   removeItem: SecureStore.deleteItemAsync,
 };
 
-const convex = new ConvexReactClient(ENV.CONVEX_URL);
+function useConvexClientSafely(): ConvexReactClient | null {
+  return useMemo(() => {
+    try {
+      validateEnv();
+      return new ConvexReactClient(ENV.CONVEX_URL);
+    } catch (e) {
+      console.error('[App] Environment validation failed:', e);
+      return null;
+    }
+  }, []);
+}
 
 export default function App() {
+  const convex = useConvexClientSafely();
+
+  useEffect(() => {
+    if (convex === null) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [convex]);
+
+  if (convex === null) {
+    return (
+      <View style={tw`flex-1 items-center justify-center bg-surface-950 px-6`}>
+        <Text style={tw`mb-3 text-center text-lg font-semibold text-red-400`}>
+          Configuration error
+        </Text>
+        <Text style={tw`text-center text-base text-slate-400`}>
+          EXPO_PUBLIC_CONVEX_URL is missing for this build. Add it to the same
+          EAS profile you use (e.g. production or preview) in eas.json
+          &quot;env&quot;, then rebuild.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <ConvexAuthProvider client={convex} storage={secureStorage}>
       <GestureHandlerRootView style={tw`flex-1`}>
