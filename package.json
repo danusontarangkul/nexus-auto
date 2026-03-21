@@ -11,7 +11,10 @@
     "format": "prettier \"**/*.{js,jsx,ts,tsx,css,json,md}\" --write",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "convex:dev": "convex dev"
+    "convex:dev": "convex dev",
+    "build:ios": "eas build --platform ios --profile production --auto-submit",
+    "build:dev": "eas build --platform ios --profile development",
+    "submit": "eas submit --platform ios --latest"
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.90",
