@@ -6,9 +6,15 @@
     "jsx": "react-native",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["src/*"],
-      "@convex/*": ["convex/*"],
-      "@assets/*": ["assets/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@convex/*": [
+        "convex/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -20,8 +26,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types",
-    "convex/_generated",
-    "expo-env.d.ts"
+    "convex/_generated"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

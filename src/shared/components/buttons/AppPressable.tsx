@@ -24,7 +24,7 @@ export function AppPressable({
   const isInactive = disabled || isLoading;
 
   const getContent = (state: PressableStateCallbackType) => {
-    if (isLoading) {
+    if (isLoading && typeof children !== 'function') {
       return (
         <View style={tw`flex-row items-center justify-center`}>
           <ActivityIndicator size="small" color={spinnerColor} />

@@ -10,20 +10,37 @@
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#022c7a"
+      "backgroundColor": "#2C2C2C"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.davidanusontarangkul.nexusauto",
+      "buildNumber": "6",
       "usesAppleSignIn": true,
       "icon": "./assets/icon.png",
+      "associatedDomains": [
+        "applinks:fiery-echidna-514.convex.site",
+        "applinks:effervescent-ptarmigan-256.convex.site"
+      ],
+      "entitlements": {
+        "com.apple.developer.applesignin": ["Default"],
+        "com.apple.developer.associated-domains": [
+          "applinks:fiery-echidna-514.convex.site",
+          "applinks:effervescent-ptarmigan-256.convex.site"
+        ]
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "Nexus Auto uses the camera to scan VINs and maintenance receipts for your vehicle records.",
         "NSPhotoLibraryUsageDescription": "Nexus Auto accesses your photos to import existing images of VINs and service receipts.",
         "NSPhotoLibraryAddUsageDescription": "Nexus Auto saves processed images of your vehicle documents to your library.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["nexus-auto"]
+          }
+        ]
       }
     },
     "android": {
@@ -39,9 +56,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "expo-font"
-      ],
+      ["expo-font"],
       "expo-web-browser",
       "expo-secure-store",
       "expo-apple-authentication",
