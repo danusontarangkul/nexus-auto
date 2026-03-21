@@ -7,13 +7,29 @@ import { sanitizeAuthParams } from '@/utils/auth';
 
 WebBrowser.maybeCompleteAuthSession();
 
+function shouldHandleGoogleOAuthReturn(url: string): boolean {
+  const lower = url.toLowerCase();
+  if (lower.includes('apple-auth')) {
+    return false;
+  }
+  if (lower.includes('code=') || lower.includes('error=')) {
+    return true;
+  }
+  if (url.includes('auth')) {
+    return true;
+  }
+  return false;
+}
+
 export function useGoogleAuth(onSuccess: () => Promise<void>) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signIn } = useAuthActions();
 
   const handleDeepLink = useCallback(
     async (event: { url: string }) => {
-      if (!event.url.includes('auth')) return;
+      if (!shouldHandleGoogleOAuthReturn(event.url)) {
+        return;
+      }
 
       setIsLoading(true);
       try {
@@ -44,7 +60,8 @@ export function useGoogleAuth(onSuccess: () => Promise<void>) {
   const loginWithGoogle = useCallback(async () => {
     setIsLoading(true);
     try {
-      const redirectTo = Linking.createURL('auth');
+      const redirectTo =
+        process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL || Linking.createURL('auth');
       const result = await signIn('google', { redirectTo });
       const urlToOpen = result?.redirect?.toString();
 

@@ -9,7 +9,8 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_CONVEX_URL": "https://fiery-echidna-514.convex.cloud",
-        "EXPO_PUBLIC_CONVEX_SITE_URL": "https://fiery-echidna-514.convex.site"
+        "EXPO_PUBLIC_CONVEX_SITE_URL": "https://fiery-echidna-514.convex.site",
+        "EXPO_PUBLIC_AUTH_REDIRECT_URL": "nexus-auto://auth"
       }
     },
     "preview": {

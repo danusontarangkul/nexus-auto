@@ -14,7 +14,8 @@ export function useAppleAuth(onSuccess: () => Promise<void>) {
   const loginWithApple = useCallback(async () => {
     setIsLoading(true);
     try {
-      const redirectTo = Linking.createURL('apple-auth');
+      const redirectTo =
+        process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL || Linking.createURL('auth');
       const result = await signIn('apple', { redirectTo });
       const urlToOpen = result?.redirect?.toString();
 

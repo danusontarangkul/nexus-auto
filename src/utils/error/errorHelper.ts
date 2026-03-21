@@ -1,5 +1,8 @@
 import Toast from 'react-native-toast-message';
 
+export const AUTH_REQUIRED_ERROR_MESSAGE =
+  'Authentication required. Please log in.';
+
 interface ConvexErrorLike {
   data?: unknown;
 }
@@ -16,7 +19,27 @@ export function getErrorMessage(error: unknown): string {
     return (error as ConvexErrorLike).data as string;
   }
 
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
   return fallback;
+}
+
+export function isAuthRequiredError(error: unknown): boolean {
+  return getErrorMessage(error) === AUTH_REQUIRED_ERROR_MESSAGE;
+}
+
+export function getErrorFallbackHeadline(explicitTitle?: string): string {
+  return explicitTitle || 'Oops!';
+}
+
+export function getErrorFallbackHomeButtonTitle(error: unknown): string {
+  return isAuthRequiredError(error) ? 'Go to sign in' : 'Return to Dashboard';
 }
 
 export function setErrorFromConvexError(

@@ -4,9 +4,14 @@ import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { OutlineButton } from '@/shared/components/buttons/OutlineButton';
 import { Screen } from '@/shared/components/screens/Screen';
 import tw from '@/styles/tw';
-import { getErrorMessage } from '@/utils/error/errorHelper';
+import {
+  getErrorMessage,
+  getErrorFallbackHeadline,
+  getErrorFallbackHomeButtonTitle,
+  isAuthRequiredError,
+} from '@/utils/error/errorHelper';
 import { navRef } from '@/navigation/NavRef';
-import { AUTH, ROOT } from '@/navigation/routes';
+import { ROOT } from '@/navigation/routes';
 
 interface Props {
   error: unknown;
@@ -16,15 +21,17 @@ interface Props {
 
 export function ErrorFallback({ error, resetErrorBoundary, title }: Props) {
   const errorMessage = getErrorMessage(error);
+  const authRequired = isAuthRequiredError(error);
 
   const handleReturnHome = () => {
     resetErrorBoundary();
-    if (navRef.isReady()) {
-      navRef.reset({
-        index: 0,
-        routes: [{ name: AUTH.Login }],
-      });
+    if (!navRef.isReady()) {
+      return;
     }
+    navRef.reset({
+      index: 0,
+      routes: [{ name: authRequired ? ROOT.Auth : ROOT.App }],
+    });
   };
 
   const handleDevPress = () => {
@@ -55,12 +62,8 @@ export function ErrorFallback({ error, resetErrorBoundary, title }: Props) {
         </Pressable>
       )}
       <View style={tw`flex-1 justify-center items-center p-6`}>
-        <View style={tw`mb-6 bg-red-500/10 p-4 rounded-full`}>
-          {/* Icon would go here */}
-        </View>
-
         <CustomText style={tw`text-2xl font-bold mb-2 text-center text-white`}>
-          {title || 'Oops!'}
+          {getErrorFallbackHeadline(title)}
         </CustomText>
 
         <CustomText style={tw`text-center text-surface-400 mb-10 leading-6`}>
@@ -70,7 +73,7 @@ export function ErrorFallback({ error, resetErrorBoundary, title }: Props) {
         <View style={tw`w-full gap-3`}>
           <PrimaryButton title="Try Again" onPress={resetErrorBoundary} />
           <OutlineButton
-            title="Return to Dashboard"
+            title={getErrorFallbackHomeButtonTitle(error)}
             onPress={handleReturnHome}
           />
         </View>
