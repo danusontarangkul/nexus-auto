@@ -22,7 +22,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Nexus Auto uses the camera to scan VINs and maintenance receipts for your vehicle records.",
         "NSPhotoLibraryUsageDescription": "Nexus Auto accesses your photos to import existing images of VINs and service receipts.",
-        "NSPhotoLibraryAddUsageDescription": "Nexus Auto saves processed images of your vehicle documents to your library."
+        "NSPhotoLibraryAddUsageDescription": "Nexus Auto saves processed images of your vehicle documents to your library.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -39,16 +40,12 @@
     },
     "plugins": [
       [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/SpaceMono-Regular.ttf"
-          ]
-        }
+        "expo-font"
       ],
       "expo-web-browser",
       "expo-secure-store",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "@react-native-community/datetimepicker"
     ],
     "extra": {
       "eas": {
