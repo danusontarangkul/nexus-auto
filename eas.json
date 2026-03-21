@@ -6,7 +6,11 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_CONVEX_URL": "https://fiery-echidna-514.convex.cloud",
+        "EXPO_PUBLIC_CONVEX_SITE_URL": "https://fiery-echidna-514.convex.site"
+      }
     },
     "preview": {
       "distribution": "internal",

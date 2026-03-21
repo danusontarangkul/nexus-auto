@@ -56,9 +56,9 @@ export default function App() {
           Configuration error
         </Text>
         <Text style={tw`text-center text-base text-slate-400`}>
-          EXPO_PUBLIC_CONVEX_URL is missing for this build. Add it to the same
-          EAS profile you use (e.g. production or preview) in eas.json
-          &quot;env&quot;, then rebuild.
+          Convex URL resolved to empty (unexpected). Set EXPO_PUBLIC_CONVEX_URL
+          in .env.local or in eas.json for your EAS profile, or update
+          src/config/publicEnv.ts defaults.
         </Text>
       </View>
     );
