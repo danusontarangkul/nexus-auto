@@ -3,6 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
+    "jsx": "react-native",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["src/*"],
       "@convex/*": ["convex/*"],
@@ -10,8 +12,16 @@
     },
     "allowJs": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types", "convex/_generated"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types",
+    "convex/_generated",
+    "expo-env.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
