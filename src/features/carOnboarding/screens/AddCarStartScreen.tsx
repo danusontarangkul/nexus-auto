@@ -7,7 +7,6 @@ import { Input } from '@/shared/components/inputs/Input';
 import { PrimaryButton } from '@/shared/components/buttons/PrimaryButton';
 import { CustomText } from '@/shared/components/texts/CustomText';
 import tw from '@/styles/tw';
-import { useAppState } from '@/state/AppState';
 import { ONBOARD, OnboardingStackParamList } from '@/navigation/routes';
 import {
   getVinHelperMessage,
@@ -31,8 +30,6 @@ export function AddCarStartScreen() {
   const [vin, setVin] = useState<string>('');
   const [vinMessage, setVinMessage] = useState<string>('');
   const [vinError, setVinError] = useState<string | null>(null);
-
-  const { completeAddCar } = useAppState();
 
   const {
     decodeVin,
@@ -75,7 +72,6 @@ export function AddCarStartScreen() {
       return;
     }
 
-    completeAddCar();
     nav.navigate(ONBOARD.ConfirmCar, {
       car: result,
       plate: plate,

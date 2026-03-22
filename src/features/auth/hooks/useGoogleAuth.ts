@@ -21,7 +21,7 @@ function shouldHandleGoogleOAuthReturn(url: string): boolean {
   return false;
 }
 
-export function useGoogleAuth(onSuccess: () => Promise<void>) {
+export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signIn } = useAuthActions();
 
@@ -42,14 +42,13 @@ export function useGoogleAuth(onSuccess: () => Promise<void>) {
         }
 
         await signIn('google', params);
-        await onSuccess();
       } catch (error) {
         handleError(error, 'Google Auth', 'Could not complete Google sign-in.');
       } finally {
         setIsLoading(false);
       }
     },
-    [signIn, onSuccess],
+    [signIn],
   );
 
   useEffect(() => {

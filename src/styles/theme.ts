@@ -1,3 +1,5 @@
+import { DefaultTheme, Theme } from '@react-navigation/native';
+
 export const palette = {
   primary: {
     500: '#3B82F6',
@@ -62,5 +64,17 @@ export const typography = {
     fontFamily: 'SourceSansPro_600SemiBold',
     fontSize: 16,
     color: palette.ink[900],
+  },
+};
+
+export const darkNavTheme: Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#0F1115',
+    card: '#14171C',
+    border: '#2B313C',
+    text: '#F8FAFC',
+    primary: '#3B82F6',
   },
 };

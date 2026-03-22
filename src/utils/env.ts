@@ -1,9 +1,5 @@
 import { DEFAULT_CONVEX_URL } from '@/config/publicEnv';
 
-/**
- * `EXPO_PUBLIC_*` is inlined when set (`.env` or EAS). Otherwise we use the
- * default so `expo start` works without a `.env` file.
- */
 export const ENV = {
   CONVEX_URL: process.env.EXPO_PUBLIC_CONVEX_URL ?? DEFAULT_CONVEX_URL,
 };

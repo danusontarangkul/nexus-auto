@@ -113,3 +113,6 @@ export const CATEGORY_ICONS: Record<
   inspection: 'shield-checkmark-outline',
   other: 'ellipsis-horizontal-circle-outline',
 };
+
+export const HAS_CAR_KEY = 'nexus_user_has_car';
+export const AUTH_TOKEN_KEY = 'nexus_auth_token';

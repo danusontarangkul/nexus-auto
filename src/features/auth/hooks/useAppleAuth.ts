@@ -7,7 +7,7 @@ import { sanitizeAuthParams } from '@/utils/auth';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export function useAppleAuth(onSuccess: () => Promise<void>) {
+export function useAppleAuth() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signIn } = useAuthActions();
 
@@ -36,10 +36,7 @@ export function useAppleAuth(onSuccess: () => Promise<void>) {
           params = sanitizeAuthParams(parsed.queryParams);
         }
 
-        // ConvexAuth uses the callback params (code/state/etc) to complete auth
-        // and trigger `createOrUpdateUser` in `convex/auth.ts`.
         await signIn('apple', params);
-        await onSuccess();
       } else {
         setIsLoading(false);
       }
@@ -49,7 +46,7 @@ export function useAppleAuth(onSuccess: () => Promise<void>) {
     } finally {
       setIsLoading(false);
     }
-  }, [signIn, onSuccess]);
+  }, [signIn]);
 
   return { loginWithApple, isLoading };
 }
