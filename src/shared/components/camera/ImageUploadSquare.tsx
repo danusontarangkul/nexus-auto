@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { View, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import tw from '@/styles/tw';
 
@@ -16,8 +15,6 @@ export function ImageUploadSquare({
   onRemove,
   onPress,
 }: ImageUploadSquareProps) {
-  const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
-
   if (!imageUri) {
     return (
       <TouchableOpacity
@@ -34,17 +31,7 @@ export function ImageUploadSquare({
       <Image
         source={{ uri: imageUri }}
         style={tw`w-full h-full rounded-xl bg-surface-900`}
-        onLoadStart={() => setIsImageLoading(true)}
-        onLoadEnd={() => setIsImageLoading(false)}
       />
-
-      {isImageLoading && (
-        <View
-          style={tw`absolute inset-0 items-center justify-center bg-black/20 rounded-xl`}
-        >
-          <ActivityIndicator size="small" color="#fff" />
-        </View>
-      )}
 
       {isEditing && onRemove && (
         <TouchableOpacity

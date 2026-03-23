@@ -17,6 +17,7 @@ import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
 import { usePhotoAttachment } from '@/shared/hooks/usePhotoAttachment';
 import { useUploadPhoto } from '@/shared/hooks/useUploadPhoto';
 import { useDashboardContext } from '@/providers/DashboardProvider';
+import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function AddWarrantyScreen() {
   const { dashboard } = useDashboardContext();
@@ -33,7 +34,14 @@ export function AddWarrantyScreen() {
     error: uploadError,
   } = useUploadPhoto();
 
-  const { imageUris, removeImage, openImagePicker } = usePhotoAttachment();
+  const {
+    imageUris,
+    removeImage,
+    openImagePicker,
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
+  } = usePhotoAttachment();
 
   const handleSubmit = async () => {
     if (!vehicleId) {
@@ -106,6 +114,13 @@ export function AddWarrantyScreen() {
           />
         </ActionGroup>
       </ButtonContainer>
+
+      <ImageSourcePickerSheet
+        visible={isImageSourceSheetOpen}
+        onClose={closeImageSourceSheet}
+        onSelectCamera={() => selectImageSource('camera')}
+        onSelectLibrary={() => selectImageSource('library')}
+      />
     </Screen>
   );
 }

@@ -25,6 +25,7 @@ import { isEmptyDate, isEmptyString } from '@/utils/format';
 import tw from '@/styles/tw';
 import { WARRANTIES, WarrantiesStackParamList } from '@/navigation/routes';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
+import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function WarrantiesDetailsScreen() {
   const navigation = useNavigation<NavigationProp<WarrantiesStackParamList>>();
@@ -39,7 +40,14 @@ export function WarrantiesDetailsScreen() {
   const [manufacturer, setManufacturer] = useState<string>('');
   const [component, setComponent] = useState<string>('');
 
-  const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
+  const {
+    openImagePicker,
+    imageUris,
+    removeImage,
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
+  } = usePhotoAttachment();
   const {
     deleteWarranty,
     isLoading: isDeleting,
@@ -187,6 +195,13 @@ export function WarrantiesDetailsScreen() {
         cancelText="Cancel"
         loading={isDeleting}
         error={deleteError}
+      />
+
+      <ImageSourcePickerSheet
+        visible={isImageSourceSheetOpen}
+        onClose={closeImageSourceSheet}
+        onSelectCamera={() => selectImageSource('camera')}
+        onSelectLibrary={() => selectImageSource('library')}
       />
     </Screen>
   );

@@ -283,3 +283,9 @@ export interface CarForDisplay {
   make?: string | null;
   model?: string | null;
 }
+
+export type ImagePickSource = 'camera' | 'library';
+
+export type UsePhotoAttachmentOptions = {
+  useScannerCamera?: boolean;
+};

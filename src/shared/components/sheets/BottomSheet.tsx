@@ -1,8 +1,6 @@
 import React from 'react';
-import { Modal, Pressable, View, Animated, Dimensions } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import tw from '@/styles/tw';
-
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 type BottomSheetProps = {
   visible: boolean;

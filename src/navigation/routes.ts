@@ -57,7 +57,7 @@ export type AppTabsParamList = {
   [TABS.Dashboard]: undefined;
   [TABS.Records]: NavigatorScreenParams<RecordsStackParamList>;
   [TABS.Warranties]: undefined;
-  [TABS.About]: undefined;
+  [TABS.About]: NavigatorScreenParams<AboutStackParamList>;
 };
 
 export const DASHBOARD = {
@@ -101,9 +101,9 @@ export type WarrantiesStackParamList = {
 };
 
 export const ABOUT = {
-  About: 'About',
+  AboutMain: 'AboutMain',
 } as const;
 
 export type AboutStackParamList = {
-  [ABOUT.About]: undefined;
+  [ABOUT.AboutMain]: undefined;
 };

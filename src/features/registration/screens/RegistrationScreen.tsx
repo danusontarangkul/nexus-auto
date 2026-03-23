@@ -18,6 +18,7 @@ import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
 import { useRegistrationChanges } from '../hooks/useRegistrationChanges';
 import { EmptyState } from '@/shared/components/texts/EmptyState';
 import { useEditHeader } from '@/navigation/hooks/useEditHeader';
+import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function RegistrationScreen() {
   const { vehicleId } = useRegistrationRouteParams();
@@ -50,7 +51,10 @@ export function RegistrationScreen() {
     removeImage,
     addCapturedPhoto,
     openImagePicker,
-  } = usePhotoAttachment();
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
+  } = usePhotoAttachment({ useScannerCamera: true });
 
   const hasChanges = useRegistrationChanges(registration, {
     expiryDate,
@@ -144,6 +148,13 @@ export function RegistrationScreen() {
           </ActionGroup>
         </ButtonContainer>
       )}
+
+      <ImageSourcePickerSheet
+        visible={isImageSourceSheetOpen}
+        onClose={closeImageSourceSheet}
+        onSelectCamera={() => selectImageSource('camera')}
+        onSelectLibrary={() => selectImageSource('library')}
+      />
     </Screen>
   );
 }

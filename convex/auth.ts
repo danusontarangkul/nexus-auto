@@ -16,9 +16,12 @@ function isAllowedNativeRedirect(redirectTo: string): boolean {
   }
   try {
     const url = new URL(redirectTo);
-    const apple = url.hostname === 'apple-auth' || url.pathname.endsWith('/apple-auth');
+    const apple =
+      url.hostname === 'apple-auth' || url.pathname.endsWith('/apple-auth');
     const google =
-      url.hostname === 'auth' || url.pathname === '/auth' || url.pathname.endsWith('/auth');
+      url.hostname === 'auth' ||
+      url.pathname === '/auth' ||
+      url.pathname.endsWith('/auth');
     return google || apple;
   } catch {
     return false;

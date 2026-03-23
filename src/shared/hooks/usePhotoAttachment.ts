@@ -1,14 +1,46 @@
 import { useState } from 'react';
-import { ActionSheetIOS, Platform, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import {
+  showCameraPermissionNeededAlert,
+  showPhotoLibraryPermissionNeededAlert,
+} from '../components/alerts/permissionAccessAlerts';
+import { ImagePickSource, UsePhotoAttachmentOptions } from '@convex/types';
+import { PICKER_AFTER_MODAL_MS } from '@/utils/const';
 
-export function usePhotoAttachment() {
-  const [isTakingPhoto, setIsTakingPhoto] = useState(false);
+export function usePhotoAttachment(options?: UsePhotoAttachmentOptions) {
+  const useScannerCamera = options?.useScannerCamera ?? false;
+  const [isTakingPhoto, setIsTakingPhoto] = useState<boolean>(false);
   const [imageUris, setImageUris] = useState<string[]>([]);
+  const [isImageSourceSheetOpen, setIsImageSourceSheetOpen] =
+    useState<boolean>(false);
 
-  const handleImagePick = async (source: 'camera' | 'library') => {
-    if (source === 'camera') {
-      setIsTakingPhoto(true);
+  const openSystemCamera = async () => {
+    const { granted, canAskAgain } =
+      await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!granted) {
+      showCameraPermissionNeededAlert(canAskAgain);
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      allowsEditing: false,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      const newUris = result.assets.map((asset) => asset.uri);
+      setImageUris((prev) => [...prev, ...newUris]);
+    }
+  };
+
+  const openImageLibrary = async () => {
+    const { granted, canAskAgain } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!granted) {
+      showPhotoLibraryPermissionNeededAlert(canAskAgain);
       return;
     }
 
@@ -25,6 +57,19 @@ export function usePhotoAttachment() {
     }
   };
 
+  const handleImagePick = async (source: ImagePickSource) => {
+    if (source === 'camera') {
+      if (useScannerCamera) {
+        setIsTakingPhoto(true);
+        return;
+      }
+      await openSystemCamera();
+      return;
+    }
+
+    await openImageLibrary();
+  };
+
   const removeImage = (index: number) => {
     setImageUris((prev) => prev.filter((_, i) => i !== index));
   };
@@ -34,27 +79,19 @@ export function usePhotoAttachment() {
     setIsTakingPhoto(false);
   };
 
-  const openImagePicker = () => {
-    const options = ['Cancel', 'Take Photo', 'Choose from Library'];
+  const openImagePicker = () => setIsImageSourceSheetOpen(true);
 
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        { options, cancelButtonIndex: 0 },
-        (index) => {
-          if (index === 1) handleImagePick('camera');
-          if (index === 2) handleImagePick('library');
-        },
-      );
-    } else {
-      Alert.alert('Upload Document', 'Select a source', [
-        { text: 'Take Photo', onPress: () => handleImagePick('camera') },
-        {
-          text: 'Choose from Library',
-          onPress: () => handleImagePick('library'),
-        },
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    }
+  const closeImageSourceSheet = () => setIsImageSourceSheetOpen(false);
+
+  const selectImageSource = (source: ImagePickSource) => {
+    setIsImageSourceSheetOpen(false);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          void handleImagePick(source);
+        }, PICKER_AFTER_MODAL_MS);
+      });
+    });
   };
 
   return {
@@ -65,5 +102,8 @@ export function usePhotoAttachment() {
     removeImage,
     addCapturedPhoto,
     openImagePicker,
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
   };
 }

@@ -1,18 +1,15 @@
-import { useLayoutEffect, useState } from 'react';
-import { View } from 'react-native';
+import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { BackHeader } from '@/navigation/components/BackHeader';
 import { Screen } from '@/shared/components/screens/Screen';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { StaticField } from '@/shared/components/texts/StaticField';
-import tw from '@/styles/tw';
 import { ButtonContainer } from '@/shared/components/containers/ButtonContainer';
 import { useDeleteVehicle } from '@/domain/vehicles';
 import { AppTabsParamList, TABS } from '@/navigation/routes';
 import { LinkButton } from '@/shared/components/buttons/LinkButton';
-import { SectionHeader } from '@/shared/components/headers/SectionHeader';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
 import { InputGroup } from '@/shared/components/inputs/InputGroup';
+import tw from '@/styles/tw';
 
 export function AboutScreen() {
   const navigation = useNavigation<NavigationProp<AppTabsParamList>>();
@@ -36,25 +33,18 @@ export function AboutScreen() {
     const success = await deleteVehicle(vehicle?._id);
     if (success) {
       setShowDeleteModal(false);
-      navigation.navigate(TABS.Dashboard);
+      navigation.getParent()?.navigate(TABS.Dashboard);
     }
   };
 
   return (
     <Screen>
-      <View style={tw` mt-6`}>
-        <SectionHeader
-          title="About"
-          variant="titleLg"
-          style={tw`mb-4 text-center w-full`}
-        />
-        <InputGroup gap={4}>
-          <StaticField label="Vin Number" value={vehicle?.vinNumber} />
-          <StaticField label="Make" value={vehicle?.vehicleData.make} />
-          <StaticField label="Model" value={vehicle?.vehicleData.model} />
-          <StaticField label="Year" value={vehicle?.vehicleData.year} />
-        </InputGroup>
-      </View>
+      <InputGroup gap={4} style={tw`mt-6`}>
+        <StaticField label="Vin Number" value={vehicle?.vinNumber} />
+        <StaticField label="Make" value={vehicle?.vehicleData.make} />
+        <StaticField label="Model" value={vehicle?.vehicleData.model} />
+        <StaticField label="Year" value={vehicle?.vehicleData.year} />
+      </InputGroup>
       <ButtonContainer>
         <LinkButton
           title="Delete Vehicle"

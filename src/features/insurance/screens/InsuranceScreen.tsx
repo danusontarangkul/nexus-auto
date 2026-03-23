@@ -21,6 +21,7 @@ import { useInsuranceChanges } from '../hooks/useInsuranceChanges';
 import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
 import { isEmptyString } from '@/utils/format';
 import { useEditHeader } from '@/navigation/hooks/useEditHeader';
+import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function InsuranceScreen() {
   const { vehicleId } = useInsuranceRouteParams();
@@ -54,7 +55,10 @@ export function InsuranceScreen() {
     removeImage,
     addCapturedPhoto,
     openImagePicker,
-  } = usePhotoAttachment();
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
+  } = usePhotoAttachment({ useScannerCamera: true });
 
   const hasChanges = useInsuranceChanges(insurance, {
     expiryDate,
@@ -164,6 +168,13 @@ export function InsuranceScreen() {
           </ActionGroup>
         </ButtonContainer>
       )}
+
+      <ImageSourcePickerSheet
+        visible={isImageSourceSheetOpen}
+        onClose={closeImageSourceSheet}
+        onSelectCamera={() => selectImageSource('camera')}
+        onSelectLibrary={() => selectImageSource('library')}
+      />
     </Screen>
   );
 }

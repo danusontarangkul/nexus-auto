@@ -34,6 +34,7 @@ import { ControlledNumberInput } from '@/shared/components/inputs/ControlledNumb
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { ServiceCategoryType } from '@convex/types/literals';
 import { getServiceOptionsForCategory } from '../utils/utils';
+import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -64,7 +65,14 @@ export function RecordsDetailsScreen() {
 
   const [storageIds] = useState<Id<'_storage'>[]>([]);
 
-  const { openImagePicker, imageUris, removeImage } = usePhotoAttachment();
+  const {
+    openImagePicker,
+    imageUris,
+    removeImage,
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
+  } = usePhotoAttachment();
 
   const {
     deleteServiceRecord,
@@ -274,6 +282,13 @@ export function RecordsDetailsScreen() {
         cancelText="Cancel"
         loading={isDeleting}
         error={deleteError}
+      />
+
+      <ImageSourcePickerSheet
+        visible={isImageSourceSheetOpen}
+        onClose={closeImageSourceSheet}
+        onSelectCamera={() => selectImageSource('camera')}
+        onSelectLibrary={() => selectImageSource('library')}
       />
     </Screen>
   );

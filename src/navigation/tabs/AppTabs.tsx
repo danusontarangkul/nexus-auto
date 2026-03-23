@@ -8,7 +8,7 @@ import { getTabBarIcon, tabDark } from '../options';
 import { DashboardStack } from '../stacks/DashboardStack';
 import { RecordsStack } from '../stacks/RecordsStack';
 import { WarrantiesStack } from '../stacks/WarrantiesStack';
-import { AboutScreen } from '@/features/about/screens/AboutScreen';
+import { AboutStack } from '../stacks/AboutStack';
 
 const Tab = createBottomTabNavigator<AppTabsParamList>();
 
@@ -49,7 +49,7 @@ export function AppTabs() {
       <Tab.Screen name={TABS.Dashboard} component={DashboardStack} />
       <Tab.Screen name={TABS.Records} component={RecordsStack} />
       <Tab.Screen name={TABS.Warranties} component={WarrantiesStack} />
-      <Tab.Screen name={TABS.About} component={AboutScreen} />
+      <Tab.Screen name={TABS.About} component={AboutStack} />
     </Tab.Navigator>
   );
 }

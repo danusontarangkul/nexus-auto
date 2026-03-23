@@ -34,17 +34,17 @@ export function BackHeader({
         paddingHorizontal: 16,
       })}
     >
-      <View style={tw`flex-row items-center justify-between`}>
-        <View style={tw`w-10`}>
+      <View style={tw`min-h-10 flex-row items-center justify-between`}>
+        <View style={tw`h-10 w-10 justify-center`}>
           {leftElement ? (
-            <View style={tw`w-10 h-10 items-center justify-center -ml-2`}>
+            <View style={tw`h-10 w-10 items-center justify-center -ml-2`}>
               {leftElement}
             </View>
           ) : !hideBack ? (
             <TouchableOpacity
               accessibilityRole="button"
               onPress={onBackPress ?? (() => nav.goBack())}
-              style={tw`w-10 h-10 items-center justify-center -ml-2`}
+              style={tw`h-10 w-10 items-center justify-center -ml-2`}
             >
               <Ionicons
                 name="chevron-back"
@@ -63,14 +63,12 @@ export function BackHeader({
           )}
         </View>
 
-        <View style={tw`w-10 items-center justify-center`}>
+        <View style={tw`h-10 w-10 items-center justify-center`}>
           {rightElement ? (
-            <View style={tw`w-10 h-10 items-center justify-center -mr-2`}>
+            <View style={tw`h-10 w-10 items-center justify-center -mr-2`}>
               {rightElement}
             </View>
-          ) : (
-            <View style={tw`w-10`} />
-          )}
+          ) : null}
         </View>
       </View>
     </View>

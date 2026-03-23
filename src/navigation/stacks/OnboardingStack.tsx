@@ -17,7 +17,11 @@ export function OnboardingStack() {
       <Stack.Screen
         name={ONBOARD.AddCarStart}
         component={AddCarStartScreen}
-        options={{ header: () => <BackHeader title="New Car" hideBack /> }}
+        options={
+          __DEV__
+            ? { header: () => <BackHeader title="New Car" hideBack /> }
+            : { headerShown: false }
+        }
       />
       <Stack.Screen
         name={ONBOARD.EnterVin}
@@ -44,7 +48,11 @@ export function OnboardingStack() {
       <Stack.Screen
         name={ONBOARD.ConfirmCar}
         component={ConfirmCarScreen}
-        options={{ header: () => <BackHeader title="Confirm Vehicle" /> }}
+        options={
+          __DEV__
+            ? { header: () => <BackHeader title="Confirm Vehicle" /> }
+            : { headerShown: false }
+        }
       />
     </Stack.Navigator>
   );

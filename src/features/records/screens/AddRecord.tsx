@@ -24,6 +24,7 @@ import tw from '@/styles/tw';
 import { ServiceItemCard } from '../components/ServiceItemCard';
 import { NumberInput } from '@/shared/components/inputs/NumberInput';
 import { getServiceOptionsForCategory } from '../utils/utils';
+import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function AddRecordScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
@@ -41,7 +42,14 @@ export function AddRecordScreen() {
     error: uploadError,
   } = useUploadPhoto();
 
-  const { imageUris, removeImage, openImagePicker } = usePhotoAttachment();
+  const {
+    imageUris,
+    removeImage,
+    openImagePicker,
+    isImageSourceSheetOpen,
+    closeImageSourceSheet,
+    selectImageSource,
+  } = usePhotoAttachment();
 
   const [serviceDate, setServiceDate] = useState<Date | null>(new Date());
 
@@ -194,6 +202,13 @@ export function AddRecordScreen() {
           </ActionGroup>
         </ButtonContainer>
       </ScrollView>
+
+      <ImageSourcePickerSheet
+        visible={isImageSourceSheetOpen}
+        onClose={closeImageSourceSheet}
+        onSelectCamera={() => selectImageSource('camera')}
+        onSelectLibrary={() => selectImageSource('library')}
+      />
     </Screen>
   );
 }
