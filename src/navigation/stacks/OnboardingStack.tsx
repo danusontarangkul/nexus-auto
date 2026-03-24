@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { stackDark } from '../options';
+import { AddCarStartHeader } from '../components/AddCarStartHeader';
 import { BackHeader } from '../components/BackHeader';
 import { AddCarStartScreen } from '../../features/carOnboarding/screens/AddCarStartScreen';
 import { EnterVinScreen } from '../../features/carOnboarding/screens/EnterVinScreen';
@@ -17,11 +18,7 @@ export function OnboardingStack() {
       <Stack.Screen
         name={ONBOARD.AddCarStart}
         component={AddCarStartScreen}
-        options={
-          __DEV__
-            ? { header: () => <BackHeader title="New Car" hideBack /> }
-            : { headerShown: false }
-        }
+        options={{ header: () => <AddCarStartHeader /> }}
       />
       <Stack.Screen
         name={ONBOARD.EnterVin}
@@ -48,11 +45,7 @@ export function OnboardingStack() {
       <Stack.Screen
         name={ONBOARD.ConfirmCar}
         component={ConfirmCarScreen}
-        options={
-          __DEV__
-            ? { header: () => <BackHeader title="Confirm Vehicle" /> }
-            : { headerShown: false }
-        }
+        options={{ header: () => <BackHeader title="Confirm Vehicle" /> }}
       />
     </Stack.Navigator>
   );

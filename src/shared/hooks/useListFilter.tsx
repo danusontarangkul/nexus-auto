@@ -63,6 +63,7 @@ export function useListFilter<T>({
           <BackHeader
             title={headerTitle}
             hideBack
+            skipTopInset
             leftElement={
               <TouchableOpacity onPress={onAddPress}>
                 <Ionicons name="add" size={28} color={tw.color('ink-900')} />

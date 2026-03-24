@@ -31,7 +31,9 @@ export function DashboardStack() {
       <Stack.Screen
         name={DASHBOARD.Account}
         component={withErrorBoundary(AccountScreen, 'Account Access')}
-        options={{ header: () => <BackHeader title="Account" /> }}
+        options={{
+          header: () => <BackHeader title="Account" skipTopInset />,
+        }}
       />
       <Stack.Screen
         name={DASHBOARD.ServiceRecordDetails}
@@ -40,6 +42,7 @@ export function DashboardStack() {
           header: () => (
             <BackHeader
               title="Service Record Details"
+              skipTopInset
               onBackPress={() => navigateToRecordsListScreen(navigation)}
             />
           ),

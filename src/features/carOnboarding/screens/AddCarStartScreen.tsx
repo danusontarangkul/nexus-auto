@@ -83,8 +83,7 @@ export function AddCarStartScreen() {
 
   return (
     <Screen>
-      <ScreenHeader title="Enter Car Details" style={tw`pt-10`} />
-      <InputGroup>
+      <InputGroup style={tw`mt-10`}>
         <Input
           label="License Plate #"
           placeholder="License Plate #"

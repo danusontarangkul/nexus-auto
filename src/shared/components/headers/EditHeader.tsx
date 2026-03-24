@@ -25,6 +25,7 @@ export function EditHeader({
   return (
     <BackHeader
       title={title}
+      skipTopInset
       rightElement={
         <TouchableOpacity onPress={onPress} style={tw`p-1`}>
           <Ionicons name={iconName} size={24} color={tw.color('ink-900')} />

@@ -25,11 +25,12 @@ export function BackHeader({
 }: Props) {
   const nav = useNavigation();
   const insets = useSafeAreaInsets();
+  const topPad = (skipTopInset ? 0 : insets.top) + 4;
 
   return (
     <View
       style={tw.style('bg-surface-950 border-b border-surface-border', {
-        paddingTop: 4,
+        paddingTop: topPad,
         paddingBottom: 12,
         paddingHorizontal: 16,
       })}

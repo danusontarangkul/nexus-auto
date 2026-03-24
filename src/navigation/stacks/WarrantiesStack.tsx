@@ -19,7 +19,9 @@ export function WarrantiesStack() {
       <Stack.Screen
         name={WARRANTIES.AddWarranty}
         component={AddWarrantyScreen}
-        options={{ header: () => <BackHeader title="Add Warranty" /> }}
+        options={{
+          header: () => <BackHeader title="Add Warranty" skipTopInset />,
+        }}
       />
       <Stack.Screen
         name={WARRANTIES.WarrantyDetails}
