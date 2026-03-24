@@ -26,6 +26,7 @@ import {
   AppTabsParamList,
 } from '@/navigation/routes';
 import { Avatar } from '@/shared/components/avatar/Avatar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type DashboardNav = CompositeNavigationProp<
   NativeStackNavigationProp<DashboardStackParamList>,
@@ -93,14 +94,15 @@ export default function DashboardScreen() {
       params: { initialMaintenanceItemId: item._id },
     });
   };
+  const insets = useSafeAreaInsets();
 
   return (
-    <Screen>
+    <Screen style={tw`pt-[${insets.top}px + 4px]`}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={tw`pb-8`}
       >
-        <View style={tw`flex-row items-center justify-between  mt-4 `}>
+        <View style={tw`flex-row items-center justify-between mt-2`}>
           <View style={tw`flex-1 mr-3`}>
             <CarSwitcher
               cars={dashboard.vehicles}

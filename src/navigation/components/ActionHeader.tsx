@@ -8,7 +8,6 @@ interface ActionHeaderProps {
   isEditing: boolean;
   hasData: boolean;
   onActionPress: () => void;
-  skipTopInset?: boolean;
   showEllipsis?: boolean;
 }
 
@@ -17,7 +16,6 @@ export function ActionHeader({
   isEditing,
   hasData,
   onActionPress,
-  skipTopInset = true,
   showEllipsis = false,
 }: ActionHeaderProps) {
   const getIconName = () => {
@@ -38,7 +36,6 @@ export function ActionHeader({
   return (
     <BackHeader
       title={title}
-      skipTopInset={skipTopInset}
       rightElement={
         <TouchableOpacity
           onPress={onActionPress}

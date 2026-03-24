@@ -10,7 +10,6 @@ type Props = {
   title?: string;
   hideBack?: boolean;
   onBackPress?: () => void;
-  skipTopInset?: boolean;
   rightElement?: ReactNode;
   leftElement?: ReactNode;
 };
@@ -19,18 +18,16 @@ export function BackHeader({
   title,
   hideBack,
   onBackPress,
-  skipTopInset,
   rightElement,
   leftElement,
 }: Props) {
   const nav = useNavigation();
   const insets = useSafeAreaInsets();
-  const topPad = (skipTopInset ? 0 : insets.top) + 4;
 
   return (
     <View
       style={tw.style('bg-surface-950 border-b border-surface-border', {
-        paddingTop: topPad,
+        paddingTop: insets.top + 4,
         paddingBottom: 12,
         paddingHorizontal: 16,
       })}

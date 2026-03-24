@@ -13,9 +13,7 @@ export function AboutStack() {
         name={ABOUT.AboutMain}
         component={AboutScreen}
         options={{
-          header: () => (
-            <BackHeader title="About" hideBack={true} skipTopInset />
-          ),
+          header: () => <BackHeader title="About" hideBack={true} />,
         }}
       />
     </Stack.Navigator>

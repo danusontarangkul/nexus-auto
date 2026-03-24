@@ -20,7 +20,6 @@ export function RecordsStack() {
           header: () => (
             <BackHeader
               title="Add Record"
-              skipTopInset
               onBackPress={() => navigateToRecordsListScreen(navigation)}
             />
           ),
@@ -33,7 +32,6 @@ export function RecordsStack() {
           header: () => (
             <BackHeader
               title="Record Details"
-              skipTopInset
               onBackPress={() => navigateToRecordsListScreen(navigation)}
             />
           ),

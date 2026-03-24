@@ -13,7 +13,7 @@ export const stackDark: NativeStackNavigationOptions = {
 };
 
 export const tabDark: BottomTabNavigationOptions = {
-  headerShown: true,
+  headerShown: false,
   headerTitle: '',
   headerStyle: {
     backgroundColor: tw.color('surface-950'),
