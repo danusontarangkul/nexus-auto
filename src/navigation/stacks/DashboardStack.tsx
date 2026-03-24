@@ -8,6 +8,7 @@ import { InsuranceScreen } from '@/features/insurance/screens/InsuranceScreen';
 import { AccountScreen } from '@/features/account/screens/AccountScreen';
 import { BackHeader } from '../components/BackHeader';
 import { RecordsDetailsScreen } from '@/features/records/screens/RecordsDetails';
+import { navigateToRecordsListScreen } from '../navigateToRecordsList';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
 
@@ -30,18 +31,19 @@ export function DashboardStack() {
       <Stack.Screen
         name={DASHBOARD.Account}
         component={withErrorBoundary(AccountScreen, 'Account Access')}
-        options={{
-          header: () => <BackHeader title="Account" skipTopInset={true} />,
-        }}
+        options={{ header: () => <BackHeader title="Account" /> }}
       />
       <Stack.Screen
         name={DASHBOARD.ServiceRecordDetails}
         component={RecordsDetailsScreen}
-        options={{
+        options={({ navigation }) => ({
           header: () => (
-            <BackHeader title="Service Record Details" skipTopInset={true} />
+            <BackHeader
+              title="Service Record Details"
+              onBackPress={() => navigateToRecordsListScreen(navigation)}
+            />
           ),
-        }}
+        })}
       />
     </Stack.Navigator>
   );

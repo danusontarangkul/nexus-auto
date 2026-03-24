@@ -76,17 +76,21 @@ export default function DashboardScreen() {
   const handleMaintenanceItemPress = (
     item: (typeof maintenanceItems)[number],
   ) => {
-    if (!item.lastDoneRecordId) {
-      return;
-    }
     const parentNavigator =
       nav.getParent<BottomTabNavigationProp<AppTabsParamList>>();
     if (!parentNavigator) {
       return;
     }
+    if (item.lastDoneRecordId) {
+      parentNavigator.navigate(TABS.Records, {
+        screen: RECORDS.RecordDetails,
+        params: { recordId: item.lastDoneRecordId },
+      });
+      return;
+    }
     parentNavigator.navigate(TABS.Records, {
-      screen: RECORDS.RecordDetails,
-      params: { recordId: item.lastDoneRecordId },
+      screen: RECORDS.AddRecord,
+      params: { initialMaintenanceItemId: item._id },
     });
   };
 

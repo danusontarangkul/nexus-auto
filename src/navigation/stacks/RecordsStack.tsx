@@ -5,6 +5,7 @@ import { RecordsScreen } from '@/features/records/screens/RecordsScreen';
 import { AddRecordScreen } from '@/features/records/screens/AddRecord';
 import { BackHeader } from '../components/BackHeader';
 import { RecordsDetailsScreen } from '@/features/records/screens/RecordsDetails';
+import { navigateToRecordsListScreen } from '../navigateToRecordsList';
 
 const Stack = createNativeStackNavigator<RecordsStackParamList>();
 
@@ -15,9 +16,14 @@ export function RecordsStack() {
       <Stack.Screen
         name={RECORDS.AddRecord}
         component={AddRecordScreen}
-        options={{
-          header: () => <BackHeader title="Add Record" skipTopInset={true} />,
-        }}
+        options={({ navigation }) => ({
+          header: () => (
+            <BackHeader
+              title="Add Record"
+              onBackPress={() => navigateToRecordsListScreen(navigation)}
+            />
+          ),
+        })}
       />
       <Stack.Screen
         name={RECORDS.RecordDetails}
@@ -26,8 +32,7 @@ export function RecordsStack() {
           header: () => (
             <BackHeader
               title="Record Details"
-              skipTopInset={true}
-              onBackPress={() => navigation.navigate(RECORDS.RecordsList)}
+              onBackPress={() => navigateToRecordsListScreen(navigation)}
             />
           ),
         })}

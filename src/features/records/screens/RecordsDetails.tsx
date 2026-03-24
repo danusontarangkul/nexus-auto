@@ -16,7 +16,9 @@ import {
   useDeleteServiceRecord,
 } from '@/domain/serviceRecords';
 import { ActionMenu } from '@/shared/components/sheets/ActionMenu';
-import { RECORDS, RecordsStackParamList } from '@/navigation/routes';
+import { RecordsStackParamList } from '@/navigation/routes';
+import { navigateToRecordsListScreen } from '@/navigation/navigateToRecordsList';
+import { useHardwareBackToRecordsList } from '@/navigation/hooks/useHardwareBackToRecordsList';
 import { ControlledDatePicker } from '@/shared/components/inputs/ControlledDatePicker';
 import { ControlledInput } from '@/shared/components/inputs/ControlledInput';
 import { DocumentGallery } from '@/shared/components/camera/DocumentGallery';
@@ -33,11 +35,15 @@ import { View } from 'react-native';
 import { ControlledNumberInput } from '@/shared/components/inputs/ControlledNumberInput';
 import { useDashboardContext } from '@/providers/DashboardProvider';
 import { ServiceCategoryType } from '@convex/types/literals';
-import { getServiceOptionsForCategory } from '../utils/utils';
+import {
+  getDefaultRoutinePerformedService,
+  getServiceOptionsForCategory,
+} from '../utils/utils';
 import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
 
 export function RecordsDetailsScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
+  useHardwareBackToRecordsList(navigation);
 
   const { recordId } = useRecordsRouteParams();
   const { dashboard } = useDashboardContext();
@@ -125,7 +131,7 @@ export function RecordsDetailsScreen() {
   const addServiceItem = () => {
     setPerformedServices((prev) => [
       ...prev,
-      { category: 'routine', serviceName: '', notes: '' },
+      getDefaultRoutinePerformedService(maintenanceItems),
     ]);
   };
 
@@ -165,7 +171,7 @@ export function RecordsDetailsScreen() {
 
     if (success) {
       setShowDeleteModal(false);
-      navigation.navigate(RECORDS.RecordsList);
+      navigateToRecordsListScreen(navigation);
     }
   };
 
@@ -234,6 +240,7 @@ export function RecordsDetailsScreen() {
                     : undefined
                 }
                 specificServiceOptions={getOptionsForCategory(service.category)}
+                maintenanceItems={maintenanceItems}
               />
             ))}
 

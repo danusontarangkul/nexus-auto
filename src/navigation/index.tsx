@@ -15,11 +15,12 @@ import DevSwitcher from './dev/DevSwitcher';
 
 const Root = createNativeStackNavigator<RootStackParamList>();
 
-type ActiveStack = {
-  name: keyof RootStackParamList;
-  component: React.ComponentType<any>;
-  title: string;
-};
+const devSwitcherScreen = __DEV__ ? (
+  <Root.Screen
+    name={ROOT.Dev}
+    component={withErrorBoundary(DevSwitcher, 'Developer Tools')}
+  />
+) : null;
 
 export function RootNavigator() {
   const { isAuthenticated, hasCar, isLoading } = useInitialBoot();
@@ -27,32 +28,6 @@ export function RootNavigator() {
   if (isLoading) {
     return <FullScreenLoading />;
   }
-
-  const getActiveStack = (): ActiveStack => {
-    if (!isAuthenticated) {
-      return {
-        name: ROOT.Auth,
-        component: AuthStack,
-        title: 'Account Access',
-      };
-    }
-
-    if (!hasCar) {
-      return {
-        name: ROOT.Onboarding,
-        component: OnboardingStack,
-        title: 'Vehicle Setup',
-      };
-    }
-
-    return {
-      name: ROOT.App,
-      component: AuthenticatedApp,
-      title: 'Dashboard',
-    };
-  };
-
-  const active = getActiveStack();
 
   return (
     <NavigationContainer ref={navRef} theme={darkNavTheme}>
@@ -65,20 +40,38 @@ export function RootNavigator() {
           />
         )}
       >
-        <Root.Navigator screenOptions={{ headerShown: false }}>
-          <Root.Screen
-            key={active.name}
-            name={active.name}
-            component={withErrorBoundary(active.component, active.title)}
-          />
-
-          {__DEV__ && (
+        {!isAuthenticated ? (
+          <Root.Navigator screenOptions={{ headerShown: false }}>
             <Root.Screen
-              name={ROOT.Dev}
-              component={withErrorBoundary(DevSwitcher, 'Developer Tools')}
+              name={ROOT.Auth}
+              component={withErrorBoundary(AuthStack, 'Account Access')}
             />
-          )}
-        </Root.Navigator>
+            {devSwitcherScreen}
+          </Root.Navigator>
+        ) : !hasCar ? (
+          <Root.Navigator screenOptions={{ headerShown: false }}>
+            <Root.Screen
+              name={ROOT.Onboarding}
+              component={withErrorBoundary(OnboardingStack, 'Vehicle Setup')}
+            />
+            {devSwitcherScreen}
+          </Root.Navigator>
+        ) : (
+          <Root.Navigator
+            initialRouteName={ROOT.App}
+            screenOptions={{ headerShown: false }}
+          >
+            <Root.Screen
+              name={ROOT.App}
+              component={withErrorBoundary(AuthenticatedApp, 'Dashboard')}
+            />
+            <Root.Screen
+              name={ROOT.Onboarding}
+              component={withErrorBoundary(OnboardingStack, 'Vehicle Setup')}
+            />
+            {devSwitcherScreen}
+          </Root.Navigator>
+        )}
       </ErrorBoundary>
     </NavigationContainer>
   );

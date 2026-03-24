@@ -1,5 +1,9 @@
 import { FilterLogicMap } from '@/shared/hooks/useFilter';
-import { SERVICE_CATEGORIES, SERVICES_BY_CATEGORY } from '@/utils/const';
+import {
+  ROUTINE_DEFAULT_SERVICE_LABEL,
+  SERVICE_CATEGORIES,
+  SERVICES_BY_CATEGORY,
+} from '@/utils/const';
 import { Doc, Id } from '@convex/_generated/dataModel';
 import { PerformedService, MaintenanceItemWithDue } from '@convex/types';
 import { ServiceCategoryType } from '@convex/types/literals';
@@ -84,8 +88,6 @@ export const getServiceOptionsForCategory = (
   let maintenanceItemOptions: ServiceOption[] = [];
 
   if (maintenanceItems && maintenanceItems.length > 0) {
-    // For Routine Maintenance, surface key scheduled tasks (oil change, tire rotation, etc.)
-    // even if their underlying maintenance items live in more specific categories
     if (category === 'routine') {
       const routineStaticOptions = SERVICES_BY_CATEGORY['routine'] ?? [];
       const routineLabels = new Set(
@@ -118,3 +120,80 @@ export const getServiceOptionsForCategory = (
 
   return Array.from(optionsByLabel.values());
 };
+
+const STATIC_SPECIFIC_SERVICE_VALUES = new Set(
+  Object.values(SERVICES_BY_CATEGORY)
+    .flat()
+    .map((o) => o.value),
+);
+
+export function getDefaultRoutinePerformedService(
+  maintenanceItems: MaintenanceItemWithDue[] | undefined,
+): PerformedService {
+  const options = getServiceOptionsForCategory(maintenanceItems, 'routine');
+  const oil = options.find(
+    (option) => option.label === ROUTINE_DEFAULT_SERVICE_LABEL,
+  );
+
+  if (!oil) {
+    return {
+      category: 'routine',
+      serviceName: ROUTINE_DEFAULT_SERVICE_LABEL,
+      notes: '',
+    };
+  }
+
+  if (STATIC_SPECIFIC_SERVICE_VALUES.has(String(oil.value))) {
+    return {
+      category: 'routine',
+      serviceName: oil.label,
+      notes: '',
+    };
+  }
+
+  return {
+    category: 'routine',
+    serviceName: oil.label,
+    notes: '',
+    maintenanceItemId: oil.value as Id<'maintenanceItems'>,
+  };
+}
+
+export const STATIC_SPECIFIC_VALUES = new Set(
+  Object.values(SERVICES_BY_CATEGORY)
+    .flat()
+    .map((o) => o.value),
+);
+
+export type SpecificServiceOption = { label: string; value: string };
+export const CUSTOM_OPTION = { label: 'Custom', value: 'other' } as const;
+
+export function getServiceItemDerivedState(
+  service: PerformedService,
+  specificServiceOptions?: SpecificServiceOption[],
+) {
+  const baseOptions: SpecificServiceOption[] =
+    specificServiceOptions ?? SERVICES_BY_CATEGORY[service.category] ?? [];
+
+  const hasOtherOption = baseOptions.some(
+    (option) => option.value === CUSTOM_OPTION.value,
+  );
+
+  const specificOptions: SpecificServiceOption[] =
+    specificServiceOptions && !hasOtherOption
+      ? [...baseOptions, CUSTOM_OPTION]
+      : baseOptions;
+
+  const foundOption = specificOptions.find(
+    (option) => option.label === service.serviceName,
+  );
+
+  const specificValue =
+    service.maintenanceItemId ?? foundOption?.value ?? CUSTOM_OPTION.value;
+
+  return {
+    specificOptions,
+    specificValue,
+    isOtherSelected: specificValue === CUSTOM_OPTION.value,
+  };
+}

@@ -19,9 +19,7 @@ export function WarrantiesStack() {
       <Stack.Screen
         name={WARRANTIES.AddWarranty}
         component={AddWarrantyScreen}
-        options={{
-          header: () => <BackHeader title="Add Warranty" skipTopInset={true} />,
-        }}
+        options={{ header: () => <BackHeader title="Add Warranty" /> }}
       />
       <Stack.Screen
         name={WARRANTIES.WarrantyDetails}
@@ -30,8 +28,8 @@ export function WarrantiesStack() {
           header: () => (
             <BackHeader
               title="Warranty Details"
-              skipTopInset={true}
               onBackPress={() => navigation.navigate(WARRANTIES.WarrantiesList)}
+              skipTopInset
             />
           ),
         })}

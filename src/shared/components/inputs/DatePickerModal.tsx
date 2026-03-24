@@ -71,13 +71,14 @@ export function DatePickerModal({
             </TouchableOpacity>
           </View>
 
-          <View style={tw`p-2`}>
+          <View style={tw`w-full items-center`}>
             <DateTimePicker
               value={getSafePickerDate(value)}
               mode="date"
               display="inline"
               onChange={handleChange}
               themeVariant="light"
+              style={tw`w-full`}
             />
           </View>
         </View>

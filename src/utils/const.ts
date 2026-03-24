@@ -71,6 +71,12 @@ export const SERVICES_BY_CATEGORY: Record<
   ],
 };
 
+/** Label for the default routine service when adding a record (see `routine` + `oil_change` above). */
+export const ROUTINE_DEFAULT_SERVICE_LABEL =
+  SERVICES_BY_CATEGORY['routine']?.find(
+    (option) => option.value === 'oil_change',
+  )?.label ?? 'Oil & Filter Change';
+
 export const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'active', label: 'Active' },

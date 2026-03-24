@@ -29,7 +29,7 @@ export function BackHeader({
   return (
     <View
       style={tw.style('bg-surface-950 border-b border-surface-border', {
-        paddingTop: skipTopInset ? 12 : insets.top + 8,
+        paddingTop: 4,
         paddingBottom: 12,
         paddingHorizontal: 16,
       })}

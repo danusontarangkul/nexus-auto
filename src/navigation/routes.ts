@@ -84,7 +84,7 @@ export const RECORDS = {
 
 export type RecordsStackParamList = {
   [RECORDS.RecordsList]: undefined;
-  [RECORDS.AddRecord]: undefined;
+  [RECORDS.AddRecord]: { initialMaintenanceItemId?: Id<'maintenanceItems'> };
   [RECORDS.RecordDetails]: { recordId: Id<'serviceRecords'> };
 };
 

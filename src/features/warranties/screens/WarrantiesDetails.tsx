@@ -26,6 +26,7 @@ import tw from '@/styles/tw';
 import { WARRANTIES, WarrantiesStackParamList } from '@/navigation/routes';
 import { ConfirmModal } from '@/shared/components/modals/ConfirmModal';
 import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
+import { InputGroup } from '@/shared/components/inputs/InputGroup';
 
 export function WarrantiesDetailsScreen() {
   const navigation = useNavigation<NavigationProp<WarrantiesStackParamList>>();
@@ -127,44 +128,44 @@ export function WarrantiesDetailsScreen() {
         variant="titleLg"
         style={tw`mb-4`}
       />
+      <InputGroup gap={4}>
+        <ControlledInput
+          label="Manufacturer"
+          value={manufacturer}
+          isEditing={isEditing}
+          onChangeText={setManufacturer}
+          onClear={() => setManufacturer('')}
+        />
 
-      <ControlledInput
-        label="Manufacturer"
-        value={manufacturer}
-        isEditing={isEditing}
-        onChangeText={setManufacturer}
-        onClear={() => setManufacturer('')}
-      />
+        <ControlledInput
+          label="Component"
+          value={component}
+          isEditing={isEditing}
+          onChangeText={setComponent}
+          onClear={() => setComponent('')}
+        />
 
-      <ControlledInput
-        label="Component"
-        value={component}
-        isEditing={isEditing}
-        onChangeText={setComponent}
-        onClear={() => setComponent('')}
-      />
-
-      <ControlledDatePicker
-        label="Expiration Date"
-        value={expiryDate}
-        isEditing={isEditing}
-        onDateChange={setExpiryDate}
-      />
-      <DocumentGallery
-        existingReceipts={warranty.receipts}
-        removedReceiptIds={removedReceiptIds}
-        onRemoveExisting={(id) =>
-          setRemovedReceiptIds((prev) =>
-            prev.includes(id) ? prev : [...prev, id],
-          )
-        }
-        pendingUris={imageUris}
-        isEditing={isEditing}
-        onRemovePending={removeImage}
-        onAddPress={openImagePicker}
-        style={isEditing ? tw`mt-8` : undefined}
-      />
-
+        <ControlledDatePicker
+          label="Expiration Date"
+          value={expiryDate}
+          isEditing={isEditing}
+          onDateChange={setExpiryDate}
+        />
+        <DocumentGallery
+          existingReceipts={warranty.receipts}
+          removedReceiptIds={removedReceiptIds}
+          onRemoveExisting={(id) =>
+            setRemovedReceiptIds((prev) =>
+              prev.includes(id) ? prev : [...prev, id],
+            )
+          }
+          pendingUris={imageUris}
+          isEditing={isEditing}
+          onRemovePending={removeImage}
+          onAddPress={openImagePicker}
+          style={isEditing ? tw`mt-8` : undefined}
+        />
+      </InputGroup>
       {isEditing && (
         <ButtonContainer>
           <ActionGroup error={updateError}>

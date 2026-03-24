@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import { Id } from '@convex/_generated/dataModel';
 import { Screen } from '@/shared/components/screens/Screen';
 import { SectionHeader } from '@/shared/components/headers/SectionHeader';
@@ -23,11 +28,20 @@ import { PerformedService } from '@convex/types';
 import tw from '@/styles/tw';
 import { ServiceItemCard } from '../components/ServiceItemCard';
 import { NumberInput } from '@/shared/components/inputs/NumberInput';
-import { getServiceOptionsForCategory } from '../utils/utils';
+import { ROUTINE_DEFAULT_SERVICE_LABEL } from '@/utils/const';
+import {
+  getDefaultRoutinePerformedService,
+  getServiceOptionsForCategory,
+} from '../utils/utils';
 import { ImageSourcePickerSheet } from '@/shared/components/sheets/ImageSourcePickerSheet';
+import { useHardwareBackToRecordsList } from '@/navigation/hooks/useHardwareBackToRecordsList';
 
 export function AddRecordScreen() {
   const navigation = useNavigation<NavigationProp<RecordsStackParamList>>();
+  useHardwareBackToRecordsList(navigation);
+  const route =
+    useRoute<RouteProp<RecordsStackParamList, typeof RECORDS.AddRecord>>();
+  const initialMaintenanceItemId = route.params?.initialMaintenanceItemId;
 
   const { dashboard } = useDashboardContext();
 
@@ -59,7 +73,53 @@ export function AddRecordScreen() {
 
   const [performedServices, setPerformedServices] = useState<
     PerformedService[]
-  >([{ category: 'routine', serviceName: '', notes: '' }]);
+  >(() => [getDefaultRoutinePerformedService(undefined)]);
+
+  const hasAppliedPrefill = useRef(false);
+
+  useEffect(() => {
+    if (!maintenanceItems?.length || hasAppliedPrefill.current) {
+      return;
+    }
+    setPerformedServices((prev) =>
+      prev.map((service) => {
+        if (
+          service.category !== 'routine' ||
+          service.serviceName !== ROUTINE_DEFAULT_SERVICE_LABEL ||
+          service.maintenanceItemId
+        ) {
+          return service;
+        }
+        const def = getDefaultRoutinePerformedService(maintenanceItems);
+        return { ...service, maintenanceItemId: def.maintenanceItemId };
+      }),
+    );
+  }, [maintenanceItems]);
+
+  useEffect(() => {
+    if (
+      hasAppliedPrefill.current ||
+      !initialMaintenanceItemId ||
+      !maintenanceItems?.length
+    ) {
+      return;
+    }
+    const item = maintenanceItems.find(
+      (maintenanceItem) => maintenanceItem._id === initialMaintenanceItemId,
+    );
+    if (!item) {
+      return;
+    }
+    hasAppliedPrefill.current = true;
+    setPerformedServices([
+      {
+        category: item.category,
+        serviceName: item.serviceName,
+        notes: '',
+        maintenanceItemId: item._id,
+      },
+    ]);
+  }, [initialMaintenanceItemId, maintenanceItems]);
 
   const getOptionsForCategory = (category: ServiceCategoryType) => {
     return getServiceOptionsForCategory(maintenanceItems, category);
@@ -79,7 +139,7 @@ export function AddRecordScreen() {
   const addServiceItem = () => {
     setPerformedServices((prev) => [
       ...prev,
-      { category: 'routine', serviceName: '', notes: '' },
+      getDefaultRoutinePerformedService(maintenanceItems),
     ]);
   };
 
@@ -88,7 +148,9 @@ export function AddRecordScreen() {
   };
 
   const handleSubmit = async () => {
-    if (!vehicleId) return;
+    if (!vehicleId) {
+      return;
+    }
 
     let finalStorageIds: Id<'_storage'>[] = [];
 
@@ -185,6 +247,7 @@ export function AddRecordScreen() {
               }
               isEditing={true}
               specificServiceOptions={getOptionsForCategory(service.category)}
+              maintenanceItems={maintenanceItems}
             />
           ))}
 

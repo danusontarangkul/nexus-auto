@@ -40,7 +40,7 @@ export function RecordsScreen() {
           item.serviceDate.toString(),
         ];
       },
-      onAddPress: () => navigation.navigate(RECORDS.AddRecord),
+      onAddPress: () => navigation.navigate(RECORDS.AddRecord, {}),
     });
 
   if (!serviceRecords) {
