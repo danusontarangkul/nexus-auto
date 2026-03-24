@@ -22,7 +22,7 @@ export function ConfirmCarScreen() {
 
   return (
     <Screen>
-      <ScreenHeader title="Confirm Vehicle" style={tw`mt-10`} />
+      <ScreenHeader title="Confirm Vehicle" style={tw`pt-10`} />
       <VehiclePreviewCard car={car} plate={plate} />
       <ButtonContainer>
         <ActionGroup error={error}>
