@@ -2,6 +2,8 @@
 
 A mobile-first solution built with **React Native** and **Convex** for car owners who want to avoid overpaying for maintenance. This app empowers users to cross-reference technician advice with manufacturer data, track digital receipts, and maintain a verifiable service history for resale value.
 
+**Landing page:** [Nexus Auto — maintenance & documents](https://danusontarangkul.github.io/nexusauto/)
+
 ---
 
 ## 🎯 The Problem (User Avatar)
@@ -171,7 +173,7 @@ npm run convex:dev
 
 ## 👥 Contributors
 
-* **Danuson Tarangkul** - [github.com/danusontarangkul](https://github.com/danusontarangkul)
+* **David Anusontarangkul** - [github.com/danusontarangkul](https://github.com/danusontarangkul)
 * **Ivan Torres** - [github.com/IvanTorresMia](https://github.com/IvanTorresMia)
 
 
