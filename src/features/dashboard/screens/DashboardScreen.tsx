@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Platform } from 'react-native';
 import {
   useNavigation,
   CompositeNavigationProp,
@@ -97,9 +97,12 @@ export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <Screen style={tw`pt-[${insets.top}px + 4px]`}>
+    <Screen style={{ paddingTop: insets.top + 4 }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior={
+          Platform.OS === 'ios' ? 'never' : undefined
+        }
         contentContainerStyle={tw`pb-8`}
       >
         <View style={tw`flex-row items-center justify-between mt-2`}>
