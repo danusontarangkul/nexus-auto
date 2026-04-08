@@ -1,4 +1,5 @@
 import { View, TextInput, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import tw from '@/styles/tw';
 
@@ -15,9 +16,17 @@ export function SearchHeader({
   onBack,
   placeholder = 'Search...',
 }: SearchHeaderProps) {
+  const insets = useSafeAreaInsets();
+
   return (
     <View
-      style={tw`flex-row items-center bg-surface-950 px-4 py-3 border-b border-surface-800`}
+      style={tw.style(
+        'flex-row items-center bg-surface-950 px-4 border-b border-surface-800',
+        {
+          paddingTop: insets.top + 4,
+          paddingBottom: 12,
+        },
+      )}
     >
       <TouchableOpacity onPress={onBack} style={tw`mr-3`}>
         <Ionicons name="arrow-back" size={24} color={tw.color('ink-400')} />

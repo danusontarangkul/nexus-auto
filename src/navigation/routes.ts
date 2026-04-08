@@ -14,7 +14,7 @@ export type RootStackParamList = {
   [ROOT.Gate]: undefined;
   [ROOT.Auth]: undefined;
   [ROOT.Onboarding]: undefined;
-  [ROOT.App]: undefined;
+  [ROOT.App]: NavigatorScreenParams<AppTabsParamList> | undefined;
   [ROOT.Dev]?: undefined;
 };
 
@@ -54,7 +54,7 @@ export const TABS = {
 } as const;
 
 export type AppTabsParamList = {
-  [TABS.Dashboard]: undefined;
+  [TABS.Dashboard]: NavigatorScreenParams<DashboardStackParamList> | undefined;
   [TABS.Records]: NavigatorScreenParams<RecordsStackParamList>;
   [TABS.Warranties]: undefined;
   [TABS.About]: NavigatorScreenParams<AboutStackParamList>;
